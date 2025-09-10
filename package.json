@@ -1,7 +1,7 @@
 {
 	"name": "intermediate-astro-v5-less-decap",
 	"type": "module",
-	"version": "2.2.4",
+	"version": "2.2.5",
 	"scripts": {
 		"astro": "astro dev",
 		"dev": "astro dev",
@@ -10,12 +10,10 @@
 		"preview": "astro preview"
 	},
 	"dependencies": {
-		"@astrojs/check": "^0.9.4",
-		"@astrojs/sitemap": "^3.4.2",
-		"astro": "^5.12.9",
+		"@astrojs/sitemap": "^3.5.1",
+		"astro": "^5.13.7",
 		"astro-icon": "^1.1.5",
 		"autoprefixer": "^10.4.21",
-		"less": "^4.2.2",
-		"typescript": "^5.6.3"
+		"less": "^4.4.1"
 	}
 }
