@@ -3,7 +3,7 @@ import sitemap from "@astrojs/sitemap";
 import icon from "astro-icon";
 
 export default defineConfig({
-  site: "https://your-project-name.vercel.app", // update with your actual Vercel URL
+  site: "https://site-0-5ayxjbg5q-rigby35xs-projects.vercel.app",
   integrations: [
     icon(),
     sitemap({
