@@ -1,36 +1,27 @@
 [
   {
-    "key": "Home",
-    "url": "/",
+    "key": "{{navigation.items.0.text}}",
+    "url": "{{navigation.items.0.link}}",
     "children": []
   },
   {
-    "key": "About Us",
-    "url": "/about/",
+    "key": "{{navigation.items.1.text}}",
+    "url": "{{navigation.items.1.link}}",
     "children": []
   },
   {
-    "key": "Projects",
-    "url": "/projects/",
-    "children": [
-      {
-        "key": "Project 1",
-        "url": "/projects/project-1/"
-      },
-      {
-        "key": "Project 2",
-        "url": "/projects/project-2/"
-      }
-    ]
-  },
-  {
-    "key": "Reviews",
-    "url": "/reviews/",
+    "key": "{{navigation.items.2.text}}",
+    "url": "{{navigation.items.2.link}}",
     "children": []
   },
   {
-    "key": "Blog",
-    "url": "/blog/",
-    "children": []     
+    "key": "{{navigation.items.3.text}}",
+    "url": "{{navigation.items.3.link}}",
+    "children": []
+  },
+  {
+    "key": "{{navigation.items.4.text}}",
+    "url": "{{navigation.items.4.link}}",
+    "children": []
   }
 ]

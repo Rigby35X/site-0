@@ -8,13 +8,13 @@
 @media only screen and (min-width: 0em) {
 	// Website colors
 	:root {
-		--primary: hsl(80, 90%, 55%);
-		--primaryLight: hsl(80, 60%, 40%);
-		--secondary: #001f3f;
-		--secondaryLight: #001f3f;
-		--headerColor: #1a1a1a;
-		--bodyTextColor: #4e4b66;
-		--bodyTextColorWhite: #fafbfc;
+		--primary: {{branding.colors.primary}};
+		--primaryLight: {{branding.colors.primaryLight}};
+		--secondary: {{branding.colors.secondary}};
+		--secondaryLight: {{branding.colors.secondary}};
+		--headerColor: {{branding.colors.headerColor}};
+		--bodyTextColor: {{branding.colors.bodyTextColor}};
+		--bodyTextColorWhite: {{branding.colors.bodyTextColorWhite}};
 
 		/* 13px - 16px */
 		--topperFontSize: clamp(0.8125rem, 1.6vw, 1rem);

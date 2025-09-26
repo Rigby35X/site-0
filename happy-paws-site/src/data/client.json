@@ -1,0 +1,16 @@
+{
+	"name": "Happy Paws Dog Rescue",
+	"email": "info@happypawsrescue.org",
+	"phoneForTel": "555-DOG-PAWS",
+	"phoneFormatted": "(555) DOG-PAWS",
+	"ein": "12-3456789",
+	"address": {
+		"lineOne": "123 Rescue Lane",
+		"lineTwo": "Suite 100",
+		"city": "Dog City",
+		"state": "CA",
+		"zip": "90210",
+		"mapLink": "https://maps.google.com/your-location"
+	},
+	"domain": "happypawsrescue.org"
+}

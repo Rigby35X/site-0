@@ -1,0 +1,527 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import CTA from "@components/CTA.astro";
+---
+
+<BaseLayout
+  title="Happy Paws Dog Rescue - Applications"
+  description="Apply to adopt, foster, or volunteer with Happy Paws Dog Rescue. Start your journey to help animals in need."
+>
+  <!-- ============================================ -->
+  <!--                 Page Header                  -->
+  <!-- ============================================ -->
+  
+  <section id="page-header">
+    <div class="cs-container">
+      <h1 class="cs-title">Get Involved</h1>
+      <p class="cs-text">
+        There are many ways to help animals in need. Whether you're ready to adopt, 
+        want to foster, or volunteer your time, we have opportunities for everyone.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!--              Application Types               -->
+  <!-- ============================================ -->
+  
+  <section id="application-types">
+    <div class="cs-container">
+      <div class="cs-card-group">
+        
+        <!-- Adoption Application -->
+        <div class="cs-application-card">
+          <div class="cs-icon">
+            <img src="/assets/svgs/adoption.svg" alt="Adoption icon" width="60" height="60" />
+          </div>
+          <h2>Adoption Application</h2>
+          <p class="cs-description">
+            Ready to welcome a new family member? Our adoption process ensures the perfect match 
+            between you and your future pet. We'll guide you through every step to make sure 
+            both you and your new companion are set up for success.
+          </p>
+          
+          <div class="cs-requirements">
+            <h3>Requirements:</h3>
+            <ul>
+              <li>Must be 21 years or older</li>
+              <li>Valid government-issued ID</li>
+              <li>Proof of residence</li>
+              <li>Landlord approval (if renting)</li>
+              <li>Veterinary references (if you've had pets)</li>
+            </ul>
+          </div>
+          
+          <div class="cs-process">
+            <h3>Process:</h3>
+            <ol>
+              <li>Submit online application</li>
+              <li>Application review (24-48 hours)</li>
+              <li>Meet and greet with your chosen pet</li>
+              <li>Home visit (if required)</li>
+              <li>Finalize adoption</li>
+            </ol>
+          </div>
+          
+          <div class="cs-fees">
+            <h3>Adoption Fees:</h3>
+            <div class="cs-fee-list">
+              <div class="cs-fee-item">
+                <span>Dogs:</span>
+                <span>$150 - $300</span>
+              </div>
+              <div class="cs-fee-item">
+                <span>Cats:</span>
+                <span>$75 - $150</span>
+              </div>
+              <div class="cs-fee-item">
+                <span>Small Animals:</span>
+                <span>$25 - $75</span>
+              </div>
+            </div>
+            <p class="cs-fee-note">
+              Adoption fees include spay/neuter, vaccinations, microchip, and health check.
+            </p>
+          </div>
+          
+          <a href="/forms/adoption-application" class="cs-button-solid">Start Adoption Application</a>
+        </div>
+
+        <!-- Foster Application -->
+        <div class="cs-application-card">
+          <div class="cs-icon">
+            <img src="/assets/svgs/foster.svg" alt="Foster icon" width="60" height="60" />
+          </div>
+          <h2>Foster Application</h2>
+          <p class="cs-description">
+            Foster families provide temporary care for animals who need extra time before adoption. 
+            This might include young animals, those recovering from medical procedures, or pets 
+            who need behavioral support. We provide all supplies and medical care.
+          </p>
+          
+          <div class="cs-requirements">
+            <h3>Requirements:</h3>
+            <ul>
+              <li>Must be 18 years or older</li>
+              <li>Stable living situation</li>
+              <li>Time to dedicate to foster care</li>
+              <li>Transportation to vet appointments</li>
+              <li>Current pets must be up-to-date on vaccinations</li>
+            </ul>
+          </div>
+          
+          <div class="cs-foster-types">
+            <h3>Foster Opportunities:</h3>
+            <ul>
+              <li><strong>Bottle babies:</strong> Orphaned kittens/puppies needing round-the-clock care</li>
+              <li><strong>Medical foster:</strong> Animals recovering from surgery or illness</li>
+              <li><strong>Behavioral foster:</strong> Shy or fearful animals needing socialization</li>
+              <li><strong>Maternity foster:</strong> Pregnant animals and their babies</li>
+              <li><strong>Respite foster:</strong> Short-term care (weekends, vacations)</li>
+            </ul>
+          </div>
+          
+          <div class="cs-support">
+            <h3>We Provide:</h3>
+            <ul>
+              <li>All food, supplies, and equipment</li>
+              <li>Complete medical care</li>
+              <li>24/7 support hotline</li>
+              <li>Training and guidance</li>
+              <li>Transportation assistance when needed</li>
+            </ul>
+          </div>
+          
+          <a href="/forms/foster-application" class="cs-button-solid">Start Foster Application</a>
+        </div>
+
+        <!-- Volunteer Application -->
+        <div class="cs-application-card">
+          <div class="cs-icon">
+            <img src="/assets/svgs/volunteer.svg" alt="Volunteer icon" width="60" height="60" />
+          </div>
+          <h2>Volunteer Application</h2>
+          <p class="cs-description">
+            Volunteers are the heart of our organization. Whether you have an hour a week or 
+            several hours a day, there are meaningful ways to contribute to animal welfare 
+            and make a direct impact on the lives of animals in need.
+          </p>
+          
+          <div class="cs-requirements">
+            <h3>Requirements:</h3>
+            <ul>
+              <li>Must be 16 years or older (some positions 18+)</li>
+              <li>Reliable and committed</li>
+              <li>Comfortable around animals</li>
+              <li>Able to follow safety protocols</li>
+              <li>Background check required for some positions</li>
+            </ul>
+          </div>
+          
+          <div class="cs-volunteer-opportunities">
+            <h3>Volunteer Opportunities:</h3>
+            <div class="cs-opportunity-grid">
+              <div class="cs-opportunity">
+                <strong>Animal Care</strong>
+                <p>Daily care, feeding, cleaning, socialization</p>
+              </div>
+              <div class="cs-opportunity">
+                <strong>Dog Walking</strong>
+                <p>Exercise and enrichment for shelter dogs</p>
+              </div>
+              <div class="cs-opportunity">
+                <strong>Cat Socialization</strong>
+                <p>Helping shy cats become more adoptable</p>
+              </div>
+              <div class="cs-opportunity">
+                <strong>Administrative</strong>
+                <p>Data entry, phone calls, filing</p>
+              </div>
+              <div class="cs-opportunity">
+                <strong>Events</strong>
+                <p>Adoption events, fundraisers, outreach</p>
+              </div>
+              <div class="cs-opportunity">
+                <strong>Transportation</strong>
+                <p>Vet visits, rescue transports</p>
+              </div>
+              <div class="cs-opportunity">
+                <strong>Photography</strong>
+                <p>Taking adoption photos and videos</p>
+              </div>
+              <div class="cs-opportunity">
+                <strong>Social Media</strong>
+                <p>Content creation, posting, engagement</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="cs-commitment">
+            <h3>Time Commitment:</h3>
+            <p>
+              We ask for a minimum commitment of 6 months and at least 2 hours per week. 
+              This allows time for training and helps ensure consistency for our animals.
+            </p>
+          </div>
+          
+          <a href="/forms/volunteer-application" class="cs-button-solid">Start Volunteer Application</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!--              Additional Info                 -->
+  <!-- ============================================ -->
+  
+  <section id="additional-info">
+    <div class="cs-container">
+      <div class="cs-info-grid">
+        <div class="cs-info-card">
+          <h2>Questions?</h2>
+          <p>
+            Have questions about our application process? We're here to help! 
+            Contact us and we'll be happy to discuss which opportunity might be 
+            the best fit for you.
+          </p>
+          <a href="/contact" class="cs-button-transparent">Contact Us</a>
+        </div>
+        
+        <div class="cs-info-card">
+          <h2>Visit Us</h2>
+          <p>
+            Want to see our facility and meet some of our animals before applying? 
+            We welcome visitors during our open hours. Check our events page for 
+            special adoption events and open houses.
+          </p>
+          <a href="/events" class="cs-button-transparent">View Events</a>
+        </div>
+        
+        <div class="cs-info-card">
+          <h2>Other Ways to Help</h2>
+          <p>
+            Can't adopt, foster, or volunteer right now? There are still ways to help! 
+            Consider making a donation, sharing our posts on social media, or 
+            spreading the word about our animals.
+          </p>
+          <a href="/donate" class="cs-button-transparent">Donate</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CTA />
+</BaseLayout>
+
+<style lang="less">
+  /* Page Header */
+  #page-header {
+    padding: var(--sectionPadding);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primaryDark) 100%);
+    color: white;
+    text-align: center;
+
+    .cs-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .cs-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      margin-bottom: 1rem;
+      color: white;
+    }
+
+    .cs-text {
+      font-size: 1.125rem;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+
+  /* Application Types */
+  #application-types {
+    padding: var(--sectionPadding);
+
+    .cs-card-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 3rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .cs-application-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2.5rem;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      border: 1px solid #f0f0f0;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .cs-icon {
+        text-align: center;
+        margin-bottom: 1.5rem;
+
+        img {
+          filter: brightness(0) saturate(100%) invert(47%) sepia(96%) saturate(1237%) hue-rotate(14deg) brightness(94%) contrast(91%);
+        }
+      }
+
+      h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        color: var(--headerColor);
+      }
+
+      .cs-description {
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+        color: var(--bodyTextColor);
+      }
+
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--headerColor);
+        border-bottom: 2px solid var(--primary);
+        padding-bottom: 0.5rem;
+      }
+
+      ul, ol {
+        margin-bottom: 2rem;
+        padding-left: 1.5rem;
+
+        li {
+          margin-bottom: 0.5rem;
+          line-height: 1.5;
+        }
+      }
+
+      .cs-requirements,
+      .cs-process,
+      .cs-foster-types,
+      .cs-support,
+      .cs-volunteer-opportunities,
+      .cs-commitment {
+        margin-bottom: 2rem;
+      }
+
+      .cs-fees {
+        margin-bottom: 2rem;
+
+        .cs-fee-list {
+          background: var(--accent);
+          padding: 1.5rem;
+          border-radius: 8px;
+          margin-bottom: 1rem;
+        }
+
+        .cs-fee-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.5rem 0;
+          border-bottom: 1px solid #ddd;
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+          span:first-child {
+            font-weight: 600;
+          }
+
+          span:last-child {
+            color: var(--primary);
+            font-weight: 600;
+          }
+        }
+
+        .cs-fee-note {
+          font-size: 0.875rem;
+          color: var(--bodyTextColor);
+          font-style: italic;
+        }
+      }
+
+      .cs-opportunity-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .cs-opportunity {
+        background: var(--accent);
+        padding: 1rem;
+        border-radius: 8px;
+
+        strong {
+          display: block;
+          margin-bottom: 0.5rem;
+          color: var(--headerColor);
+        }
+
+        p {
+          font-size: 0.875rem;
+          margin: 0;
+          color: var(--bodyTextColor);
+        }
+      }
+
+      .cs-button-solid {
+        width: 100%;
+        text-align: center;
+        padding: 1rem 2rem;
+        background: var(--primary);
+        color: white;
+        border: 2px solid var(--primary);
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: block;
+
+        &:hover {
+          background: var(--primaryDark);
+          border-color: var(--primaryDark);
+          transform: translateY(-2px);
+        }
+      }
+    }
+  }
+
+  /* Additional Info */
+  #additional-info {
+    padding: var(--sectionPadding);
+    background: #f8f9fa;
+
+    .cs-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .cs-info-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+
+      h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: var(--headerColor);
+      }
+
+      p {
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        color: var(--bodyTextColor);
+      }
+
+      .cs-button-transparent {
+        padding: 0.75rem 1.5rem;
+        background: transparent;
+        color: var(--primary);
+        border: 2px solid var(--primary);
+        border-radius: 6px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-block;
+
+        &:hover {
+          background: var(--primary);
+          color: white;
+        }
+      }
+    }
+  }
+
+  /* Mobile Responsive */
+  @media only screen and (max-width: 768px) {
+    .cs-card-group {
+      grid-template-columns: 1fr;
+    }
+
+    .cs-application-card {
+      padding: 2rem;
+    }
+
+    .cs-opportunity-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .cs-info-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media only screen and (max-width: 480px) {
+    .cs-application-card {
+      padding: 1.5rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+    }
+
+    h3 {
+      font-size: 1.125rem;
+    }
+  }
+</style>

@@ -1,0 +1,176 @@
+{
+  "meta": {
+    "templateName": "Construction Company Website",
+    "version": "1.0.0",
+    "description": "Professional construction company website"
+  },
+  "site": {
+    "name": "BuildRight Construction",
+    "title": "BuildRight Construction - Professional Building Services",
+    "description": "Professional construction services including home building, renovations, and commercial construction in Denver, CO.",
+    "domain": "www.buildrightconstruction.com",
+    "url": "https://www.buildrightconstruction.com"
+  },
+  "organization": {
+    "name": "BuildRight Construction",
+    "email": "info@buildrightconstruction.com",
+    "phone": {
+      "tel": "555-123-4567",
+      "formatted": "(555) 123-4567"
+    },
+    "address": {
+      "lineOne": "1234 Construction Ave",
+      "lineTwo": "Suite 100",
+      "city": "Denver",
+      "state": "CO",
+      "zip": "80202",
+      "mapLink": "https://goo.gl/maps/example"
+    }
+  },
+  "branding": {
+    "logo": {
+      "main": "/assets/images/logos/buildright-logo.svg",
+      "alt": "BuildRight Construction Logo",
+      "width": "200",
+      "height": "60"
+    },
+    "favicon": "/assets/favicons/buildright-favicon.svg",
+    "colors": {
+      "primary": "#FF6A3D",
+      "primaryLight": "#FF8A5D",
+      "primaryDark": "#E5501D",
+      "secondary": "#1A1A1A",
+      "accent": "#F7F7F7",
+      "headerColor": "#1A1A1A",
+      "bodyTextColor": "#353535",
+      "bodyTextColorWhite": "#FAFBFC"
+    },
+    "fonts": {
+      "primary": "'Roboto', 'Arial', sans-serif",
+      "secondary": "'Open Sans', 'Arial', sans-serif",
+      "headings": "'Roboto', 'Arial', sans-serif"
+    }
+  },
+  "homepage": {
+    "hero": {
+      "topper": "Professional Construction",
+      "title": "Building Dreams Into Reality",
+      "text": "With over 20 years of experience, BuildRight Construction delivers exceptional residential and commercial building services. From custom homes to major renovations, we bring your vision to life with quality craftsmanship and attention to detail.",
+      "primaryButton": {
+        "text": "Get Free Quote",
+        "link": "/contact"
+      },
+      "secondaryButton": {
+        "text": "View Our Work",
+        "link": "/projects"
+      },
+      "backgroundImage": {
+        "desktop": "/assets/images/construction-hero.jpg",
+        "mobile": "/assets/images/construction-hero-m.jpg",
+        "alt": "Construction site with modern building"
+      }
+    },
+    "services": {
+      "service1": {
+        "title": "Custom Home Building",
+        "description": "Build your dream home from the ground up with our experienced team and quality materials.",
+        "icon": "/assets/svgs/home-building.svg"
+      },
+      "service2": {
+        "title": "Home Renovations",
+        "description": "Transform your existing space with our comprehensive renovation and remodeling services.",
+        "icon": "/assets/svgs/renovation.svg"
+      },
+      "service3": {
+        "title": "Commercial Construction",
+        "description": "Professional commercial building services for offices, retail spaces, and industrial facilities.",
+        "icon": "/assets/svgs/commercial.svg"
+      }
+    },
+    "about": {
+      "topper": "About BuildRight",
+      "title": "Two Decades of Excellence in Construction",
+      "text1": "Founded in 2003, BuildRight Construction has been serving the Denver metro area with exceptional building services. Our team of skilled craftsmen and project managers ensures every project meets the highest standards of quality and safety.",
+      "text2": "We pride ourselves on transparent communication, timely completion, and exceeding our clients' expectations. From initial consultation to final walkthrough, we're with you every step of the way.",
+      "quote": "BuildRight transformed our vision into reality. Their attention to detail and professionalism exceeded our expectations.",
+      "quoteName": "Sarah Johnson",
+      "quoteTitle": "Homeowner",
+      "buttonText": "Learn More About Us",
+      "buttonLink": "/about",
+      "image1": "/assets/images/construction-team.jpg",
+      "image2": "/assets/images/construction-quality.jpg"
+    },
+    "seoSection": {
+      "topper": "Quality Construction",
+      "title": "Licensed & Insured Construction Services",
+      "text1": "All our projects are completed by licensed professionals with full insurance coverage. We follow all local building codes and safety regulations to ensure your project is built to last.",
+      "text2": "Our commitment to quality extends beyond completion. We offer comprehensive warranties on our work and maintain long-term relationships with our clients for ongoing support and maintenance.",
+      "image1": "/assets/images/construction-safety.jpg",
+      "image2": "/assets/images/construction-tools.jpg"
+    },
+    "gallery": {
+      "topper": "Our Portfolio",
+      "title": "Recent Construction Projects",
+      "buttonText": "View All Projects",
+      "buttonLink": "/projects",
+      "images": [
+        "/assets/images/portfolio/construction-1.jpg",
+        "/assets/images/portfolio/construction-2.jpg",
+        "/assets/images/portfolio/construction-3.jpg",
+        "/assets/images/portfolio/construction-4.jpg",
+        "/assets/images/portfolio/construction-5.jpg",
+        "/assets/images/portfolio/construction-6.jpg",
+        "/assets/images/portfolio/construction-7.jpg",
+        "/assets/images/portfolio/construction-8.jpg",
+        "/assets/images/portfolio/construction-9.jpg"
+      ]
+    },
+    "reviews": {
+      "topper": "Client Reviews",
+      "title": "What Our Clients Say",
+      "text": "Don't just take our word for it. Here's what our satisfied clients have to say about working with BuildRight Construction.",
+      "buttonText": "Read More Reviews",
+      "buttonLink": "/reviews",
+      "review1": {
+        "text": "BuildRight exceeded our expectations in every way. From the initial consultation to the final walkthrough, their team was professional, communicative, and delivered exceptional quality work.",
+        "name": "Mike Thompson",
+        "title": "Homeowner",
+        "image": "/assets/images/reviews/client-1.jpg"
+      },
+      "review2": {
+        "text": "Our commercial renovation was completed on time and within budget. The BuildRight team worked around our business schedule and minimized disruption to our operations.",
+        "name": "Lisa Chen",
+        "title": "Business Owner",
+        "image": "/assets/images/reviews/client-2.jpg"
+      }
+    }
+  },
+  "navigation": {
+    "items": [
+      {
+        "text": "Home",
+        "link": "/"
+      },
+      {
+        "text": "About",
+        "link": "/about"
+      },
+      {
+        "text": "Services",
+        "link": "/services"
+      },
+      {
+        "text": "Projects",
+        "link": "/projects"
+      },
+      {
+        "text": "Contact",
+        "link": "/contact"
+      }
+    ]
+  },
+  "footer": {
+    "text": "BuildRight Construction - Building Excellence Since 2003",
+    "copyright": "© 2024 BuildRight Construction. All rights reserved."
+  }
+}

@@ -19,75 +19,77 @@ import DarkModeToggle from "@components/DarkModeToggle.astro";
       />
     </a>
     <!--Navigation List-->
-    <nav class="cs-nav" role="navigation">
-      <!--Mobile Nav Toggle-->
-      <button class="cs-toggle" id="mobile-menu-toggle" aria-expanded="false" aria-controls="cs-expanded-ul" aria-label="Toggle mobile menu.">
-        <div class="cs-box" aria-hidden="true">
-          <span class="cs-line cs-line1" aria-hidden="true"></span>
-          <span class="cs-line cs-line2" aria-hidden="true"></span>
-          <span class="cs-line cs-line3" aria-hidden="true"></span>
+    <div class="cs-nav-wrapper">
+      <nav class="cs-nav" role="navigation">
+        <!--Mobile Nav Toggle-->
+        <button class="cs-toggle" id="mobile-menu-toggle" aria-expanded="false" aria-controls="cs-expanded-ul" aria-label="Toggle mobile menu.">
+          <div class="cs-box" aria-hidden="true">
+            <span class="cs-line cs-line1" aria-hidden="true"></span>
+            <span class="cs-line cs-line2" aria-hidden="true"></span>
+            <span class="cs-line cs-line3" aria-hidden="true"></span>
+          </div>
+        </button>
+        <!-- If you want to use another navigation stitch and enjoy the benefits of dynamic routing, replace the .cs-ul-wrapper in the navigation stitch with this one below -->
+        <div class="cs-ul-wrapper">
+          <ul id="cs-expanded-ul" class="cs-ul">
+            {navData.map((entry) => (
+              <li
+                class:list={[
+                  "cs-li",
+                  { "cs-dropdown": entry.children?.length > 0 },
+                ]}
+
+              >
+                {entry.children?.length > 0 ? (
+                  // If entry has children in navData.json, create a button and a dropdown icon
+                  <button
+                  aria-expanded="false"
+                  aria-controls={`submenu-${entry.key}`}
+                    class:list={[
+                      "cs-li-link cs-dropdown-button",
+                      { "cs-active": Astro.url.pathname.includes(entry.url)},
+                    ]}
+                  >
+                    {entry.key}
+                    <Icon name="mdi--caret" class="cs-drop-icon" />
+                  </button>
+                ) : (
+                  // If entry does not have children in navData.json, create an anchor
+                  <a
+                    href={entry.url}
+                    class:list={[
+                      "cs-li-link",
+                      { "cs-active": Astro.url.pathname === entry.url },
+                    ]}
+                    aria-current={Astro.url.pathname === entry.url ? "page" : undefined}
+                  >
+                    {entry.key}
+                  </a>
+                )}
+
+                {entry.children?.length > 0 && (
+                  // If entry has children in navData.json, create a drop down menu
+                  <ul id={`submenu-${entry.key}`} class="cs-drop-ul">
+                    {entry.children.map((child) => (
+                      <li class="cs-drop-li">
+                        <a
+                          href={child.url}
+                          class="cs-li-link cs-drop-link"
+                          aria-current={Astro.url.pathname === child.url ? "page" : undefined}
+                        >
+                          {child.key}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))}
+          </ul>
         </div>
-      </button>
-      <!-- If you want to use another navigation stitch and enjoy the benefits of dynamic routing, replace the .cs-ul-wrapper in the navigation stitch with this one below -->
-      <div class="cs-ul-wrapper">
-        <ul id="cs-expanded-ul" class="cs-ul">
-          {navData.map((entry) => (
-            <li
-              class:list={[
-                "cs-li",
-                { "cs-dropdown": entry.children?.length > 0 },
-              ]}
-              
-            >
-              {entry.children?.length > 0 ? (
-                // If entry has children in navData.json, create a button and a dropdown icon
-                <button
-                aria-expanded="false"
-                aria-controls={`submenu-${entry.key}`}
-                  class:list={[
-                    "cs-li-link cs-dropdown-button",
-                    { "cs-active": Astro.url.pathname.includes(entry.url)},
-                  ]}
-                >
-                  {entry.key}
-                  <Icon name="mdi--caret" class="cs-drop-icon" />
-                </button>
-              ) : (
-                // If entry does not have children in navData.json, create an anchor
-                <a
-                  href={entry.url}
-                  class:list={[
-                    "cs-li-link",
-                    { "cs-active": Astro.url.pathname === entry.url },
-                  ]}
-                  aria-current={Astro.url.pathname === entry.url ? "page" : undefined}
-                >
-                  {entry.key}
-                </a>
-              )}
-              
-              {entry.children?.length > 0 && (
-                // If entry has children in navData.json, create a drop down menu
-                <ul id={`submenu-${entry.key}`} class="cs-drop-ul">
-                  {entry.children.map((child) => (
-                    <li class="cs-drop-li">
-                      <a 
-                        href={child.url} 
-                        class="cs-li-link cs-drop-link"
-                        aria-current={Astro.url.pathname === child.url ? "page" : undefined}
-                      >
-                        {child.key}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </nav>
-    <a href="/contact" class="cs-button-solid cs-nav-button">Contact Us</a>
+      </nav>
+      <a href="/contact" class="cs-button-solid cs-nav-button">Contact Us</a>
+    </div>
     <!--Dark Mode toggle: remove component if you don't want to enable a dark mode toggle-->
     <DarkModeToggle />
   </div>
@@ -362,6 +364,17 @@ import DarkModeToggle from "@components/DarkModeToggle.astro";
 
     .cs-button-solid {
       display: none;
+    }
+  }
+}
+
+/* Desktop Navigation Button */
+@media only screen and (min-width: 64rem) {
+  #cs-navigation {
+    .cs-nav-button {
+      font-size: clamp(0.75rem, 0.8vw, 0.875rem);
+      padding: (8/16rem) (16/16rem);
+      border-radius: (4/16rem);
     }
   }
 }
@@ -680,7 +693,7 @@ import DarkModeToggle from "@components/DarkModeToggle.astro";
       max-width: (1280/16rem);
       margin: auto;
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
       align-items: center;
       gap: (24/16rem);
     }
@@ -694,7 +707,7 @@ import DarkModeToggle from "@components/DarkModeToggle.astro";
       max-width: (350/16rem);
       height: (65/16rem);
       /* margin-right auto pushes everything away from it to the right */
-      margin: 0 auto 0 0;
+      margin: 0;
       padding: 0;
       display: flex;
       justify-content: center;
@@ -709,15 +722,21 @@ import DarkModeToggle from "@components/DarkModeToggle.astro";
       }
     }
 
+    .cs-nav-wrapper {
+      display: flex;
+      align-items: center;
+      gap: (16/16rem);
+    }
+
     .cs-ul {
-      width: 100%;
+      width: auto;
       margin: 0;
       padding: 0;
       display: flex;
-      justify-content: flex-start;
+      justify-content: flex-end;
       align-items: center;
-      /* 20px - 36px */
-      gap: clamp(1.25rem, 2.6vw, 2.25rem);
+      /* 16px - 24px */
+      gap: clamp(1rem, 2vw, 1.5rem);
     }
 
     .cs-li {
@@ -728,8 +747,8 @@ import DarkModeToggle from "@components/DarkModeToggle.astro";
     }
 
     .cs-li-link {
-      /* 14px - 16px */
-      font-size: clamp(0.875rem, 1vw, 1rem);
+      /* 12px - 14px */
+      font-size: clamp(0.75rem, 0.8vw, 0.875rem);
       line-height: 1.5em;
       text-decoration: none;
       margin: 0;

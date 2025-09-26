@@ -11,16 +11,16 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'})
 ---
 
 <BaseLayout
-  title="About"
-  description="Meta description for the page"
+  title="{{pages.about.hero.title}}"
+  description="{{pages.about.hero.description}}"
   preloadedImage = {optimizedImage}
 >
   <!-- ============================================ -->
   <!--                    LANDING                   -->
   <!-- ============================================ -->
 
-  <Landing 
-    title="About Us"
+  <Landing
+    title="{{pages.about.hero.title}}"
     image={optimizedImage}
   />
 
@@ -73,19 +73,13 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'})
       </div>
       <!-- Right Content Section-->
       <div class="cs-right">
-        <span class="cs-topper">About Us</span>
-        <h2 class="cs-title">About Company Title</h2>
+        <span class="cs-topper">{{pages.about.story.title}}</span>
+        <h2 class="cs-title">{{pages.about.hero.subtitle}}</h2>
         <p class="cs-text">
-          In consequat tincidunt turpis sit amet imperdiet. Praesent Class
-          officelan nonatoureanor mauris laoreet, iaculis libero quis. Curabitur
-          et tempus eri consequat tincidunt turpis sit amet imperdiet. Praesent
-          nonatourean olei aptent taciti sociosqu ad litora torquent per.
+          {{pages.about.story.content}}
         </p>
         <p class="cs-text">
-          In consequat tincidunt turpis sit amet imperdiet. Praesent Class
-          officelan nonatoureanor mauris laoreet, iaculis libero quis. Curabitur
-          et tempus eri consequat tincidunt turpis sit amet imperdiet. Praesent
-          nonatourean olei aptent taciti sociosqu ad litora torquent per.
+          {{pages.about.mission.content}}
         </p>
         <div class="cs-flex-group">
           <p class="cs-flex-p">

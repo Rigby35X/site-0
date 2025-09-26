@@ -1,0 +1,223 @@
+{
+  "meta": {
+    "templateName": "Animal Rescue & Shelter Website",
+    "version": "1.0.0",
+    "description": "Comprehensive animal rescue and shelter website template"
+  },
+  "site": {
+    "name": "Paws & Hearts Animal Rescue",
+    "title": "Paws & Hearts Animal Rescue - Saving Lives, Finding Homes",
+    "description": "Dedicated to rescuing, rehabilitating, and rehoming animals in need. Find your perfect companion and help us save more lives.",
+    "domain": "www.pawsandhearts.org",
+    "url": "https://www.pawsandhearts.org"
+  },
+  "organization": {
+    "name": "Paws & Hearts Animal Rescue",
+    "email": "info@pawsandhearts.org",
+    "phone": {
+      "tel": "555-PAWS-123",
+      "formatted": "(555) PAWS-123"
+    },
+    "address": {
+      "lineOne": "456 Rescue Lane",
+      "lineTwo": "Building A",
+      "city": "Denver",
+      "state": "CO",
+      "zip": "80205",
+      "mapLink": "https://goo.gl/maps/example"
+    }
+  },
+  "branding": {
+    "logo": {
+      "main": "/assets/images/logos/paws-hearts-logo.svg",
+      "alt": "Paws & Hearts Animal Rescue Logo",
+      "width": "220",
+      "height": "80"
+    },
+    "favicon": "/assets/favicons/paws-favicon.svg",
+    "colors": {
+      "primary": "#E67E22",
+      "primaryLight": "#F39C12",
+      "primaryDark": "#D35400",
+      "secondary": "#2C3E50",
+      "accent": "#ECF0F1",
+      "headerColor": "#2C3E50",
+      "bodyTextColor": "#34495E",
+      "bodyTextColorWhite": "#FFFFFF"
+    },
+    "fonts": {
+      "primary": "'Nunito', 'Arial', sans-serif",
+      "secondary": "'Open Sans', 'Arial', sans-serif",
+      "headings": "'Nunito', 'Arial', sans-serif"
+    }
+  },
+  "homepage": {
+    "hero": {
+      "topper": "Saving Lives Every Day",
+      "title": "Every Animal Deserves a Loving Home",
+      "text": "At Paws & Hearts Animal Rescue, we're dedicated to rescuing abandoned and neglected animals, providing them with medical care, love, and finding them forever homes. Join us in our mission to save lives and create happy endings.",
+      "primaryButton": {
+        "text": "Adopt Today",
+        "link": "/our-animals"
+      },
+      "secondaryButton": {
+        "text": "Donate Now",
+        "link": "/donate"
+      },
+      "backgroundImage": {
+        "desktop": "/assets/images/rescue-hero.jpg",
+        "mobile": "/assets/images/rescue-hero-m.jpg",
+        "alt": "Happy rescued dogs and cats"
+      }
+    },
+    "services": {
+      "service1": {
+        "title": "Pet Adoption",
+        "description": "Find your perfect companion from our loving animals waiting for their forever homes.",
+        "icon": "/assets/svgs/adoption.svg"
+      },
+      "service2": {
+        "title": "Foster Program",
+        "description": "Provide temporary care for animals in need while they await their permanent families.",
+        "icon": "/assets/svgs/foster.svg"
+      },
+      "service3": {
+        "title": "Volunteer Opportunities",
+        "description": "Join our team of dedicated volunteers and make a direct impact on animal welfare.",
+        "icon": "/assets/svgs/volunteer.svg"
+      }
+    },
+    "about": {
+      "topper": "Our Mission",
+      "title": "Dedicated to Animal Welfare Since 2010",
+      "text1": "Paws & Hearts Animal Rescue was founded with a simple but powerful mission: to save the lives of abandoned, abused, and neglected animals. We provide comprehensive medical care, behavioral rehabilitation, and lots of love to prepare our animals for their forever homes.",
+      "text2": "Our no-kill shelter has successfully placed over 5,000 animals in loving homes. We work tirelessly with our network of foster families, volunteers, and community partners to ensure every animal gets a second chance at happiness.",
+      "quote": "Paws & Hearts didn't just help me find my best friend - they saved a life and enriched mine beyond measure.",
+      "quoteName": "Sarah Mitchell",
+      "quoteTitle": "Adopter",
+      "buttonText": "Learn Our Story",
+      "buttonLink": "/about",
+      "image1": "/assets/images/rescue-care.jpg",
+      "image2": "/assets/images/happy-adoption.jpg"
+    },
+    "seoSection": {
+      "topper": "Making a Difference",
+      "title": "Comprehensive Animal Care & Community Support",
+      "text1": "Our experienced veterinary team provides complete medical care including spay/neuter services, vaccinations, microchipping, and treatment for medical conditions. We ensure every animal is healthy and ready for adoption.",
+      "text2": "Beyond rescue and adoption, we offer community education programs, low-cost spay/neuter clinics, and support for pet owners facing hardships. We believe in keeping families together whenever possible while preventing overpopulation.",
+      "image1": "/assets/images/veterinary-care.jpg",
+      "image2": "/assets/images/community-outreach.jpg"
+    },
+    "gallery": {
+      "topper": "Success Stories",
+      "title": "Happy Tails - Our Recent Adoptions",
+      "buttonText": "See All Success Stories",
+      "buttonLink": "/success-stories",
+      "images": [
+        "/assets/images/adoptions/success-1.jpg",
+        "/assets/images/adoptions/success-2.jpg",
+        "/assets/images/adoptions/success-3.jpg",
+        "/assets/images/adoptions/success-4.jpg",
+        "/assets/images/adoptions/success-5.jpg",
+        "/assets/images/adoptions/success-6.jpg",
+        "/assets/images/adoptions/success-7.jpg",
+        "/assets/images/adoptions/success-8.jpg",
+        "/assets/images/adoptions/success-9.jpg"
+      ]
+    },
+    "reviews": {
+      "topper": "Adopter Stories",
+      "title": "Hear From Our Happy Families",
+      "text": "The joy of successful adoptions is what drives us every day. Here are some heartwarming stories from families who found their perfect companions through Paws & Hearts.",
+      "buttonText": "Read More Stories",
+      "buttonLink": "/testimonials",
+      "review1": {
+        "text": "The team at Paws & Hearts was incredible throughout the adoption process. They matched us perfectly with Luna, who has brought so much joy to our family. Their care and dedication to the animals is truly inspiring.",
+        "name": "Mike & Jennifer Rodriguez",
+        "title": "Luna's Family",
+        "image": "/assets/images/reviews/family-1.jpg"
+      },
+      "review2": {
+        "text": "Fostering through Paws & Hearts has been the most rewarding experience. They provide all the support and supplies needed, and knowing I'm helping save lives makes every moment worthwhile.",
+        "name": "David Chen",
+        "title": "Foster Volunteer",
+        "image": "/assets/images/reviews/foster-1.jpg"
+      }
+    }
+  },
+  "navigation": {
+    "items": [
+      {
+        "text": "Home",
+        "link": "/"
+      },
+      {
+        "text": "About",
+        "link": "/about"
+      },
+      {
+        "text": "Our Animals",
+        "link": "/our-animals"
+      },
+      {
+        "text": "Applications",
+        "link": "/applications"
+      },
+      {
+        "text": "Donate",
+        "link": "/donate"
+      },
+      {
+        "text": "Events",
+        "link": "/events"
+      },
+      {
+        "text": "Contact",
+        "link": "/contact"
+      }
+    ]
+  },
+  "footer": {
+    "text": "Paws & Hearts Animal Rescue - Every Life Matters",
+    "copyright": "© 2024 Paws & Hearts Animal Rescue. All rights reserved. 501(c)(3) Non-Profit Organization"
+  },
+  "applications": {
+    "adopt": {
+      "title": "Adoption Application",
+      "description": "Ready to welcome a new family member? Start your adoption journey here.",
+      "formUrl": "/forms/adoption-application"
+    },
+    "foster": {
+      "title": "Foster Application",
+      "description": "Provide temporary care for animals in need while they await their forever homes.",
+      "formUrl": "/forms/foster-application"
+    },
+    "volunteer": {
+      "title": "Volunteer Application",
+      "description": "Join our team of dedicated volunteers and make a direct impact on animal welfare.",
+      "formUrl": "/forms/volunteer-application"
+    }
+  },
+  "donation": {
+    "title": "Support Our Mission",
+    "description": "Your donation directly impacts the lives of animals in need. Every dollar helps us provide medical care, food, shelter, and love.",
+    "donationLevels": [
+      {
+        "amount": "$25",
+        "description": "Provides food for one animal for a week"
+      },
+      {
+        "amount": "$50",
+        "description": "Covers basic medical care and vaccinations"
+      },
+      {
+        "amount": "$100",
+        "description": "Sponsors spay/neuter surgery for one animal"
+      },
+      {
+        "amount": "$250",
+        "description": "Covers emergency medical treatment"
+      }
+    ]
+  }
+}

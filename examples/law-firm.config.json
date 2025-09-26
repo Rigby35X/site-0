@@ -1,0 +1,176 @@
+{
+  "meta": {
+    "templateName": "Law Firm Website",
+    "version": "1.0.0",
+    "description": "Professional law firm website"
+  },
+  "site": {
+    "name": "Sterling & Associates Law",
+    "title": "Sterling & Associates - Experienced Legal Representation",
+    "description": "Experienced attorneys providing comprehensive legal services in family law, personal injury, and business law in Denver, Colorado.",
+    "domain": "www.sterlinglaw.com",
+    "url": "https://www.sterlinglaw.com"
+  },
+  "organization": {
+    "name": "Sterling & Associates Law",
+    "email": "contact@sterlinglaw.com",
+    "phone": {
+      "tel": "555-987-6543",
+      "formatted": "(555) 987-6543"
+    },
+    "address": {
+      "lineOne": "789 Legal Plaza",
+      "lineTwo": "15th Floor",
+      "city": "Denver",
+      "state": "CO",
+      "zip": "80203",
+      "mapLink": "https://goo.gl/maps/example"
+    }
+  },
+  "branding": {
+    "logo": {
+      "main": "/assets/images/logos/sterling-logo.svg",
+      "alt": "Sterling & Associates Law Logo",
+      "width": "250",
+      "height": "70"
+    },
+    "favicon": "/assets/favicons/sterling-favicon.svg",
+    "colors": {
+      "primary": "#1B365D",
+      "primaryLight": "#2E4A6B",
+      "primaryDark": "#0F1F35",
+      "secondary": "#C9A961",
+      "accent": "#F8F9FA",
+      "headerColor": "#1B365D",
+      "bodyTextColor": "#4A4A4A",
+      "bodyTextColorWhite": "#FFFFFF"
+    },
+    "fonts": {
+      "primary": "'Merriweather', 'Georgia', serif",
+      "secondary": "'Open Sans', 'Arial', sans-serif",
+      "headings": "'Merriweather', 'Georgia', serif"
+    }
+  },
+  "homepage": {
+    "hero": {
+      "topper": "Experienced Legal Counsel",
+      "title": "Protecting Your Rights & Interests",
+      "text": "For over 25 years, Sterling & Associates has provided exceptional legal representation to individuals and businesses throughout Colorado. Our experienced attorneys are committed to achieving the best possible outcomes for our clients.",
+      "primaryButton": {
+        "text": "Free Consultation",
+        "link": "/contact"
+      },
+      "secondaryButton": {
+        "text": "Our Practice Areas",
+        "link": "/services"
+      },
+      "backgroundImage": {
+        "desktop": "/assets/images/law-office-hero.jpg",
+        "mobile": "/assets/images/law-office-hero-m.jpg",
+        "alt": "Professional law office interior"
+      }
+    },
+    "services": {
+      "service1": {
+        "title": "Family Law",
+        "description": "Compassionate representation in divorce, custody, adoption, and other family legal matters.",
+        "icon": "/assets/svgs/family-law.svg"
+      },
+      "service2": {
+        "title": "Personal Injury",
+        "description": "Aggressive advocacy for accident victims seeking fair compensation for their injuries.",
+        "icon": "/assets/svgs/personal-injury.svg"
+      },
+      "service3": {
+        "title": "Business Law",
+        "description": "Comprehensive legal services for businesses including contracts, litigation, and compliance.",
+        "icon": "/assets/svgs/business-law.svg"
+      }
+    },
+    "about": {
+      "topper": "About Our Firm",
+      "title": "Trusted Legal Advocates Since 1998",
+      "text1": "Sterling & Associates was founded on the principle that every client deserves dedicated, personalized legal representation. Our team of experienced attorneys brings decades of combined experience to every case.",
+      "text2": "We understand that legal issues can be overwhelming and stressful. That's why we take the time to listen to our clients, explain their options clearly, and develop strategies tailored to their specific needs and goals.",
+      "quote": "Sterling & Associates fought tirelessly for my family. Their expertise and compassion made all the difference during a difficult time.",
+      "quoteName": "Jennifer Martinez",
+      "quoteTitle": "Client",
+      "buttonText": "Meet Our Team",
+      "buttonLink": "/about",
+      "image1": "/assets/images/law-team.jpg",
+      "image2": "/assets/images/law-consultation.jpg"
+    },
+    "seoSection": {
+      "topper": "Legal Excellence",
+      "title": "Award-Winning Legal Representation",
+      "text1": "Our attorneys have been recognized by their peers and the legal community for their excellence in practice. We maintain the highest ethical standards and are committed to continuing education in our practice areas.",
+      "text2": "We believe in transparent communication with our clients. You'll always know the status of your case and understand your options. Our goal is to achieve the best possible outcome while keeping you informed every step of the way.",
+      "image1": "/assets/images/law-awards.jpg",
+      "image2": "/assets/images/law-books.jpg"
+    },
+    "gallery": {
+      "topper": "Our Success",
+      "title": "Notable Case Results & Recognition",
+      "buttonText": "View All Results",
+      "buttonLink": "/results",
+      "images": [
+        "/assets/images/portfolio/case-result-1.jpg",
+        "/assets/images/portfolio/case-result-2.jpg",
+        "/assets/images/portfolio/case-result-3.jpg",
+        "/assets/images/portfolio/award-1.jpg",
+        "/assets/images/portfolio/award-2.jpg",
+        "/assets/images/portfolio/award-3.jpg",
+        "/assets/images/portfolio/team-photo-1.jpg",
+        "/assets/images/portfolio/team-photo-2.jpg",
+        "/assets/images/portfolio/office-1.jpg"
+      ]
+    },
+    "reviews": {
+      "topper": "Client Testimonials",
+      "title": "What Our Clients Say",
+      "text": "Our clients' success is our success. Read what they have to say about their experience working with Sterling & Associates.",
+      "buttonText": "More Testimonials",
+      "buttonLink": "/testimonials",
+      "review1": {
+        "text": "The attorneys at Sterling & Associates provided exceptional representation during my divorce. They were professional, knowledgeable, and always kept my best interests in mind.",
+        "name": "Robert Johnson",
+        "title": "Family Law Client",
+        "image": "/assets/images/reviews/client-1.jpg"
+      },
+      "review2": {
+        "text": "After my accident, Sterling & Associates fought hard to get me the compensation I deserved. Their expertise in personal injury law made all the difference in my case.",
+        "name": "Maria Rodriguez",
+        "title": "Personal Injury Client",
+        "image": "/assets/images/reviews/client-2.jpg"
+      }
+    }
+  },
+  "navigation": {
+    "items": [
+      {
+        "text": "Home",
+        "link": "/"
+      },
+      {
+        "text": "About",
+        "link": "/about"
+      },
+      {
+        "text": "Practice Areas",
+        "link": "/services"
+      },
+      {
+        "text": "Results",
+        "link": "/results"
+      },
+      {
+        "text": "Contact",
+        "link": "/contact"
+      }
+    ]
+  },
+  "footer": {
+    "text": "Sterling & Associates Law - Your Trusted Legal Advocates",
+    "copyright": "© 2024 Sterling & Associates Law. All rights reserved."
+  }
+}

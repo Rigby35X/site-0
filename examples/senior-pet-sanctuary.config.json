@@ -1,0 +1,238 @@
+{
+  "site": {
+    "name": "Golden Years Pet Sanctuary",
+    "title": "Caring for Senior Pets with Love and Dignity",
+    "description": "A sanctuary dedicated to providing loving care for senior pets in their golden years. Adoption, hospice care, and lifetime sanctuary services.",
+    "domain": "goldenyearspets.org",
+    "url": "https://goldenyearspets.org"
+  },
+  "organization": {
+    "name": "Golden Years Pet Sanctuary",
+    "legalName": "Golden Years Pet Sanctuary Inc.",
+    "email": "info@goldenyearspets.org",
+    "phone": {
+      "tel": "555-GOLDEN1",
+      "formatted": "(555) GOLDEN-1"
+    },
+    "address": {
+      "lineOne": "456 Sunset Lane",
+      "lineTwo": "",
+      "city": "Peaceful Valley",
+      "state": "CA",
+      "zip": "90210",
+      "country": "United States"
+    },
+    "taxId": "12-3456789",
+    "founded": "2015",
+    "mission": "To provide compassionate care, comfort, and dignity to senior pets while helping them find loving homes or peaceful sanctuary for their remaining years."
+  },
+  "branding": {
+    "colors": {
+      "primary": "#8E44AD",
+      "primaryLight": "#A569BD",
+      "primaryDark": "#6C3483",
+      "secondary": "#34495E",
+      "accent": "#F8F9FA",
+      "headerColor": "#2C3E50",
+      "bodyTextColor": "#34495E",
+      "bodyTextColorWhite": "#FFFFFF"
+    },
+    "fonts": {
+      "primary": "'Merriweather', 'Georgia', serif",
+      "secondary": "'Open Sans', 'Arial', sans-serif",
+      "headings": "'Merriweather', 'Georgia', serif"
+    },
+    "logo": {
+      "main": "/assets/images/golden-years-logo.svg",
+      "white": "/assets/images/golden-years-logo-white.svg",
+      "favicon": "/assets/images/golden-years-favicon.ico"
+    }
+  },
+  "homepage": {
+    "hero": {
+      "title": "Every Senior Pet Deserves Love",
+      "subtitle": "Providing compassionate care and finding loving homes for pets in their golden years",
+      "description": "At Golden Years Pet Sanctuary, we believe that age is just a number. Our senior pets have so much love to give and deserve to spend their remaining years in comfort, dignity, and happiness.",
+      "primaryCTA": {
+        "text": "Meet Our Senior Pets",
+        "link": "/our-animals"
+      },
+      "secondaryCTA": {
+        "text": "Learn About Senior Pet Adoption",
+        "link": "/about"
+      },
+      "backgroundImage": {
+        "desktop": "/assets/images/senior-pets-hero.jpg",
+        "mobile": "/assets/images/senior-pets-hero-mobile.jpg"
+      }
+    },
+    "services": {
+      "title": "Our Services",
+      "subtitle": "Comprehensive care for senior pets",
+      "items": [
+        {
+          "title": "Senior Pet Adoption",
+          "description": "Find your perfect senior companion. Older pets make wonderful, grateful companions.",
+          "icon": "/assets/svgs/senior-adoption.svg",
+          "link": "/our-animals"
+        },
+        {
+          "title": "Lifetime Sanctuary Care",
+          "description": "For pets who need specialized care or peaceful retirement in a loving environment.",
+          "icon": "/assets/svgs/sanctuary.svg",
+          "link": "/about"
+        },
+        {
+          "title": "Hospice & Palliative Care",
+          "description": "Compassionate end-of-life care ensuring comfort and dignity for our most vulnerable pets.",
+          "icon": "/assets/svgs/hospice.svg",
+          "link": "/about"
+        },
+        {
+          "title": "Senior Pet Support",
+          "description": "Resources and support for families caring for aging pets at home.",
+          "icon": "/assets/svgs/support.svg",
+          "link": "/contact"
+        }
+      ]
+    },
+    "about": {
+      "title": "Why Choose Senior Pets?",
+      "description": "Senior pets are often overlooked, but they make incredible companions. They're calm, grateful, and ready to love unconditionally. At Golden Years, we specialize in caring for pets aged 7 and older, providing them with medical care, comfort, and the chance to find loving homes.",
+      "image": "/assets/images/senior-pet-love.jpg",
+      "stats": [
+        {
+          "number": "500+",
+          "label": "Senior Pets Helped"
+        },
+        {
+          "number": "85%",
+          "label": "Successful Adoptions"
+        },
+        {
+          "number": "24/7",
+          "label": "Medical Care Available"
+        }
+      ]
+    },
+    "gallery": {
+      "title": "Happy Endings",
+      "subtitle": "See our senior pets thriving in their new homes",
+      "images": [
+        {
+          "src": "/assets/images/gallery/senior-dog-1.jpg",
+          "alt": "Max, 12-year-old Golden Retriever, enjoying his new backyard",
+          "caption": "Max found his forever home at age 12"
+        },
+        {
+          "src": "/assets/images/gallery/senior-cat-1.jpg",
+          "alt": "Whiskers, 15-year-old tabby cat, sleeping peacefully",
+          "caption": "Whiskers enjoying her golden years"
+        },
+        {
+          "src": "/assets/images/gallery/senior-dog-2.jpg",
+          "alt": "Bella, 10-year-old Beagle, playing with her new family",
+          "caption": "Bella proving age is just a number"
+        },
+        {
+          "src": "/assets/images/gallery/senior-cat-2.jpg",
+          "alt": "Oliver, 13-year-old Persian cat, being petted by his new owner",
+          "caption": "Oliver found love in his twilight years"
+        }
+      ]
+    },
+    "reviews": [
+      {
+        "name": "Sarah Johnson",
+        "location": "Peaceful Valley, CA",
+        "review": "Adopting our 11-year-old dog Charlie from Golden Years was the best decision we ever made. He's brought so much joy and wisdom to our family. The staff prepared us perfectly for senior pet care.",
+        "rating": 5,
+        "image": "/assets/images/reviews/sarah.jpg"
+      },
+      {
+        "name": "Michael Chen",
+        "location": "Sunset Hills, CA",
+        "review": "When our family cat needed end-of-life care, Golden Years provided compassionate hospice services. They helped us give Mittens a peaceful, dignified goodbye surrounded by love.",
+        "rating": 5,
+        "image": "/assets/images/reviews/michael.jpg"
+      },
+      {
+        "name": "Linda Rodriguez",
+        "location": "Valley View, CA",
+        "review": "I volunteer at Golden Years and am amazed by their dedication to senior pets. Every animal receives individualized care, medical attention, and so much love. It's truly special.",
+        "rating": 5,
+        "image": "/assets/images/reviews/linda.jpg"
+      }
+    ]
+  },
+  "navigation": {
+    "items": [
+      {
+        "text": "Home",
+        "link": "/"
+      },
+      {
+        "text": "About",
+        "link": "/about/"
+      },
+      {
+        "text": "Our Senior Pets",
+        "link": "/our-animals/"
+      },
+      {
+        "text": "Get Involved",
+        "link": "/applications/"
+      },
+      {
+        "text": "Donate",
+        "link": "/donate/"
+      },
+      {
+        "text": "Events",
+        "link": "/events/"
+      },
+      {
+        "text": "Contact",
+        "link": "/contact/"
+      }
+    ]
+  },
+  "footer": {
+    "description": "Golden Years Pet Sanctuary is dedicated to providing loving care for senior pets. Every donation helps us continue our mission of giving older pets the dignity and comfort they deserve.",
+    "quickLinks": [
+      {
+        "text": "Adopt a Senior Pet",
+        "link": "/our-animals"
+      },
+      {
+        "text": "Volunteer",
+        "link": "/applications"
+      },
+      {
+        "text": "Donate",
+        "link": "/donate"
+      },
+      {
+        "text": "Senior Pet Care Tips",
+        "link": "/resources"
+      }
+    ],
+    "socialMedia": {
+      "facebook": "https://facebook.com/goldenyearspets",
+      "instagram": "https://instagram.com/goldenyearspets",
+      "twitter": "https://twitter.com/goldenyearspets",
+      "youtube": "https://youtube.com/goldenyearspets"
+    },
+    "newsletter": {
+      "title": "Stay Updated",
+      "description": "Get updates on our senior pets and sanctuary news",
+      "placeholder": "Enter your email"
+    }
+  },
+  "seo": {
+    "keywords": "senior pet adoption, elderly pet care, pet sanctuary, hospice care for pets, older dog adoption, senior cat rescue, pet retirement home",
+    "author": "Golden Years Pet Sanctuary",
+    "robots": "index, follow",
+    "canonical": "https://goldenyearspets.org"
+  }
+}

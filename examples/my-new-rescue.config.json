@@ -1,0 +1,447 @@
+{
+  "meta": {
+    "templateName": "Animal Rescue Website Template",
+    "version": "2.0.0",
+    "description": "A comprehensive animal rescue and shelter website template with Astro and Decap CMS"
+  },
+  "site": {
+    "name": "Happy Paws Dog Rescue",
+    "title": "Saving Dogs, Finding Forever Homes",
+    "description": "Dedicated to rescuing and rehoming dogs in the greater metro area since 2015",
+    "domain": "happypawsrescue.org",
+    "url": "https://happypawsrescue.org"
+  },
+  "organization": {
+    "name": "Happy Paws Dog Rescue",
+    "legalName": "Happy Paws Dog Rescue Inc.",
+    "email": "info@happypawsrescue.org",
+    "phone": {
+      "tel": "555-DOG-PAWS",
+      "formatted": "(555) DOG-PAWS"
+    },
+    "address": {
+      "lineOne": "123 Rescue Lane",
+      "lineTwo": "Suite 100",
+      "city": "Dog City",
+      "state": "CA",
+      "zip": "90210",
+      "country": "United States",
+      "mapLink": "https://maps.google.com/your-location"
+    },
+    "taxId": "12-3456789",
+    "founded": "2015",
+    "mission": "To rescue, rehabilitate, and rehome dogs in need while educating our community about responsible pet ownership and the importance of spay/neuter programs.",
+    "hours": {
+      "monday": "10:00 AM - 6:00 PM",
+      "tuesday": "10:00 AM - 6:00 PM",
+      "wednesday": "10:00 AM - 6:00 PM",
+      "thursday": "10:00 AM - 6:00 PM",
+      "friday": "10:00 AM - 6:00 PM",
+      "saturday": "9:00 AM - 5:00 PM",
+      "sunday": "12:00 PM - 4:00 PM"
+    }
+  },
+  "branding": {
+    "logo": {
+      "main": "/assets/images/happy-paws-logo.svg",
+      "white": "/assets/images/happy-paws-logo-white.svg",
+      "favicon": "/assets/images/happy-paws-favicon.ico",
+      "alt": "Happy Paws Dog Rescue Logo",
+      "width": "210",
+      "height": "60"
+    },
+    "colors": {
+      "primary": "#2E8B57",
+      "primaryLight": "#3CB371",
+      "primaryDark": "#228B22",
+      "secondary": "#4682B4",
+      "accent": "#F0F8FF",
+      "headerColor": "#2C3E50",
+      "bodyTextColor": "#34495E",
+      "bodyTextColorWhite": "#FFFFFF"
+    },
+    "fonts": {
+      "primary": "'Roboto', 'Arial', sans-serif",
+      "secondary": "'Open Sans', 'Arial', sans-serif",
+      "headings": "'Roboto Slab', 'Georgia', serif"
+    }
+  },
+  "homepage": {
+    "hero": {
+      "topper": "Dog Rescue & Adoption",
+      "title": "Every Dog Deserves a Loving Home",
+      "subtitle": "Find Your Perfect Companion Today",
+      "description": "Happy Paws Dog Rescue has been saving lives and finding forever homes for dogs in need since 2015. Our dedicated team works tirelessly to rescue, rehabilitate, and rehome dogs of all ages and breeds.",
+      "primaryCTA": {
+        "text": "Adopt a Dog",
+        "link": "/our-animals"
+      },
+      "secondaryCTA": {
+        "text": "Learn About Us",
+        "link": "/about"
+      },
+      "backgroundImage": {
+        "desktop": "/assets/images/hero-dogs-playing.jpg",
+        "mobile": "/assets/images/hero-dogs-playing-mobile.jpg",
+        "alt": "Happy dogs playing together in a sunny field"
+      }
+    },
+    "services": {
+      "title": "How We Help Dogs",
+      "subtitle": "Comprehensive care and support for every dog that comes through our doors",
+      "items": [
+        {
+          "title": "Dog Adoption",
+          "description": "Find your perfect canine companion from our carefully vetted dogs ready for their forever homes.",
+          "icon": "/assets/svgs/dog-adoption.svg",
+          "link": "/our-animals"
+        },
+        {
+          "title": "Foster Program",
+          "description": "Provide temporary care for dogs who need extra time, medical attention, or socialization before adoption.",
+          "icon": "/assets/svgs/foster-care.svg",
+          "link": "/applications"
+        },
+        {
+          "title": "Volunteer Opportunities",
+          "description": "Join our team of dedicated volunteers helping with dog care, events, transportation, and more.",
+          "icon": "/assets/svgs/volunteer.svg",
+          "link": "/applications"
+        },
+        {
+          "title": "Dog Training & Support",
+          "description": "Ongoing support and training resources for adopters to ensure successful, lifelong placements.",
+          "icon": "/assets/svgs/dog-training.svg",
+          "link": "/contact"
+        }
+      ]
+    },
+    "about": {
+      "title": "Our Mission",
+      "description": "Happy Paws Dog Rescue was founded in 2015 with a simple but powerful mission: every dog deserves a loving home. We rescue dogs from high-kill shelters, provide necessary medical care and rehabilitation, and work tirelessly to match them with perfect families. Our comprehensive approach includes behavioral training, medical care, and ongoing support to ensure successful adoptions.",
+      "image": "/assets/images/rescue-team-with-dogs.jpg",
+      "stats": [
+        {
+          "number": "1,200+",
+          "label": "Dogs Rescued"
+        },
+        {
+          "number": "95%",
+          "label": "Adoption Success Rate"
+        },
+        {
+          "number": "24/7",
+          "label": "Emergency Care"
+        }
+      ]
+    },
+    "gallery": {
+      "title": "Success Stories",
+      "subtitle": "See our rescued dogs thriving in their new homes",
+      "images": [
+        {
+          "src": "/assets/images/gallery/max-new-home.jpg",
+          "alt": "Max, a golden retriever, playing in his new backyard",
+          "caption": "Max found his forever family after 3 months in our care"
+        },
+        {
+          "src": "/assets/images/gallery/bella-family.jpg",
+          "alt": "Bella, a beagle mix, cuddling with her new family",
+          "caption": "Bella now enjoys daily walks and lots of love"
+        },
+        {
+          "src": "/assets/images/gallery/rocky-training.jpg",
+          "alt": "Rocky, a German shepherd, completing his training program",
+          "caption": "Rocky graduated from our behavioral training program"
+        },
+        {
+          "src": "/assets/images/gallery/puppies-playing.jpg",
+          "alt": "A litter of rescued puppies playing together",
+          "caption": "These puppies were all adopted within 2 weeks"
+        }
+      ]
+    },
+    "reviews": [
+      {
+        "name": "Sarah Johnson",
+        "location": "Dog City, CA",
+        "review": "Adopting Max from Happy Paws was the best decision our family ever made. The staff was incredibly helpful throughout the process and provided ongoing support. Max has brought so much joy to our lives!",
+        "rating": 5,
+        "image": "/assets/images/reviews/sarah-johnson.jpg"
+      },
+      {
+        "name": "Mike Rodriguez",
+        "location": "Paw Valley, CA",
+        "review": "I've been volunteering with Happy Paws for 2 years now. The dedication of the staff and the care they provide to every dog is amazing. It's so rewarding to be part of this mission.",
+        "rating": 5,
+        "image": "/assets/images/reviews/mike-rodriguez.jpg"
+      },
+      {
+        "name": "Emily Chen",
+        "location": "Rescue Hills, CA",
+        "review": "We fostered Luna before adopting her permanently. Happy Paws provided all the supplies and support we needed. Luna has transformed from a scared rescue to a confident, happy dog.",
+        "rating": 5,
+        "image": "/assets/images/reviews/emily-chen.jpg"
+      }
+    ]
+  },
+  "navigation": {
+    "items": [
+      {
+        "text": "Home",
+        "link": "/"
+      },
+      {
+        "text": "About",
+        "link": "/about/"
+      },
+      {
+        "text": "Our Dogs",
+        "link": "/our-animals/"
+      },
+      {
+        "text": "Applications",
+        "link": "/applications/"
+      },
+      {
+        "text": "Donate",
+        "link": "/donate/"
+      },
+      {
+        "text": "Events",
+        "link": "/events/"
+      },
+      {
+        "text": "Contact",
+        "link": "/contact/"
+      }
+    ]
+  },
+  "pages": {
+    "about": {
+      "hero": {
+        "title": "About Happy Paws",
+        "subtitle": "Our Story of Saving Lives",
+        "description": "Learn about our mission, our team, and how we've been making a difference in the lives of dogs since 2015."
+      },
+      "story": {
+        "title": "Our Story",
+        "content": "Happy Paws Dog Rescue was founded in 2015 by a group of passionate dog lovers who saw the overwhelming need for dog rescue in our community. What started as a small group of volunteers has grown into a comprehensive rescue organization that has saved over 1,200 dogs. We work with local shelters, take in owner surrenders, and rescue dogs from difficult situations, providing them with medical care, training, and love until they find their perfect forever homes.",
+        "image": "/assets/images/about-our-story.jpg"
+      },
+      "mission": {
+        "title": "Our Mission",
+        "content": "To rescue, rehabilitate, and rehome dogs in need while educating our community about responsible pet ownership, the importance of spay/neuter programs, and the incredible bond between humans and dogs. We believe every dog deserves a second chance and a loving home."
+      },
+      "team": {
+        "title": "Meet Our Team",
+        "members": [
+          {
+            "name": "Jennifer Martinez",
+            "title": "Executive Director & Founder",
+            "bio": "Jennifer founded Happy Paws after volunteering at local shelters for 10 years. She oversees all rescue operations and has personally helped place over 500 dogs in loving homes.",
+            "image": "/assets/images/team/jennifer-martinez.jpg"
+          },
+          {
+            "name": "Dr. Robert Kim",
+            "title": "Veterinary Director",
+            "bio": "Dr. Kim provides medical care for all our rescue dogs. With 15 years of veterinary experience, he ensures every dog receives the best possible health care before adoption.",
+            "image": "/assets/images/team/dr-robert-kim.jpg"
+          },
+          {
+            "name": "Lisa Thompson",
+            "title": "Volunteer Coordinator",
+            "bio": "Lisa manages our amazing team of 50+ volunteers. She coordinates foster families, adoption events, and ensures our dogs get the socialization and care they need.",
+            "image": "/assets/images/team/lisa-thompson.jpg"
+          }
+        ]
+      }
+    },
+    "animals": {
+      "hero": {
+        "title": "Meet Our Dogs",
+        "subtitle": "Find Your Perfect Companion",
+        "description": "Browse our available dogs and find your new best friend. Each dog has been health-checked, vaccinated, and is ready for their forever home."
+      },
+      "filterLabels": {
+        "all": "All Dogs",
+        "dogs": "Dogs",
+        "cats": "Cats",
+        "available": "Available",
+        "pending": "Adoption Pending",
+        "specialNeeds": "Special Needs"
+      }
+    },
+    "applications": {
+      "hero": {
+        "title": "Get Involved",
+        "subtitle": "Help Us Save More Dogs",
+        "description": "There are many ways to help dogs in need. Whether you're ready to adopt, want to foster, or volunteer your time, we have opportunities for everyone."
+      },
+      "adoption": {
+        "title": "Adoption Application",
+        "description": "Ready to welcome a new family member? Our adoption process ensures the perfect match between you and your future dog.",
+        "requirements": "Must be 21 years or older, valid ID, proof of residence, landlord approval if renting, veterinary references if you've had pets",
+        "process": "Submit online application, application review (24-48 hours), meet and greet with your chosen dog, home visit if required, finalize adoption",
+        "fees": "Adoption fees range from $150-$400 and include spay/neuter, vaccinations, microchip, and health check"
+      },
+      "foster": {
+        "title": "Foster Application",
+        "description": "Foster families provide temporary care for dogs who need extra time before adoption. We provide all supplies and medical care.",
+        "requirements": "Must be 18 years or older, stable living situation, time to dedicate to foster care, transportation to vet appointments",
+        "types": "Puppy foster, medical foster, behavioral foster, maternity foster, respite foster",
+        "support": "All food and supplies provided, complete medical care, 24/7 support hotline, training and guidance"
+      },
+      "volunteer": {
+        "title": "Volunteer Application",
+        "description": "Volunteers are the heart of our organization. Whether you have an hour a week or several hours a day, there are meaningful ways to contribute.",
+        "requirements": "Must be 16 years or older (some positions 18+), reliable and committed, comfortable around dogs, able to follow safety protocols",
+        "opportunities": "Dog care and socialization, dog walking, administrative work, events and fundraising, transportation, photography, social media",
+        "commitment": "Minimum commitment of 6 months and at least 2 hours per week for consistency"
+      }
+    },
+    "donate": {
+      "hero": {
+        "title": "{{donatePageTitle}}",
+        "subtitle": "{{donatePageSubtitle}}",
+        "description": "{{donatePageDescription}}"
+      },
+      "impact": {
+        "title": "{{donateImpactTitle}}",
+        "description": "{{donateImpactDescription}}",
+        "stats": [
+          {
+            "number": "{{donateImpactStat1Number}}",
+            "label": "{{donateImpactStat1Label}}"
+          },
+          {
+            "number": "{{donateImpactStat2Number}}",
+            "label": "{{donateImpactStat2Label}}"
+          },
+          {
+            "number": "{{donateImpactStat3Number}}",
+            "label": "{{donateImpactStat3Label}}"
+          }
+        ]
+      },
+      "levels": [
+        {
+          "amount": "{{donateLevel1Amount}}",
+          "title": "{{donateLevel1Title}}",
+          "description": "{{donateLevel1Description}}",
+          "includes": "{{donateLevel1Includes}}"
+        },
+        {
+          "amount": "{{donateLevel2Amount}}",
+          "title": "{{donateLevel2Title}}",
+          "description": "{{donateLevel2Description}}",
+          "includes": "{{donateLevel2Includes}}",
+          "featured": true
+        },
+        {
+          "amount": "{{donateLevel3Amount}}",
+          "title": "{{donateLevel3Title}}",
+          "description": "{{donateLevel3Description}}",
+          "includes": "{{donateLevel3Includes}}"
+        },
+        {
+          "amount": "{{donateLevel4Amount}}",
+          "title": "{{donateLevel4Title}}",
+          "description": "{{donateLevel4Description}}",
+          "includes": "{{donateLevel4Includes}}"
+        }
+      ],
+      "monthly": {
+        "title": "{{donateMonthlyTitle}}",
+        "description": "{{donateMonthlyDescription}}",
+        "benefits": "{{donateMonthlyBenefits}}"
+      },
+      "transparency": {
+        "title": "{{donateTransparencyTitle}}",
+        "description": "{{donateTransparencyDescription}}",
+        "allocation": [
+          {
+            "percentage": "{{donateAllocation1Percentage}}",
+            "category": "{{donateAllocation1Category}}",
+            "description": "{{donateAllocation1Description}}"
+          },
+          {
+            "percentage": "{{donateAllocation2Percentage}}",
+            "category": "{{donateAllocation2Category}}",
+            "description": "{{donateAllocation2Description}}"
+          },
+          {
+            "percentage": "{{donateAllocation3Percentage}}",
+            "category": "{{donateAllocation3Category}}",
+            "description": "{{donateAllocation3Description}}"
+          }
+        ]
+      }
+    },
+    "events": {
+      "hero": {
+        "title": "{{eventsPageTitle}}",
+        "subtitle": "{{eventsPageSubtitle}}",
+        "description": "{{eventsPageDescription}}"
+      },
+      "newsletter": {
+        "title": "{{eventsNewsletterTitle}}",
+        "description": "{{eventsNewsletterDescription}}",
+        "benefits": "{{eventsNewsletterBenefits}}"
+      }
+    },
+    "contact": {
+      "hero": {
+        "title": "Contact Us",
+        "subtitle": "Get in Touch",
+        "description": "Have questions about adoption, fostering, or volunteering? We'd love to hear from you and help you get involved in our mission."
+      },
+      "form": {
+        "title": "Send Us a Message",
+        "description": "Fill out the form below and we'll get back to you within 24 hours. For urgent matters, please call us directly."
+      },
+      "info": {
+        "title": "Visit Our Facility",
+        "description": "Come meet our dogs in person! We're open 7 days a week and always happy to show you around our facility."
+      }
+    }
+  },
+  "footer": {
+    "description": "Happy Paws Dog Rescue is dedicated to saving lives and finding forever homes for dogs in need. Every donation helps us continue our mission of rescue, rehabilitation, and rehoming.",
+    "quickLinks": [
+      {
+        "text": "Adopt a Dog",
+        "link": "/our-animals"
+      },
+      {
+        "text": "Volunteer",
+        "link": "/applications"
+      },
+      {
+        "text": "Donate",
+        "link": "/donate"
+      },
+      {
+        "text": "Dog Care Tips",
+        "link": "/resources"
+      }
+    ],
+    "socialMedia": {
+      "facebook": "https://facebook.com/happypawsrescue",
+      "instagram": "https://instagram.com/happypawsrescue",
+      "twitter": "https://twitter.com/happypawsrescue",
+      "youtube": "https://youtube.com/happypawsrescue"
+    },
+    "newsletter": {
+      "title": "Stay Updated",
+      "description": "Get updates on our dogs and rescue news",
+      "placeholder": "Enter your email"
+    }
+  },
+  "seo": {
+    "keywords": "dog rescue, dog adoption, pet adoption, animal rescue, dog shelter, rescue dogs, adopt a dog, dog fostering, volunteer with dogs",
+    "author": "Happy Paws Dog Rescue",
+    "robots": "index, follow",
+    "canonical": "https://happypawsrescue.org"
+  }
+}

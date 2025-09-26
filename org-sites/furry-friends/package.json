@@ -1,0 +1,34 @@
+{
+  "name": "furry-friends-rescue-site",
+  "type": "module",
+  "version": "2.2.5",
+  "scripts": {
+    "astro": "astro dev",
+    "dev": "astro dev --port 4331",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "generate-site": "node scripts/generate-site.js",
+    "process-template": "node scripts/process-template.js",
+    "template:animal-rescue": "node scripts/process-template.js examples/animal-rescue.config.json ./output",
+    "template:cat-sanctuary": "node scripts/process-template.js examples/cat-sanctuary.config.json ./output",
+    "template:senior-sanctuary": "node scripts/process-template.js examples/senior-pet-sanctuary.config.json ./output"
+  },
+  "dependencies": {
+    "@astrojs/node": "^9.4.4",
+    "@astrojs/sitemap": "^3.5.1",
+    "astro": "^5.13.7",
+    "astro-icon": "^1.1.5",
+    "autoprefixer": "^10.4.21",
+    "dotenv": "^17.2.2",
+    "less": "^4.4.1"
+  },
+  "description": "Animal rescue website for Furry Friends Sanctuary",
+  "homepage": "https://happypawsrescue.org",
+  "organization": {
+    "id": 4,
+    "name": "Furry Friends Sanctuary",
+    "slug": "furry-friends",
+    "type": "animal-rescue"
+  }
+}

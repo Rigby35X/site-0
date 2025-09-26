@@ -1,0 +1,28 @@
+{
+  "name": "happy-paws-dog-rescue",
+  "type": "module",
+  "version": "2.2.5",
+  "scripts": {
+    "astro": "astro dev",
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "generate-site": "node scripts/generate-site.js",
+    "process-template": "node scripts/process-template.js",
+    "template:animal-rescue": "node scripts/process-template.js examples/animal-rescue.config.json ./output",
+    "template:cat-sanctuary": "node scripts/process-template.js examples/cat-sanctuary.config.json ./output",
+    "template:senior-sanctuary": "node scripts/process-template.js examples/senior-pet-sanctuary.config.json ./output"
+  },
+  "dependencies": {
+    "@astrojs/node": "^9.4.4",
+    "@astrojs/sitemap": "^3.5.1",
+    "astro": "^5.13.7",
+    "astro-icon": "^1.1.5",
+    "autoprefixer": "^10.4.21",
+    "dotenv": "^17.2.2",
+    "less": "^4.4.1"
+  },
+  "description": "Dedicated to rescuing and rehoming dogs in the greater metro area since 2015",
+  "homepage": "https://happypawsrescue.org"
+}

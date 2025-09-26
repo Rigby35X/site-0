@@ -10,16 +10,16 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'})
 ---
 
 <BaseLayout
-  title="Contact"
-  description="Meta description for the page"
+  title="{{pages.contact.hero.title}}"
+  description="{{pages.contact.hero.description}}"
   preloadedImage = {optimizedImage}
 >
   <!-- ============================================ -->
   <!--                    LANDING                   -->
   <!-- ============================================ -->
 
-  <Landing 
-    title="Contact"
+  <Landing
+    title="{{pages.contact.hero.title}}"
     image={optimizedImage}
   />
 

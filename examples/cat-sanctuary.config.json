@@ -1,0 +1,223 @@
+{
+  "meta": {
+    "templateName": "Cat Sanctuary & Rescue Website",
+    "version": "1.0.0",
+    "description": "Specialized cat sanctuary and rescue website template"
+  },
+  "site": {
+    "name": "Whiskers Haven Cat Sanctuary",
+    "title": "Whiskers Haven - A Safe Place for Every Cat",
+    "description": "Dedicated cat sanctuary providing lifetime care for special needs cats and finding homes for adoptable felines in Colorado.",
+    "domain": "www.whiskershaven.org",
+    "url": "https://www.whiskershaven.org"
+  },
+  "organization": {
+    "name": "Whiskers Haven Cat Sanctuary",
+    "email": "meow@whiskershaven.org",
+    "phone": {
+      "tel": "555-CATS-911",
+      "formatted": "(555) CATS-911"
+    },
+    "address": {
+      "lineOne": "789 Feline Way",
+      "lineTwo": "Sanctuary Grounds",
+      "city": "Boulder",
+      "state": "CO",
+      "zip": "80301",
+      "mapLink": "https://goo.gl/maps/example"
+    }
+  },
+  "branding": {
+    "logo": {
+      "main": "/assets/images/logos/whiskers-haven-logo.svg",
+      "alt": "Whiskers Haven Cat Sanctuary Logo",
+      "width": "200",
+      "height": "90"
+    },
+    "favicon": "/assets/favicons/cat-favicon.svg",
+    "colors": {
+      "primary": "#9B59B6",
+      "primaryLight": "#BB8FCE",
+      "primaryDark": "#7D3C98",
+      "secondary": "#34495E",
+      "accent": "#F8F9FA",
+      "headerColor": "#2C3E50",
+      "bodyTextColor": "#5D6D7E",
+      "bodyTextColorWhite": "#FFFFFF"
+    },
+    "fonts": {
+      "primary": "'Poppins', 'Arial', sans-serif",
+      "secondary": "'Lato', 'Arial', sans-serif",
+      "headings": "'Poppins', 'Arial', sans-serif"
+    }
+  },
+  "homepage": {
+    "hero": {
+      "topper": "A Sanctuary for Every Cat",
+      "title": "Where Special Cats Find Forever Care",
+      "text": "Whiskers Haven is more than a rescue - we're a sanctuary providing lifetime care for special needs cats while finding loving homes for our adoptable felines. Every cat deserves love, regardless of age, health, or background.",
+      "primaryButton": {
+        "text": "Meet Our Cats",
+        "link": "/our-animals"
+      },
+      "secondaryButton": {
+        "text": "Support Our Sanctuary",
+        "link": "/donate"
+      },
+      "backgroundImage": {
+        "desktop": "/assets/images/cat-sanctuary-hero.jpg",
+        "mobile": "/assets/images/cat-sanctuary-hero-m.jpg",
+        "alt": "Peaceful cat sanctuary with cats relaxing"
+      }
+    },
+    "services": {
+      "service1": {
+        "title": "Cat Adoption",
+        "description": "Find your perfect feline companion from our socialized and health-checked cats ready for homes.",
+        "icon": "/assets/svgs/cat-adoption.svg"
+      },
+      "service2": {
+        "title": "Sanctuary Care",
+        "description": "Lifetime care for special needs, elderly, and unadoptable cats in our peaceful sanctuary setting.",
+        "icon": "/assets/svgs/sanctuary.svg"
+      },
+      "service3": {
+        "title": "TNR Program",
+        "description": "Trap-Neuter-Return services to help control feral cat populations humanely and effectively.",
+        "icon": "/assets/svgs/tnr.svg"
+      }
+    },
+    "about": {
+      "topper": "Our Sanctuary",
+      "title": "A Haven for Cats Since 2008",
+      "text1": "Whiskers Haven began as a small foster home and has grown into a 10-acre sanctuary caring for over 200 cats. We specialize in caring for senior cats, those with medical needs, and feral cats who cannot be socialized for adoption.",
+      "text2": "Our sanctuary model ensures that no cat is ever euthanized for space, age, or medical condition. We provide individualized care, comfortable living spaces, and lots of love for every cat that comes through our doors.",
+      "quote": "Whiskers Haven gave my senior cat Mittens the most beautiful final years. Their compassionate care meant everything to our family.",
+      "quoteName": "Linda Thompson",
+      "quoteTitle": "Sanctuary Supporter",
+      "buttonText": "Visit Our Sanctuary",
+      "buttonLink": "/about",
+      "image1": "/assets/images/sanctuary-cats.jpg",
+      "image2": "/assets/images/cat-care.jpg"
+    },
+    "seoSection": {
+      "topper": "Specialized Care",
+      "title": "Expert Medical Care & Behavioral Support",
+      "text1": "Our on-site veterinary clinic provides comprehensive medical care including surgery, dental work, and ongoing treatment for chronic conditions. We work with specialists to ensure every cat receives the best possible care.",
+      "text2": "Our experienced team includes certified cat behaviorists who help fearful and traumatized cats learn to trust again. Through patience and specialized techniques, many of our sanctuary cats become adoptable family pets.",
+      "image1": "/assets/images/vet-clinic.jpg",
+      "image2": "/assets/images/cat-behavior.jpg"
+    },
+    "gallery": {
+      "topper": "Life at the Sanctuary",
+      "title": "Happy Cats in Their Forever Home",
+      "buttonText": "Virtual Sanctuary Tour",
+      "buttonLink": "/sanctuary-tour",
+      "images": [
+        "/assets/images/sanctuary/outdoor-enclosure.jpg",
+        "/assets/images/sanctuary/cat-room-1.jpg",
+        "/assets/images/sanctuary/cat-room-2.jpg",
+        "/assets/images/sanctuary/medical-area.jpg",
+        "/assets/images/sanctuary/play-area.jpg",
+        "/assets/images/sanctuary/senior-cats.jpg",
+        "/assets/images/sanctuary/kitten-nursery.jpg",
+        "/assets/images/sanctuary/volunteers.jpg",
+        "/assets/images/sanctuary/feeding-time.jpg"
+      ]
+    },
+    "reviews": {
+      "topper": "Community Love",
+      "title": "Stories from Our Cat Family",
+      "text": "Our sanctuary family includes adopters, volunteers, donors, and supporters who help us provide the best life possible for every cat in our care.",
+      "buttonText": "More Stories",
+      "buttonLink": "/stories",
+      "review1": {
+        "text": "Adopting Shadow from Whiskers Haven was the best decision we ever made. The staff knew him so well and helped us understand his needs perfectly. He's thriving in our home!",
+        "name": "Amanda & Tom Wilson",
+        "title": "Shadow's Family",
+        "image": "/assets/images/reviews/adopter-1.jpg"
+      },
+      "review2": {
+        "text": "Volunteering at Whiskers Haven has been incredibly fulfilling. Seeing the transformation of scared cats into confident, loving companions reminds me why this work matters so much.",
+        "name": "Maria Santos",
+        "title": "Volunteer Coordinator",
+        "image": "/assets/images/reviews/volunteer-1.jpg"
+      }
+    }
+  },
+  "navigation": {
+    "items": [
+      {
+        "text": "Home",
+        "link": "/"
+      },
+      {
+        "text": "About",
+        "link": "/about"
+      },
+      {
+        "text": "Our Cats",
+        "link": "/our-animals"
+      },
+      {
+        "text": "Applications",
+        "link": "/applications"
+      },
+      {
+        "text": "Donate",
+        "link": "/donate"
+      },
+      {
+        "text": "Events",
+        "link": "/events"
+      },
+      {
+        "text": "Contact",
+        "link": "/contact"
+      }
+    ]
+  },
+  "footer": {
+    "text": "Whiskers Haven Cat Sanctuary - Where Every Cat Matters",
+    "copyright": "© 2024 Whiskers Haven Cat Sanctuary. All rights reserved. 501(c)(3) Non-Profit Organization"
+  },
+  "applications": {
+    "adopt": {
+      "title": "Cat Adoption Application",
+      "description": "Ready to welcome a feline friend into your family? Our adoption process ensures the perfect match.",
+      "formUrl": "/forms/cat-adoption-application"
+    },
+    "foster": {
+      "title": "Foster Home Application",
+      "description": "Provide temporary care for cats recovering from medical procedures or awaiting adoption.",
+      "formUrl": "/forms/foster-application"
+    },
+    "volunteer": {
+      "title": "Volunteer Application",
+      "description": "Join our team caring for cats, helping with events, or supporting our administrative needs.",
+      "formUrl": "/forms/volunteer-application"
+    }
+  },
+  "donation": {
+    "title": "Support Our Sanctuary Cats",
+    "description": "Your donation helps us provide lifetime care for special needs cats and find homes for adoptable felines.",
+    "donationLevels": [
+      {
+        "amount": "$30",
+        "description": "Feeds one cat for a month"
+      },
+      {
+        "amount": "$75",
+        "description": "Provides medical care for one cat"
+      },
+      {
+        "amount": "$150",
+        "description": "Sponsors a spay/neuter surgery"
+      },
+      {
+        "amount": "$500",
+        "description": "Supports one sanctuary cat for a month"
+      }
+    ]
+  }
+}
