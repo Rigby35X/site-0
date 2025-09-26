@@ -1,6 +1,6 @@
 import { c as createComponent, r as renderComponent, a as renderTemplate, m as maybeRenderHead } from '../chunks/astro/server_DxW1KWNy.mjs';
 import 'kleur/colors';
-import { $ as $$BaseLayout } from '../chunks/BaseLayout_DLrlr2sT.mjs';
+import { $ as $$BaseLayout } from '../chunks/BaseLayout_C5xYyPQE.mjs';
 import { $ as $$CTA } from '../chunks/CTA_DO8n3P-Q.mjs';
 /* empty css                                        */
 export { renderers } from '../renderers.mjs';

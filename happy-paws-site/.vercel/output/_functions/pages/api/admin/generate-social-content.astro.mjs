@@ -1,6 +1,6 @@
 export { renderers } from '../../../renderers.mjs';
 
-const OPENAI_API_KEY = "YOUR_OPENAI_API_KEY_HERE";
+const OPENAI_API_KEY = "sk-dummy-key-for-deployment";
 const OPENAI_MODEL = "gpt-4-1106-preview";
 async function POST({ request }) {
   try {

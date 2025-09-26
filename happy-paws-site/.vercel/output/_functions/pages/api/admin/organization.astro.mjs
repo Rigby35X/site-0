@@ -2,7 +2,7 @@ export { renderers } from '../../../renderers.mjs';
 
 const XANO_CONFIG = {
   organizationsUrl: "https://x8ki-letl-twmt.n7.xano.io/api:siXQEdjz",
-  token: "YOUR_ORGANIZATIONS_TOKEN_HERE"
+  token: "dummy-org-token-for-deployment"
 };
 async function makeXanoRequest(endpoint, options = {}) {
   const url = `${XANO_CONFIG.organizationsUrl}${endpoint}`;

@@ -1,8 +1,8 @@
 import { c as createComponent, b as createAstro, r as renderComponent, d as renderScript, a as renderTemplate, m as maybeRenderHead, e as addAttribute } from '../../chunks/astro/server_DxW1KWNy.mjs';
 import 'kleur/colors';
-import { $ as $$BaseLayout } from '../../chunks/BaseLayout_DLrlr2sT.mjs';
+import { $ as $$BaseLayout } from '../../chunks/BaseLayout_C5xYyPQE.mjs';
 import { $ as $$CTA } from '../../chunks/CTA_DO8n3P-Q.mjs';
-import { g as getAnimalById } from '../../chunks/xano_sqU2RePX.mjs';
+import { g as getAnimalById } from '../../chunks/xano_CnmX-x_I.mjs';
 /* empty css                                   */
 export { renderers } from '../../renderers.mjs';
 

@@ -1,7 +1,7 @@
 export { renderers } from '../../../renderers.mjs';
 
 const __vite_import_meta_env__ = {"ASSETS_PREFIX": undefined, "BASE_URL": "/", "DEV": false, "MODE": "production", "PROD": true, "PUBLIC_ORG_ID": "3", "PUBLIC_XANO_BASE_URL": "https://x8ki-letl-twmt.n7.xano.io/api:wPrzs4Mr", "SITE": "https://site-0-5ayxjbg5q-rigby35xs-projects.vercel.app", "SSR": true};
-const OPENAI_API_KEY = "YOUR_OPENAI_API_KEY_HERE";
+const OPENAI_API_KEY = "sk-dummy-key-for-deployment";
 async function GET() {
   try {
     console.log("Testing OpenAI API connection...");

@@ -62,7 +62,7 @@ const navData = [
 	}
 ];
 
-const icons = {"local":{"prefix":"local","lastModified":1758924869,"icons":{"mdi--caret":{"body":"<path fill=\"currentColor\" d=\"M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z\"/>","width":24,"height":24}}}};
+const icons = {"local":{"prefix":"local","lastModified":1758925069,"icons":{"mdi--caret":{"body":"<path fill=\"currentColor\" d=\"M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z\"/>","width":24,"height":24}}}};
 
 const cache = /* @__PURE__ */ new WeakMap();
 

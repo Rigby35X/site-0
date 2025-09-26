@@ -1,6 +1,6 @@
 const XANO_ANIMALS_URL = "https://x8ki-letl-twmt.n7.xano.io/api:Od874PbA";
 const XANO_ANIMALS_TOKEN = "165XkoniNXylFdNKgO_aCvmAIcQ";
-const XANO_ORGANIZATIONS_TOKEN = "YOUR_ORGANIZATIONS_TOKEN_HERE";
+const XANO_ORGANIZATIONS_TOKEN = "dummy-org-token-for-deployment";
 const ORG_ID = "3";
 function getHeaders(endpoint = "animals") {
   const headers = {
