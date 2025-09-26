@@ -17,6 +17,7 @@
   "dependencies": {
     "@astrojs/node": "^9.4.4",
     "@astrojs/sitemap": "^3.5.1",
+    "@astrojs/vercel": "^8.2.8",
     "astro": "^5.13.7",
     "astro-icon": "^1.1.5",
     "autoprefixer": "^10.4.21",
