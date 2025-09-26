@@ -1,13 +1,13 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
 import CTA from "@components/CTA.astro";
-import { getAvailableAnimals } from "../lib/xano.js";
+import { getAllAnimals } from "../lib/xano.js";
 
 // Force server-side rendering to get fresh data on each request
 export const prerender = false;
 
-// Fetch available animals from Xano database - this will run on each request
-const animals = await getAvailableAnimals();
+// Fetch all animals from Xano database - this will run on each request
+const animals = await getAllAnimals();
 console.log(`Loaded ${animals.length} animals from Xano`);
 ---
 
@@ -54,8 +54,20 @@ console.log(`Loaded ${animals.length} animals from Xano`);
   <section id="animal-grid">
     <div class="cs-container">
       <div class="cs-card-group">
-        {animals.map((animal) => (
-          <div class="cs-item" data-category={`${animal.type.toLowerCase()} ${animal.status.toLowerCase()} ${animal.specialNeeds ? 'special-needs' : ''}`}>
+        {animals.map((animal) => {
+          // Map animal type to filter values (Dog -> dogs, Cat -> cats)
+          const typeFilter = animal.type.toLowerCase() === 'dog' ? 'dogs' :
+                           animal.type.toLowerCase() === 'cat' ? 'cats' :
+                           animal.type.toLowerCase();
+
+          // Map status to filter values
+          const statusFilter = animal.status.toLowerCase();
+
+          // Build category string for filtering
+          const categories = `${typeFilter} ${statusFilter} ${animal.specialNeeds ? 'special-needs' : ''}`.trim();
+
+          return (
+          <div class="cs-item" data-category={categories}>
             <picture class="cs-picture">
               <img
                 loading="lazy"
@@ -96,7 +108,8 @@ console.log(`Loaded ${animals.length} animals from Xano`);
               </div>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
       
       <div class="cs-more-info">
