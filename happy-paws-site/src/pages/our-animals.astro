@@ -40,6 +40,8 @@ console.log(`Loaded ${animals.length} animals from Xano`);
         <button class="cs-filter-button" data-filter="dogs">Dogs</button>
         <button class="cs-filter-button" data-filter="cats">Cats</button>
         <button class="cs-filter-button" data-filter="available">Available</button>
+        <button class="cs-filter-button" data-filter="pending">Pending</button>
+        <button class="cs-filter-button" data-filter="adopted">Adopted</button>
         <button class="cs-filter-button" data-filter="special-needs">Special Needs</button>
       </div>
     </div>
@@ -63,12 +65,12 @@ console.log(`Loaded ${animals.length} animals from Xano`);
                 width="400"
                 height="300"
               />
+            </picture>
+
+            <div class="cs-item-content">
               <div class="cs-status-badge cs-status-{animal.status.toLowerCase()}">
                 {animal.status}
               </div>
-            </picture>
-            
-            <div class="cs-item-content">
               <h3 class="cs-item-title">{animal.name}</h3>
               <div class="cs-item-details">
                 <span class="cs-detail">{animal.breed}</span>
@@ -204,13 +206,14 @@ console.log(`Loaded ${animals.length} animals from Xano`);
     }
     
     .cs-status-badge {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      padding: 0.5rem 1rem;
-      border-radius: 20px;
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 15px;
       font-weight: 600;
-      font-size: 0.875rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
       
       &.cs-status-available {
         background: #27ae60;

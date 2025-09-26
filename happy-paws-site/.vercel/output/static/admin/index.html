@@ -2472,6 +2472,27 @@
             animals = originalAnimals; // Restore original array
         }
 
+        // Filter function for full animals tab
+        function filterAnimalsInTab() {
+            const statusFilterFull = document.getElementById('statusFilterFull');
+            const speciesFilterFull = document.getElementById('speciesFilterFull');
+            const searchInputFull = document.getElementById('searchInputFull');
+
+            const statusValue = statusFilterFull ? statusFilterFull.value : '';
+            const speciesValue = speciesFilterFull ? speciesFilterFull.value : '';
+            const searchValue = searchInputFull ? searchInputFull.value.toLowerCase() : '';
+
+            const filteredAnimals = animals.filter(animal => {
+                const matchesStatus = !statusValue || animal.status === statusValue;
+                const matchesSpecies = !speciesValue || animal.species === speciesValue;
+                const matchesSearch = !searchValue || animal.name.toLowerCase().includes(searchValue);
+
+                return matchesStatus && matchesSpecies && matchesSearch;
+            });
+
+            displayAnimalsInTab(filteredAnimals);
+        }
+
         // Modal functions
         function openModal(animalId = null) {
             console.log('Opening modal for animal:', animalId);
@@ -2795,7 +2816,7 @@
             }
 
             try {
-                const response = await fetch(`/api/admin/animals/${animalId}`, {
+                const response = await fetch(`/api/admin/animals?id=${animalId}&orgId=${currentOrgId}`, {
                     method: 'DELETE'
                 });
 
@@ -2854,6 +2875,21 @@
             statusFilter.addEventListener('change', filterAnimals);
             speciesFilter.addEventListener('change', filterAnimals);
             searchInput.addEventListener('input', filterAnimals);
+
+            // Full animals tab filter event listeners
+            const statusFilterFull = document.getElementById('statusFilterFull');
+            const speciesFilterFull = document.getElementById('speciesFilterFull');
+            const searchInputFull = document.getElementById('searchInputFull');
+
+            if (statusFilterFull) {
+                statusFilterFull.addEventListener('change', filterAnimalsInTab);
+            }
+            if (speciesFilterFull) {
+                speciesFilterFull.addEventListener('change', filterAnimalsInTab);
+            }
+            if (searchInputFull) {
+                searchInputFull.addEventListener('input', filterAnimalsInTab);
+            }
 
             // Close modal when clicking outside
             animalModal.addEventListener('click', (e) => {
