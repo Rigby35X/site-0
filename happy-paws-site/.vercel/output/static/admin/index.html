@@ -311,8 +311,8 @@
                         <span class="font-mono font-medium">barkhaus2024</span>
                     </div>
                     <div class="flex justify-between">
-                        <span>ID 9: Rescue Rangers Network</span>
-                        <span class="font-mono">rangers789</span>
+                        <span>ID 9: Mission Bay Puppy Rescue</span>
+                        <span class="font-mono">mission789</span>
                     </div>
                 </div>
                 <p class="text-xs text-blue-600 mt-2 italic">* Barkhaus Admin can switch between all organizations</p>
@@ -412,7 +412,12 @@
                             </div>
                             <div class="flex items-center space-x-4">
                                 <span class="text-sm text-gray-600">Organization ID: <span id="currentOrgId"></span></span>
-                                <button onclick="testFunction()" class="btn-secondary mr-2">Test</button>
+                                <button onclick="visitWebsite()" class="btn-primary mr-2">
+                                    <svg class="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-2M14 4h6m0 0v6m0-6L10 14"></path>
+                                    </svg>
+                                    Visit Website
+                                </button>
                                 <button id="logoutBtn" class="btn-secondary">Logout</button>
                             </div>
                         </div>
@@ -1235,41 +1240,59 @@
                                     <div class="space-y-4">
                                         <div class="form-group">
                                             <label class="form-label">Organization Name *</label>
-                                            <input type="text" class="form-input" value="Happy Paws Dog Rescue" placeholder="Your Organization Name">
+                                            <input type="text" id="orgName" class="form-input" value="Happy Paws Dog Rescue" placeholder="Your Organization Name">
                                         </div>
                                         <div class="form-group">
                                             <label class="form-label">EIN (Tax ID) *</label>
-                                            <input type="text" class="form-input" placeholder="XX-XXXXXXX">
+                                            <input type="text" id="orgEIN" class="form-input" placeholder="XX-XXXXXXX">
                                         </div>
                                         <div class="form-group">
                                             <label class="form-label">Phone Number *</label>
-                                            <input type="tel" class="form-input" value="(555) 123-4567">
+                                            <input type="tel" id="orgPhone" class="form-input" value="(555) 123-4567">
                                         </div>
                                         <div class="form-group">
                                             <label class="form-label">Main Email *</label>
-                                            <input type="email" class="form-input" value="info@happypaws.org">
+                                            <input type="email" id="orgEmail" class="form-input" value="info@happypaws.org">
                                         </div>
                                         <div class="form-group">
-                                            <label class="form-label">Adoption Email</label>
-                                            <input type="email" class="form-input" placeholder="adoptions@happypaws.org">
+                                            <label class="form-label">Description</label>
+                                            <textarea id="orgDescription" class="form-textarea" rows="3" placeholder="Brief description of your organization"></textarea>
                                         </div>
                                     </div>
                                     <div class="space-y-4">
                                         <div class="form-group">
                                             <label class="form-label">Address</label>
-                                            <textarea class="form-textarea" rows="3" placeholder="123 Main St&#10;City, State 12345"></textarea>
+                                            <input type="text" id="orgAddress" class="form-input" placeholder="123 Main St">
+                                        </div>
+                                        <div class="grid grid-cols-3 gap-4">
+                                            <div class="form-group">
+                                                <label class="form-label">City</label>
+                                                <input type="text" id="orgCity" class="form-input" placeholder="City">
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">State</label>
+                                                <input type="text" id="orgState" class="form-input" placeholder="CA">
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="form-label">ZIP</label>
+                                                <input type="text" id="orgZip" class="form-input" placeholder="12345">
+                                            </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="form-label">Website URL</label>
-                                            <input type="url" class="form-input" value="https://happypaws.org">
+                                            <input type="url" id="orgWebsite" class="form-input" value="https://happypaws.org">
                                         </div>
                                         <div class="form-group">
                                             <label class="form-label">Facebook URL</label>
-                                            <input type="url" class="form-input" placeholder="https://facebook.com/yourpage">
+                                            <input type="url" id="facebookUrl" class="form-input" placeholder="https://facebook.com/yourpage">
                                         </div>
                                         <div class="form-group">
                                             <label class="form-label">Instagram URL</label>
-                                            <input type="url" class="form-input" placeholder="https://instagram.com/yourpage">
+                                            <input type="url" id="instagramUrl" class="form-input" placeholder="https://instagram.com/yourpage">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Twitter URL</label>
+                                            <input type="url" id="twitterUrl" class="form-input" placeholder="https://twitter.com/yourpage">
                                         </div>
                                     </div>
                                 </div>
@@ -1287,12 +1310,12 @@
                                         <h4 class="font-medium text-gray-900">Typography</h4>
                                         <div class="form-group">
                                             <label class="form-label">Heading Font (Google Fonts)</label>
-                                            <input type="text" class="form-input" placeholder="Bebas Neue" value="Bebas Neue">
+                                            <input type="text" id="headingFont" class="form-input" placeholder="Bebas Neue" value="Bebas Neue">
                                             <p class="text-xs text-gray-500 mt-1">Enter Google Font name (e.g., "Roboto", "Open Sans")</p>
                                         </div>
                                         <div class="form-group">
                                             <label class="form-label">Body Font (Google Fonts)</label>
-                                            <input type="text" class="form-input" placeholder="Inter" value="Inter">
+                                            <input type="text" id="bodyFont" class="form-input" placeholder="Inter" value="Inter">
                                             <p class="text-xs text-gray-500 mt-1">Enter Google Font name for body text</p>
                                         </div>
 
@@ -1300,13 +1323,13 @@
                                         <h4 class="font-medium text-gray-900 mt-6">Color Palette (Up to 5 colors)</h4>
                                         <div class="space-y-3">
                                             <div class="flex items-center gap-3">
-                                                <input type="color" class="w-12 h-10 rounded border" value="#2E8B57">
-                                                <input type="text" class="form-input flex-1" value="#2E8B57" placeholder="Primary Color">
+                                                <input type="color" id="primaryColorPicker" class="w-12 h-10 rounded border" value="#2E8B57" onchange="updateColorText('primaryColorPicker', 'primaryColorText')">
+                                                <input type="text" id="primaryColorText" class="form-input flex-1" value="#2E8B57" placeholder="Primary Color" onchange="updateColorPicker('primaryColorText', 'primaryColorPicker')">
                                                 <span class="text-sm text-gray-500">Primary</span>
                                             </div>
                                             <div class="flex items-center gap-3">
-                                                <input type="color" class="w-12 h-10 rounded border" value="#3CB371">
-                                                <input type="text" class="form-input flex-1" value="#3CB371" placeholder="Secondary Color">
+                                                <input type="color" id="secondaryColorPicker" class="w-12 h-10 rounded border" value="#3CB371" onchange="updateColorText('secondaryColorPicker', 'secondaryColorText')">
+                                                <input type="text" id="secondaryColorText" class="form-input flex-1" value="#3CB371" placeholder="Secondary Color" onchange="updateColorPicker('secondaryColorText', 'secondaryColorPicker')">
                                                 <span class="text-sm text-gray-500">Secondary</span>
                                             </div>
                                             <div class="flex items-center gap-3">
@@ -1332,19 +1355,14 @@
                                         <h4 class="font-medium text-gray-900">Logo Upload</h4>
                                         <div class="space-y-4">
                                             <div class="form-group">
-                                                <label class="form-label">Dark Logo (for light backgrounds)</label>
-                                                <input type="file" class="form-input" accept="image/*">
-                                                <p class="text-xs text-gray-500 mt-1">Recommended: SVG or PNG, 300x100px max</p>
+                                                <label class="form-label">Logo URL</label>
+                                                <input type="url" id="logoUrl" class="form-input" placeholder="https://example.com/logo.svg">
+                                                <p class="text-xs text-gray-500 mt-1">Direct URL to your logo file (SVG or PNG recommended)</p>
                                             </div>
                                             <div class="form-group">
-                                                <label class="form-label">Light Logo (for dark backgrounds)</label>
-                                                <input type="file" class="form-input" accept="image/*">
-                                                <p class="text-xs text-gray-500 mt-1">Recommended: SVG or PNG, 300x100px max</p>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="form-label">Favicon/Icon</label>
-                                                <input type="file" class="form-input" accept="image/*">
-                                                <p class="text-xs text-gray-500 mt-1">Recommended: ICO or PNG, 32x32px or 64x64px</p>
+                                                <label class="form-label">Logo Upload (Alternative)</label>
+                                                <input type="file" id="logoUpload" class="form-input" accept="image/*">
+                                                <p class="text-xs text-gray-500 mt-1">Upload: SVG or PNG, 300x100px max, under 500KB</p>
                                             </div>
                                         </div>
 
@@ -1410,12 +1428,16 @@
                                     <h4 class="font-medium text-gray-900 mb-4">About Us</h4>
                                     <div class="space-y-4">
                                         <div class="form-group">
-                                            <label class="form-label">Who We Are *</label>
-                                            <textarea class="form-input" rows="4" placeholder="We are a dedicated team of animal lovers committed to rescuing, rehabilitating, and rehoming animals in need...">We are a dedicated team of animal lovers committed to rescuing, rehabilitating, and rehoming animals in need...</textarea>
+                                            <label class="form-label">About Us *</label>
+                                            <textarea id="aboutUsContent" class="form-input" rows="4" placeholder="We are a dedicated team of animal lovers committed to rescuing, rehabilitating, and rehoming animals in need...">We are a dedicated team of animal lovers committed to rescuing, rehabilitating, and rehoming animals in need...</textarea>
                                         </div>
                                         <div class="form-group">
-                                            <label class="form-label">What We Do *</label>
-                                            <textarea class="form-input" rows="4" placeholder="Our mission is to provide temporary shelter, medical care, and love to abandoned and surrendered animals...">Our mission is to provide temporary shelter, medical care, and love to abandoned and surrendered animals...</textarea>
+                                            <label class="form-label">Mission Statement *</label>
+                                            <textarea id="missionContent" class="form-input" rows="3" placeholder="Our mission is to provide temporary shelter, medical care, and love to abandoned and surrendered animals...">Our mission is to provide temporary shelter, medical care, and love to abandoned and surrendered animals...</textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="form-label">Vision Statement</label>
+                                            <textarea id="visionContent" class="form-input" rows="3" placeholder="We envision a world where every animal has a loving home...">We envision a world where every animal has a loving home...</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -2058,22 +2080,22 @@
                 isAdmin: true
             },
             9: {
-                name: "Rescue Rangers Network",
-                accessCode: "rangers789",
-                logo: "/assets/svgs/rescue-rangers.svg",
+                name: "Mission Bay Puppy Rescue",
+                accessCode: "mission789",
+                logo: "/assets/svgs/mission-bay.svg",
                 colors: {
-                    primary: "#16a34a",
-                    secondary: "#22c55e"
+                    primary: "#0ea5e9",
+                    secondary: "#38bdf8"
                 },
                 contact: {
-                    email: "info@rescuerangers.org",
-                    phone: "(555) 789-0123",
-                    address: "147 Ranger Road, Network City, NC 78901"
+                    email: "info@missionbaypuppyrescue.org",
+                    phone: "(619) 555-0123",
+                    address: "123 Bay View Dr, San Diego, CA 92109"
                 },
                 social: {
-                    facebook: "https://facebook.com/rescuerangers",
-                    instagram: "https://instagram.com/rescuerangers",
-                    twitter: "https://twitter.com/rescuerangers"
+                    facebook: "https://facebook.com/missionbaypuppyrescue",
+                    instagram: "https://instagram.com/missionbaypuppyrescue",
+                    twitter: "https://twitter.com/missionbayrescue"
                 }
             }
         };
@@ -2367,6 +2389,28 @@
             setTimeout(() => {
                 successMsg.style.display = 'none';
             }, 3000);
+        }
+
+        // Visit Website Function
+        function visitWebsite() {
+            // Get the current production URL
+            const productionUrl = 'https://happy-paws-site-c2kpitgw4-rigby35xs-projects.vercel.app';
+            window.open(productionUrl, '_blank');
+        }
+
+        // Color picker synchronization functions
+        function updateColorText(pickerId, textId) {
+            const picker = document.getElementById(pickerId);
+            const text = document.getElementById(textId);
+            text.value = picker.value;
+        }
+
+        function updateColorPicker(textId, pickerId) {
+            const text = document.getElementById(textId);
+            const picker = document.getElementById(pickerId);
+            if (text.value.match(/^#[0-9A-F]{6}$/i)) {
+                picker.value = text.value;
+            }
         }
 
         function handleLogout() {
@@ -3306,6 +3350,11 @@
                 selectedTab.classList.add('active', 'bg-blue-100', 'text-blue-700');
                 selectedTab.classList.remove('bg-gray-100', 'text-gray-700');
             }
+
+            // Load data for specific sections
+            if (sectionName === 'organization') {
+                loadOrganizationSettings();
+            }
         }
 
         // CSV Upload Functions
@@ -3550,6 +3599,7 @@
             console.log('Saving organization settings...');
 
             const orgData = {
+                orgId: currentOrgId,
                 name: document.getElementById('orgName').value,
                 ein: document.getElementById('orgEIN').value,
                 phone: document.getElementById('orgPhone').value,
@@ -3559,7 +3609,15 @@
                 state: document.getElementById('orgState').value,
                 zip: document.getElementById('orgZip').value,
                 website: document.getElementById('orgWebsite').value,
-                orgId: currentOrgId
+                description: document.getElementById('orgDescription').value,
+                aboutUs: document.getElementById('aboutUsContent').value,
+                mission: document.getElementById('missionContent').value,
+                vision: document.getElementById('visionContent').value,
+                socialMedia: {
+                    facebook: document.getElementById('facebookUrl').value,
+                    instagram: document.getElementById('instagramUrl').value,
+                    twitter: document.getElementById('twitterUrl').value
+                }
             };
 
             try {
@@ -3578,7 +3636,7 @@
                 });
 
                 if (orgResponse.ok && clientResponse.ok) {
-                    alert('Organization settings saved successfully! Changes will appear on the website after refresh.');
+                    showSuccessMessage('Organization settings saved successfully! Changes will appear on the website after refresh.');
                 } else {
                     throw new Error('Failed to save organization settings');
                 }
@@ -3590,7 +3648,34 @@
 
         window.saveBrandingSettings = async function() {
             console.log('Saving branding settings...');
-            alert('Branding settings saved! (Feature coming soon)');
+
+            const brandingData = {
+                orgId: currentOrgId,
+                primaryColor: document.getElementById('primaryColorText').value,
+                secondaryColor: document.getElementById('secondaryColorText').value,
+                logo: document.getElementById('logoUrl').value,
+                fonts: {
+                    heading: document.getElementById('headingFont').value,
+                    body: document.getElementById('bodyFont').value
+                }
+            };
+
+            try {
+                const response = await fetch('/api/admin/update-client-data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(brandingData)
+                });
+
+                if (response.ok) {
+                    showSuccessMessage('Branding settings saved successfully! Changes will appear on the website after refresh.');
+                } else {
+                    throw new Error('Failed to save branding settings');
+                }
+            } catch (error) {
+                console.error('Error saving branding settings:', error);
+                alert('Failed to save branding settings. Please try again.');
+            }
         };
 
         window.saveSocialMediaSettings = async function() {
@@ -3615,7 +3700,7 @@
                 if (response.ok) {
                     const orgData = await response.json();
 
-                    // Populate form fields
+                    // Populate organization form fields
                     document.getElementById('orgName').value = orgData.name || '';
                     document.getElementById('orgEIN').value = orgData.ein || '';
                     document.getElementById('orgPhone').value = orgData.phone || '';
@@ -3625,6 +3710,30 @@
                     document.getElementById('orgState').value = orgData.state || '';
                     document.getElementById('orgZip').value = orgData.zip || '';
                     document.getElementById('orgWebsite').value = orgData.website || '';
+                    document.getElementById('orgDescription').value = orgData.description || '';
+
+                    // Populate content fields
+                    document.getElementById('aboutUsContent').value = orgData.about_us || '';
+                    document.getElementById('missionContent').value = orgData.mission || '';
+                    document.getElementById('visionContent').value = orgData.vision || '';
+
+                    // Populate social media fields
+                    document.getElementById('facebookUrl').value = orgData.facebook_url || '';
+                    document.getElementById('instagramUrl').value = orgData.instagram_url || '';
+                    document.getElementById('twitterUrl').value = orgData.twitter_url || '';
+
+                    // Populate branding fields
+                    if (orgData.primary_color) {
+                        document.getElementById('primaryColorText').value = orgData.primary_color;
+                        document.getElementById('primaryColorPicker').value = orgData.primary_color;
+                    }
+                    if (orgData.secondary_color) {
+                        document.getElementById('secondaryColorText').value = orgData.secondary_color;
+                        document.getElementById('secondaryColorPicker').value = orgData.secondary_color;
+                    }
+                    if (orgData.logo) {
+                        document.getElementById('logoUrl').value = orgData.logo;
+                    }
 
                     console.log('Organization settings loaded successfully');
                 }
