@@ -157,13 +157,75 @@ export async function DELETE({ request }) {
     }
 }
 
+// PATCH - Bulk import animals
+export async function PATCH({ request }) {
+    try {
+        const body = await request.json();
+        const { orgId = '3', animals } = body;
+
+        if (!animals || !Array.isArray(animals)) {
+            return new Response(JSON.stringify({ error: 'Animals array is required' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+
+        let imported = 0;
+        let errors = 0;
+        const errorDetails = [];
+
+        // Process each animal
+        for (let i = 0; i < animals.length; i++) {
+            try {
+                const animalData = {
+                    ...animals[i],
+                    org_id: orgId
+                };
+
+                await makeXanoRequest(`/orgs/${orgId}/animals`, {
+                    method: 'POST',
+                    body: JSON.stringify(animalData)
+                });
+
+                imported++;
+            } catch (error) {
+                errors++;
+                errorDetails.push({
+                    row: i + 1,
+                    animal: animals[i].name || 'Unknown',
+                    error: error.message
+                });
+                console.error(`Error importing animal ${i + 1}:`, error);
+            }
+        }
+
+        return new Response(JSON.stringify({
+            imported,
+            errors,
+            errorDetails: errorDetails.slice(0, 10) // Limit error details to first 10
+        }), {
+            status: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            }
+        });
+    } catch (error) {
+        console.error('Error in bulk import:', error);
+        return new Response(JSON.stringify({ error: 'Failed to process bulk import' }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
+}
+
 // OPTIONS - Handle CORS preflight
 export async function OPTIONS() {
     return new Response(null, {
         status: 200,
         headers: {
             'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type, Authorization'
         }
     });
