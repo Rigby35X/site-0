@@ -3663,25 +3663,10 @@
                     throw new Error(`Organization API failed: ${orgResponse.status} - ${orgError}`);
                 }
 
-                // Update client data for frontend
-                const clientResponse = await fetch('/api/admin/update-client-data', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(orgData)
-                });
+                const orgResult = await orgResponse.json();
+                console.log('Organization API result:', orgResult);
 
-                console.log('Client data API response status:', clientResponse.status);
-
-                if (!clientResponse.ok) {
-                    const clientError = await clientResponse.text();
-                    console.error('Client data API error:', clientError);
-                    throw new Error(`Client data API failed: ${clientResponse.status} - ${clientError}`);
-                }
-
-                const clientResult = await clientResponse.json();
-                console.log('Client data API result:', clientResult);
-
-                showSuccessMessage('Organization settings saved successfully! Changes will appear on the website after refresh.');
+                showSuccessMessage('Organization settings saved successfully! Changes are now live on the website.');
 
             } catch (error) {
                 console.error('Error saving organization settings:', error);
@@ -3704,14 +3689,14 @@
             };
 
             try {
-                const response = await fetch('/api/admin/update-client-data', {
-                    method: 'POST',
+                const response = await fetch('/api/admin/organization', {
+                    method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(brandingData)
                 });
 
                 if (response.ok) {
-                    showSuccessMessage('Branding settings saved successfully! Changes will appear on the website after refresh.');
+                    showSuccessMessage('Branding settings saved successfully! Changes are now live on the website.');
                 } else {
                     throw new Error('Failed to save branding settings');
                 }

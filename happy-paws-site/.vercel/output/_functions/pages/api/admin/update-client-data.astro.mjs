@@ -1,5 +1,3 @@
-import fs from 'fs';
-import path from 'path';
 export { renderers } from '../../../renderers.mjs';
 
 const XANO_CONFIG = {
@@ -116,9 +114,7 @@ async function POST({ request }) {
     } catch (xanoError) {
       console.warn("Failed to update Xano organization data:", xanoError);
     }
-    const clientJsonPath = path.join(process.cwd(), "src", "data", "client.json");
-    fs.writeFileSync(clientJsonPath, JSON.stringify(clientData, null, 2));
-    await updateCSSCustomProperties(clientData.branding.colors);
+    console.log("Client data prepared for Xano storage:", clientData);
     return new Response(JSON.stringify({
       success: true,
       message: "Client data and organization settings updated successfully",
@@ -150,31 +146,6 @@ function adjustColorBrightness(hex, percent) {
   const newG = Math.min(255, Math.max(0, g + g * percent / 100));
   const newB = Math.min(255, Math.max(0, b + b * percent / 100));
   return `#${Math.round(newR).toString(16).padStart(2, "0")}${Math.round(newG).toString(16).padStart(2, "0")}${Math.round(newB).toString(16).padStart(2, "0")}`;
-}
-async function updateCSSCustomProperties(colors) {
-  try {
-    const cssPath = path.join(process.cwd(), "src", "styles", "root.less");
-    let cssContent = fs.readFileSync(cssPath, "utf8");
-    cssContent = cssContent.replace(
-      /--primary: [^;]+;/,
-      `--primary: ${colors.primary};`
-    );
-    cssContent = cssContent.replace(
-      /--primaryLight: [^;]+;/,
-      `--primaryLight: ${colors.primaryLight};`
-    );
-    cssContent = cssContent.replace(
-      /--secondary: [^;]+;/,
-      `--secondary: ${colors.secondary};`
-    );
-    cssContent = cssContent.replace(
-      /--secondaryLight: [^;]+;/,
-      `--secondaryLight: ${colors.secondaryLight};`
-    );
-    fs.writeFileSync(cssPath, cssContent);
-  } catch (error) {
-    console.warn("Failed to update CSS custom properties:", error);
-  }
 }
 async function OPTIONS() {
   return new Response(null, {

@@ -1,10 +1,7 @@
 /**
  * API Endpoint for Updating Client Data
- * Updates the client.json file and organization data with settings from admin
+ * Updates organization data in Xano database with settings from admin
  */
-
-import fs from 'fs';
-import path from 'path';
 
 // Xano Configuration
 const XANO_CONFIG = {
@@ -136,14 +133,9 @@ export async function POST({ request }) {
             // Don't fail the entire request if Xano fails
         }
 
-        // Get the path to client.json
-        const clientJsonPath = path.join(process.cwd(), 'src', 'data', 'client.json');
-
-        // Write the updated data
-        fs.writeFileSync(clientJsonPath, JSON.stringify(clientData, null, 2));
-
-        // Update CSS custom properties file
-        await updateCSSCustomProperties(clientData.branding.colors);
+        // Note: In serverless environments like Vercel, we can't write to files
+        // Data is stored in Xano instead and retrieved dynamically
+        console.log('Client data prepared for Xano storage:', clientData);
         
         return new Response(JSON.stringify({
             success: true,
@@ -188,39 +180,8 @@ function adjustColorBrightness(hex, percent) {
     return `#${Math.round(newR).toString(16).padStart(2, '0')}${Math.round(newG).toString(16).padStart(2, '0')}${Math.round(newB).toString(16).padStart(2, '0')}`;
 }
 
-// Helper function to update CSS custom properties
-async function updateCSSCustomProperties(colors) {
-    try {
-        const cssPath = path.join(process.cwd(), 'src', 'styles', 'root.less');
-
-        // Read current CSS file
-        let cssContent = fs.readFileSync(cssPath, 'utf8');
-
-        // Update CSS custom properties
-        cssContent = cssContent.replace(
-            /--primary: [^;]+;/,
-            `--primary: ${colors.primary};`
-        );
-        cssContent = cssContent.replace(
-            /--primaryLight: [^;]+;/,
-            `--primaryLight: ${colors.primaryLight};`
-        );
-        cssContent = cssContent.replace(
-            /--secondary: [^;]+;/,
-            `--secondary: ${colors.secondary};`
-        );
-        cssContent = cssContent.replace(
-            /--secondaryLight: [^;]+;/,
-            `--secondaryLight: ${colors.secondaryLight};`
-        );
-
-        // Write updated CSS
-        fs.writeFileSync(cssPath, cssContent);
-
-    } catch (error) {
-        console.warn('Failed to update CSS custom properties:', error);
-    }
-}
+// Note: CSS custom properties updates are not supported in serverless environments
+// Colors are applied dynamically via JavaScript in the frontend
 
 // OPTIONS - Handle CORS preflight
 export async function OPTIONS() {
