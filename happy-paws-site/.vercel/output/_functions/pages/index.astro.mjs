@@ -1,6 +1,6 @@
 import { c as createComponent, b as createAstro, r as renderComponent, a as renderTemplate, m as maybeRenderHead, e as addAttribute } from '../chunks/astro/server_DxW1KWNy.mjs';
 import 'kleur/colors';
-import { $ as $$BaseLayout } from '../chunks/BaseLayout_CfKLfJFf.mjs';
+import { $ as $$BaseLayout } from '../chunks/BaseLayout_CDEetpo9.mjs';
 import { $ as $$CTA } from '../chunks/CTA_DO8n3P-Q.mjs';
 import { $ as $$FAQ } from '../chunks/FAQ_D7rfH5RV.mjs';
 import { l as landingImage } from '../chunks/landing_DCUbpOhM.mjs';

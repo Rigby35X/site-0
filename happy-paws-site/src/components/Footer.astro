@@ -129,10 +129,58 @@ const currentYear = getCurrentYear()
 </footer>
 
 <script>
-  // Load and display social media icons
+  // Load dynamic client data and social media icons
   document.addEventListener('DOMContentLoaded', function() {
+    loadDynamicClientData();
     loadSocialMediaIcons();
   });
+
+  // Function to load and update client data dynamically
+  async function loadDynamicClientData() {
+    try {
+      const orgId = '3'; // Organization ID
+      const response = await fetch(`/api/client-data?orgId=${orgId}`);
+
+      if (response.ok) {
+        const clientData = await response.json();
+
+        // Update contact information
+        const addressElement = document.querySelector('a[href="/contact"]');
+        if (addressElement && clientData.address) {
+          addressElement.innerHTML = `
+            ${clientData.address.lineOne}<br />
+            ${clientData.address.lineTwo ? clientData.address.lineTwo + '<br />' : ''}
+            ${clientData.address.city}
+            ${clientData.address.state}
+            ${clientData.address.zip}
+          `;
+        }
+
+        // Update phone number
+        const phoneElement = document.querySelector('a[href^="tel:"]');
+        if (phoneElement && clientData.phoneFormatted) {
+          phoneElement.href = `tel:${clientData.phoneForTel}`;
+          phoneElement.innerHTML = `T: ${clientData.phoneFormatted}`;
+        }
+
+        // Update email
+        const emailElement = document.querySelector('a[href^="mailto:"]');
+        if (emailElement && clientData.email) {
+          emailElement.href = `mailto:${clientData.email}`;
+        }
+
+        // Update EIN
+        const einElement = document.querySelector('span');
+        if (einElement && einElement.textContent && einElement.textContent.includes('EIN:') && clientData.ein) {
+          einElement.textContent = `EIN: ${clientData.ein}`;
+        }
+
+        console.log('Dynamic client data loaded successfully');
+      }
+    } catch (error) {
+      console.warn('Failed to load dynamic client data:', error);
+    }
+  }
 
   async function loadSocialMediaIcons() {
     try {
