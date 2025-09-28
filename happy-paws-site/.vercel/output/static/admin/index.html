@@ -1296,8 +1296,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="mt-6">
+                                <div class="mt-6 space-x-4">
                                     <button onclick="saveOrganizationSettings()" class="btn-primary">Save Organization Info</button>
+                                    <button onclick="testOrganizationAPI()" class="btn-secondary">Test API Connection</button>
                                 </div>
                             </div>
 
@@ -3594,6 +3595,30 @@
             }
         }
 
+        // Test API Connection
+        window.testOrganizationAPI = async function() {
+            console.log('Testing API connection...');
+
+            try {
+                // Test GET request
+                const getResponse = await fetch(`/api/admin/organization?orgId=${currentOrgId}`);
+                console.log('GET response status:', getResponse.status);
+
+                if (getResponse.ok) {
+                    const orgData = await getResponse.json();
+                    console.log('GET response data:', orgData);
+                    alert(`✅ API Connection Test Successful!\n\nOrganization: ${orgData.name || 'Unknown'}\nEmail: ${orgData.email || 'Unknown'}\nStatus: ${getResponse.status}`);
+                } else {
+                    const errorText = await getResponse.text();
+                    console.error('GET error:', errorText);
+                    alert(`❌ API Connection Test Failed!\n\nStatus: ${getResponse.status}\nError: ${errorText}`);
+                }
+            } catch (error) {
+                console.error('API test error:', error);
+                alert(`❌ API Connection Test Failed!\n\nError: ${error.message}`);
+            }
+        };
+
         // Settings Save Functions
         window.saveOrganizationSettings = async function() {
             console.log('Saving organization settings...');
@@ -3621,12 +3646,22 @@
             };
 
             try {
+                console.log('Saving organization data:', orgData);
+
                 // Save to organization API
                 const orgResponse = await fetch('/api/admin/organization', {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(orgData)
                 });
+
+                console.log('Organization API response status:', orgResponse.status);
+
+                if (!orgResponse.ok) {
+                    const orgError = await orgResponse.text();
+                    console.error('Organization API error:', orgError);
+                    throw new Error(`Organization API failed: ${orgResponse.status} - ${orgError}`);
+                }
 
                 // Update client data for frontend
                 const clientResponse = await fetch('/api/admin/update-client-data', {
@@ -3635,14 +3670,22 @@
                     body: JSON.stringify(orgData)
                 });
 
-                if (orgResponse.ok && clientResponse.ok) {
-                    showSuccessMessage('Organization settings saved successfully! Changes will appear on the website after refresh.');
-                } else {
-                    throw new Error('Failed to save organization settings');
+                console.log('Client data API response status:', clientResponse.status);
+
+                if (!clientResponse.ok) {
+                    const clientError = await clientResponse.text();
+                    console.error('Client data API error:', clientError);
+                    throw new Error(`Client data API failed: ${clientResponse.status} - ${clientError}`);
                 }
+
+                const clientResult = await clientResponse.json();
+                console.log('Client data API result:', clientResult);
+
+                showSuccessMessage('Organization settings saved successfully! Changes will appear on the website after refresh.');
+
             } catch (error) {
                 console.error('Error saving organization settings:', error);
-                alert('Failed to save organization settings. Please try again.');
+                alert(`Failed to save organization settings: ${error.message}`);
             }
         };
 

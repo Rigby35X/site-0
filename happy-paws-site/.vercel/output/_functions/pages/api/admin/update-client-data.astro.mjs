@@ -24,6 +24,7 @@ async function makeXanoRequest(endpoint, options = {}) {
 async function POST({ request }) {
   try {
     const body = await request.json();
+    console.log("Received update request:", body);
     const {
       orgId = "3",
       name,
@@ -87,6 +88,7 @@ async function POST({ request }) {
       socialMedia: socialMedia || {}
     };
     try {
+      console.log("Updating Xano organization data for org:", orgId);
       const orgUpdateData = {
         name,
         email,
@@ -105,10 +107,12 @@ async function POST({ request }) {
         vision,
         ein
       };
-      await makeXanoRequest(`/organizations/${orgId}`, {
+      console.log("Sending to Xano:", orgUpdateData);
+      const xanoResult = await makeXanoRequest(`/organizations/${orgId}`, {
         method: "PATCH",
         body: JSON.stringify(orgUpdateData)
       });
+      console.log("Xano update successful:", xanoResult);
     } catch (xanoError) {
       console.warn("Failed to update Xano organization data:", xanoError);
     }
