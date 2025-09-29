@@ -90,7 +90,7 @@ const currentYear = getCurrentYear()
             <h2>Contact</h2>
           </li>
           <li>
-            <a href="/contact">
+            <a href="/contact" id="footer-address">
               {client.address.lineOne}<br />
               {client.address.lineTwo}<br />
               {client.address.city}
@@ -99,13 +99,13 @@ const currentYear = getCurrentYear()
             </a>
           </li>
           <li>
-            <a href={`tel:${client.phoneForTel}`}>
+            <a href={`tel:${client.phoneForTel}`} id="footer-phone">
               T:
               {client.phoneFormatted}
             </a>
           </li>
           <li>
-            <a href={`mailto:${client.email}`}>Click to Email</a>
+            <a href={`mailto:${client.email}`} id="footer-email">Click to Email</a>
           </li>
           <li>
             <span id="ein-display">EIN: {client.ein}</span>
@@ -148,26 +148,29 @@ const currentYear = getCurrentYear()
         console.log('✅ Received client data:', clientData);
 
         // Update contact information
-        const addressElement = document.querySelector('a[href="/contact"]');
+        const addressElement = document.getElementById('footer-address');
         if (addressElement && clientData.address) {
           addressElement.innerHTML = `
             ${clientData.address.lineOne}<br />
             ${clientData.address.lineTwo ? clientData.address.lineTwo + '<br />' : ''}
             ${clientData.address.city} ${clientData.address.state} ${clientData.address.zip}
           `;
+          console.log('✅ Address updated:', clientData.address);
         }
 
         // Update phone number
-        const phoneElement = document.querySelector('a[href^="tel:"]');
+        const phoneElement = document.getElementById('footer-phone');
         if (phoneElement && clientData.phoneFormatted) {
           phoneElement.href = `tel:${clientData.phoneForTel}`;
           phoneElement.innerHTML = `T: ${clientData.phoneFormatted}`;
+          console.log('✅ Phone updated:', clientData.phoneFormatted);
         }
 
         // Update email
-        const emailElement = document.querySelector('a[href^="mailto:"]');
+        const emailElement = document.getElementById('footer-email');
         if (emailElement && clientData.email) {
           emailElement.href = `mailto:${clientData.email}`;
+          console.log('✅ Email updated:', clientData.email);
         }
 
         // Update EIN using specific ID
