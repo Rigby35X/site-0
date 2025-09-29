@@ -31,6 +31,7 @@ export interface PostData {
   mediaUrls?: string[];
   scheduleDate?: string; // ISO format
   shortenLinks?: boolean;
+  profileKey?: string; // For multi-user support
   facebookOptions?: FacebookOptions;
   twitterOptions?: TwitterOptions;
   linkedInOptions?: LinkedInOptions;
@@ -142,6 +143,7 @@ export interface CommentData {
   platform: Platform;
   comment: string;
   parentCommentId?: string;
+  profileKey?: string; // For multi-user support
 }
 
 export interface CommentResponse {
@@ -156,6 +158,7 @@ export interface MessageData {
   recipient: string;
   message: string;
   mediaUrls?: string[];
+  profileKey?: string; // For multi-user support
 }
 
 export interface MessageResponse {
@@ -214,6 +217,52 @@ export interface AyrshareError {
   message: string;
   code?: string;
   details?: any;
+}
+
+// Multi-User Profile Interfaces
+export interface ProfileCreateData {
+  userId: string;
+  title?: string;
+}
+
+export interface ProfileCreateResponse {
+  profileKey: string;
+  userId: string;
+  title?: string;
+  status: 'success' | 'error';
+  error?: string;
+}
+
+export interface JWTGenerateData {
+  profileKey: string;
+  redirectUrl?: string;
+  domain?: string;
+}
+
+export interface JWTGenerateResponse {
+  url: string;
+  jwt: string;
+  profileKey: string;
+  status: 'success' | 'error';
+  error?: string;
+}
+
+export interface SocialProfile {
+  id?: number;
+  userId: string;
+  profileKey: string;
+  title?: string;
+  connectedNetworks: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface WebhookEvent {
+  type: 'social.link' | 'social.unlink' | string;
+  profileKey: string;
+  platform: Platform;
+  data: any;
+  timestamp: string;
 }
 
 // Utility function to get environment variables
@@ -336,11 +385,66 @@ export class AyrshareService {
   }
 
   /**
+   * Create a new profile for multi-user support
+   */
+  async createProfile(profileData: ProfileCreateData): Promise<ProfileCreateResponse> {
+    return this.withRetry(async () => {
+      const response = await this.client.post('/profiles/create-profile', {
+        userId: profileData.userId,
+        title: profileData.title
+      });
+
+      return response.data;
+    });
+  }
+
+  /**
+   * Generate JWT token and SSO linking URL for social account connection
+   */
+  async generateJWT(jwtData: JWTGenerateData): Promise<JWTGenerateResponse> {
+    return this.withRetry(async () => {
+      const response = await this.client.post('/profiles/generate-jwt', {
+        profileKey: jwtData.profileKey,
+        redirectUrl: jwtData.redirectUrl,
+        domain: jwtData.domain
+      });
+
+      return response.data;
+    });
+  }
+
+  /**
+   * Get profile information and connected networks by profile key
+   */
+  async getProfileByKey(profileKey: string): Promise<any> {
+    return this.withRetry(async () => {
+      const response = await this.client.get('/profiles/profile', {
+        params: { profileKey }
+      });
+
+      return response.data;
+    });
+  }
+
+  /**
+   * Delete a profile
+   */
+  async deleteProfile(profileKey: string): Promise<any> {
+    return this.withRetry(async () => {
+      const response = await this.client.delete('/profiles/delete-profile', {
+        data: { profileKey }
+      });
+
+      return response.data;
+    });
+  }
+
+  /**
    * Publish a post to multiple social media platforms
    */
   async publishPost(postData: PostData): Promise<PostResponse> {
     return this.withRetry(async () => {
-      const response = await this.client.post('/post', {
+      const requestBody: any = {
         post: postData.post,
         platforms: postData.platforms,
         mediaUrls: postData.mediaUrls,
@@ -350,7 +454,14 @@ export class AyrshareService {
         twitterOptions: postData.twitterOptions,
         linkedInOptions: postData.linkedInOptions,
         instagramOptions: postData.instagramOptions
-      });
+      };
+
+      // Add profileKey for multi-user support
+      if (postData.profileKey) {
+        requestBody.profileKey = postData.profileKey;
+      }
+
+      const response = await this.client.post('/post', requestBody);
 
       return response.data;
     });
@@ -359,11 +470,14 @@ export class AyrshareService {
   /**
    * Get analytics for a specific post
    */
-  async getAnalytics(postId: string, platforms?: Platform[]): Promise<AnalyticsData[]> {
+  async getAnalytics(postId: string, platforms?: Platform[], profileKey?: string): Promise<AnalyticsData[]> {
     return this.withRetry(async () => {
       const params: any = { id: postId };
       if (platforms) {
         params.platforms = platforms.join(',');
+      }
+      if (profileKey) {
+        params.profileKey = profileKey;
       }
 
       const response = await this.client.get('/analytics', { params });
@@ -391,12 +505,18 @@ export class AyrshareService {
    */
   async addComment(commentData: CommentData): Promise<CommentResponse> {
     return this.withRetry(async () => {
-      const response = await this.client.post('/comment', {
+      const requestBody: any = {
         platform: commentData.platform,
         id: commentData.postId,
         comment: commentData.comment,
         parentCommentId: commentData.parentCommentId
-      });
+      };
+
+      if (commentData.profileKey) {
+        requestBody.profileKey = commentData.profileKey;
+      }
+
+      const response = await this.client.post('/comment', requestBody);
 
       return response.data;
     });
@@ -420,12 +540,18 @@ export class AyrshareService {
    */
   async sendMessage(messageData: MessageData): Promise<MessageResponse> {
     return this.withRetry(async () => {
-      const response = await this.client.post('/messages', {
+      const requestBody: any = {
         platform: messageData.platform,
         recipient: messageData.recipient,
         message: messageData.message,
         mediaUrls: messageData.mediaUrls
-      });
+      };
+
+      if (messageData.profileKey) {
+        requestBody.profileKey = messageData.profileKey;
+      }
+
+      const response = await this.client.post('/messages', requestBody);
 
       return response.data;
     });
@@ -530,6 +656,38 @@ const defaultAyrshare = new AyrshareService();
 
 // --------- Helper Functions ---------
 
+// --------- Multi-User Profile Helper Functions ---------
+
+/**
+ * Create a new profile for a user
+ */
+export async function createProfile(userId: string, title?: string): Promise<ProfileCreateResponse> {
+  return defaultAyrshare.createProfile({ userId, title });
+}
+
+/**
+ * Generate JWT token and linking URL for social account connection
+ */
+export async function generateJWT(profileKey: string, redirectUrl?: string): Promise<JWTGenerateResponse> {
+  return defaultAyrshare.generateJWT({ profileKey, redirectUrl });
+}
+
+/**
+ * Get profile information by profile key
+ */
+export async function getProfileByKey(profileKey: string): Promise<any> {
+  return defaultAyrshare.getProfileByKey(profileKey);
+}
+
+/**
+ * Delete a profile
+ */
+export async function deleteProfile(profileKey: string): Promise<any> {
+  return defaultAyrshare.deleteProfile(profileKey);
+}
+
+// --------- Updated Helper Functions with Profile Support ---------
+
 /**
  * Publish a post to multiple platforms (simplified interface)
  */
@@ -538,25 +696,28 @@ export async function publishPost({
   platforms,
   mediaUrls = [],
   scheduleDate,
+  profileKey,
 }: {
   text: string;
   platforms: Platform[];
   mediaUrls?: string[];
   scheduleDate?: string; // ISO string for scheduling
+  profileKey?: string; // For multi-user support
 }): Promise<PostResponse> {
   return defaultAyrshare.publishPost({
     post: text,
     platforms,
     mediaUrls,
-    scheduleDate
+    scheduleDate,
+    profileKey
   });
 }
 
 /**
  * Retrieve analytics for a specific post ID
  */
-export async function getAnalytics(postId: string, platforms?: Platform[]): Promise<AnalyticsData[]> {
-  return defaultAyrshare.getAnalytics(postId, platforms);
+export async function getAnalytics(postId: string, platforms?: Platform[], profileKey?: string): Promise<AnalyticsData[]> {
+  return defaultAyrshare.getAnalytics(postId, platforms, profileKey);
 }
 
 /**
@@ -566,15 +727,18 @@ export async function addComment({
   platform,
   postId,
   text,
+  profileKey,
 }: {
   platform: Platform;
   postId: string;
   text: string;
+  profileKey?: string;
 }): Promise<CommentResponse> {
   return defaultAyrshare.addComment({
     platform,
     postId,
-    comment: text
+    comment: text,
+    profileKey
   });
 }
 
@@ -586,17 +750,20 @@ export async function sendMessage({
   recipient,
   message,
   mediaUrls,
+  profileKey,
 }: {
   platform: Platform;
   recipient: string;
   message: string;
   mediaUrls?: string[];
+  profileKey?: string;
 }): Promise<MessageResponse> {
   return defaultAyrshare.sendMessage({
     platform,
     recipient,
     message,
-    mediaUrls
+    mediaUrls,
+    profileKey
   });
 }
 

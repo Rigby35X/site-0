@@ -1,0 +1,69 @@
+{
+  "name": "link-social",
+  "method": "POST",
+  "description": "Generate JWT token and linking URL for social account connection",
+  "inputs": [
+    {
+      "name": "userId",
+      "type": "string",
+      "required": true,
+      "description": "User ID to get profile for"
+    },
+    {
+      "name": "redirectUrl",
+      "type": "string",
+      "required": false,
+      "description": "URL to redirect to after linking"
+    },
+    {
+      "name": "domain",
+      "type": "string",
+      "required": false,
+      "description": "Domain for the linking process"
+    }
+  ],
+  "function_stack": [
+    {
+      "type": "function",
+      "name": "Get User Profile",
+      "code": "// Get user's social profile\nconst userProfile = await xano.db.social_profiles.getFirst({\n  user_id: inputs.userId\n});\n\nif (!userProfile) {\n  return {\n    success: false,\n    error: 'User does not have a social profile. Please create one first.',\n    needsProfile: true\n  };\n}\n\nconst profileKey = userProfile.profile_key;"
+    },
+    {
+      "type": "external_api",
+      "name": "Generate JWT from Ayrshare",
+      "method": "POST",
+      "url": "https://app.ayrshare.com/api/profiles/generate-jwt",
+      "headers": {
+        "Authorization": "Bearer {{env.AYRSHARE_API_KEY}}",
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "profileKey": "{{profileKey}}",
+        "redirectUrl": "{{inputs.redirectUrl || 'https://barkhaus.com/admin/social-linked'}}",
+        "domain": "{{inputs.domain || 'barkhaus.com'}}"
+      },
+      "response_variable": "jwt_response"
+    },
+    {
+      "type": "function",
+      "name": "Handle JWT Response",
+      "code": "// Check if JWT generation was successful\nif (!jwt_response || jwt_response.status !== 'success') {\n  return {\n    success: false,\n    error: jwt_response?.error || 'Failed to generate JWT token',\n    details: jwt_response\n  };\n}\n\nconst linkingUrl = jwt_response.url;\nconst jwtToken = jwt_response.jwt;\n\nif (!linkingUrl) {\n  return {\n    success: false,\n    error: 'No linking URL returned from Ayrshare'\n  };\n}"
+    },
+    {
+      "type": "function",
+      "name": "Update Profile with JWT Info",
+      "code": "// Update the profile with JWT generation timestamp\nawait xano.db.social_profiles.update(userProfile.id, {\n  updated_at: new Date().toISOString(),\n  last_jwt_generated: new Date().toISOString()\n});"
+    },
+    {
+      "type": "function",
+      "name": "Return Linking URL",
+      "code": "return {\n  success: true,\n  linkingUrl: linkingUrl,\n  jwt: jwtToken,\n  profileKey: profileKey,\n  userId: inputs.userId,\n  redirectUrl: inputs.redirectUrl || 'https://barkhaus.com/admin/social-linked'\n};"
+    }
+  ],
+  "error_handling": {
+    "catch_all": {
+      "type": "function",
+      "code": "console.error('Error in link-social:', error);\nreturn {\n  success: false,\n  error: error.message || 'Internal server error',\n  details: error\n};"
+    }
+  }
+}

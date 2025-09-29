@@ -29,12 +29,13 @@ export async function POST({ request }) {
     }
 
     const body = await request.json();
-    const { 
-      post, 
-      platforms, 
-      mediaUrls, 
-      scheduleDate, 
+    const {
+      post,
+      platforms,
+      mediaUrls,
+      scheduleDate,
       shortenLinks,
+      profileKey,
       facebookOptions,
       twitterOptions,
       linkedInOptions,
@@ -72,6 +73,7 @@ export async function POST({ request }) {
       mediaUrls: mediaUrls || [],
       scheduleDate,
       shortenLinks,
+      profileKey,
       facebookOptions,
       twitterOptions,
       linkedInOptions,
@@ -82,7 +84,8 @@ export async function POST({ request }) {
       platforms,
       postLength: post.length,
       mediaCount: (mediaUrls || []).length,
-      scheduled: !!scheduleDate
+      scheduled: !!scheduleDate,
+      hasProfileKey: !!profileKey
     });
 
     // Publish the post

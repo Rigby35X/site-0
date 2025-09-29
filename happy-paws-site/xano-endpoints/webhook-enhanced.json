@@ -1,0 +1,60 @@
+{
+  "name": "webhook-enhanced",
+  "method": "POST",
+  "description": "Enhanced webhook handler for Ayrshare events including social.link and social.unlink",
+  "inputs": [
+    {
+      "name": "type",
+      "type": "string",
+      "required": true,
+      "description": "Event type from Ayrshare webhook"
+    },
+    {
+      "name": "profileKey",
+      "type": "string",
+      "required": false,
+      "description": "Profile key from webhook"
+    },
+    {
+      "name": "platform",
+      "type": "string",
+      "required": false,
+      "description": "Social media platform"
+    },
+    {
+      "name": "data",
+      "type": "object",
+      "required": false,
+      "description": "Additional webhook data"
+    },
+    {
+      "name": "timestamp",
+      "type": "string",
+      "required": false,
+      "description": "Event timestamp"
+    }
+  ],
+  "function_stack": [
+    {
+      "type": "function",
+      "name": "Log Webhook Event",
+      "code": "// Log the incoming webhook for debugging\nconsole.log('Ayrshare Webhook Received:', {\n  type: inputs.type,\n  profileKey: inputs.profileKey,\n  platform: inputs.platform,\n  timestamp: inputs.timestamp || new Date().toISOString()\n});"
+    },
+    {
+      "type": "function",
+      "name": "Handle Social Link Events",
+      "code": "// Handle social.link and social.unlink events\nif (inputs.type === 'social.link' || inputs.type === 'social.unlink') {\n  \n  if (!inputs.profileKey) {\n    console.error('No profileKey provided for social link/unlink event');\n    return {\n      success: false,\n      error: 'ProfileKey is required for social link/unlink events'\n    };\n  }\n  \n  // Find the user profile\n  const userProfile = await xano.db.social_profiles.getFirst({\n    profile_key: inputs.profileKey\n  });\n  \n  if (!userProfile) {\n    console.error('No user profile found for profileKey:', inputs.profileKey);\n    return {\n      success: false,\n      error: 'User profile not found'\n    };\n  }\n  \n  // Parse current connected networks\n  let connectedNetworks = [];\n  try {\n    connectedNetworks = JSON.parse(userProfile.connected_networks || '[]');\n  } catch (e) {\n    console.error('Error parsing connected_networks:', e);\n    connectedNetworks = [];\n  }\n  \n  const platform = inputs.platform;\n  \n  if (inputs.type === 'social.link') {\n    // Add platform if not already connected\n    if (platform && !connectedNetworks.includes(platform)) {\n      connectedNetworks.push(platform);\n      console.log(`Added ${platform} to connected networks for user ${userProfile.user_id}`);\n    }\n  } else if (inputs.type === 'social.unlink') {\n    // Remove platform from connected networks\n    if (platform) {\n      connectedNetworks = connectedNetworks.filter(p => p !== platform);\n      console.log(`Removed ${platform} from connected networks for user ${userProfile.user_id}`);\n    }\n  }\n  \n  // Update the profile with new connected networks\n  await xano.db.social_profiles.update(userProfile.id, {\n    connected_networks: JSON.stringify(connectedNetworks),\n    updated_at: new Date().toISOString(),\n    last_webhook_received: new Date().toISOString()\n  });\n  \n  return {\n    success: true,\n    message: `Successfully processed ${inputs.type} event`,\n    profileKey: inputs.profileKey,\n    platform: platform,\n    connectedNetworks: connectedNetworks,\n    userId: userProfile.user_id\n  };\n}"
+    },
+    {
+      "type": "function",
+      "name": "Handle Other Webhook Events",
+      "code": "// Handle other webhook events (post.published, post.failed, etc.)\nswitch (inputs.type) {\n  case 'post.published':\n    console.log('Post published successfully:', inputs.data);\n    // You can add logic here to update post status in your database\n    break;\n    \n  case 'post.failed':\n    console.log('Post failed to publish:', inputs.data);\n    // You can add logic here to handle failed posts\n    break;\n    \n  case 'analytics.updated':\n    console.log('Analytics updated:', inputs.data);\n    // You can add logic here to cache analytics data\n    break;\n    \n  default:\n    console.log('Unhandled webhook event type:', inputs.type);\n}\n\nreturn {\n  success: true,\n  message: `Webhook event ${inputs.type} processed`,\n  type: inputs.type,\n  timestamp: inputs.timestamp || new Date().toISOString()\n};"
+    }
+  ],
+  "error_handling": {
+    "catch_all": {
+      "type": "function",
+      "code": "console.error('Error in webhook-enhanced:', error);\nreturn {\n  success: false,\n  error: error.message || 'Internal server error',\n  details: error,\n  type: inputs.type\n};"
+    }
+  }
+}
