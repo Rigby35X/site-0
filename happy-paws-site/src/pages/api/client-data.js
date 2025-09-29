@@ -3,14 +3,13 @@
  * Serves dynamic client data from Xano database
  */
 
+import { getOrganization } from '../utils/storage.js';
+
 // Xano Configuration
 const XANO_CONFIG = {
     organizationsUrl: import.meta.env.VITE_XANO_ORGANIZATIONS_URL || 'https://x8ki-letl-twmt.n7.xano.io/api:siXQEdjz',
     token: import.meta.env.VITE_XANO_AUTH_TOKEN || import.meta.env.VITE_XANO_ORGANIZATIONS_TOKEN || 'mGDOpzrGb2PvfCn4tOJB7drqYvs'
 };
-
-// In-memory storage for organization data (shared with organization.js)
-const organizationStorage = new Map();
 
 // Helper function to make Xano requests
 async function makeXanoRequest(endpoint, options = {}) {
@@ -66,35 +65,10 @@ export async function GET({ request }) {
             orgData = await makeXanoRequest(`/organizations/${orgId}`);
             console.log('✅ Organization data fetched from Xano:', orgData);
         } catch (xanoError) {
-            console.warn('⚠️ Xano fetch failed, checking in-memory storage:', xanoError.message);
+            console.warn('⚠️ Xano fetch failed, using shared storage:', xanoError.message);
 
-            // Check in-memory storage first
-            const storedOrg = organizationStorage.get(orgId);
-            if (storedOrg) {
-                console.log('✅ Organization found in memory storage:', storedOrg);
-                orgData = storedOrg;
-            } else {
-                // Fallback organization data
-                orgData = {
-                    id: parseInt(orgId),
-                    name: 'Happy Paws Dog Rescue',
-                    email: 'info@happypawsrescue.org',
-                    phone: '(555) DOG-PAWS',
-                    ein: '11-1111111', // Default EIN that can be updated
-                    address: '123 Rescue Lane',
-                    city: 'Dog City',
-                    state: 'CA',
-                    zip: '90210',
-                    website: 'https://happypawsrescue.org',
-                    description: 'Dedicated to finding loving homes for dogs in need.',
-                    primary_color: '#04736b',
-                    secondary_color: '#6a9c9b'
-                };
-
-                // Store the fallback data
-                organizationStorage.set(orgId, orgData);
-                console.log('✅ Using fallback organization data and storing in memory');
-            }
+            // Use shared storage
+            orgData = getOrganization(orgId);
         }
         
         // Format phone for different uses

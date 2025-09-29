@@ -3,14 +3,13 @@
  * Handles CRUD operations for animals via Xano
  */
 
+import { getAnimals, setAnimals, addAnimal } from '../../utils/storage.js';
+
 // Xano Configuration
 const XANO_CONFIG = {
     animalsUrl: import.meta.env.VITE_XANO_ANIMALS_URL || 'https://x8ki-letl-twmt.n7.xano.io/api:Od874PbA',
     token: import.meta.env.VITE_XANO_ANIMALS_TOKEN || '165XkoniNXylFdNKgO_aCvmAIcQ'
 };
-
-// In-memory storage for animals (fallback when Xano is not available)
-const animalsStorage = new Map();
 
 // Helper function to make Xano requests
 async function makeXanoRequest(endpoint, options = {}) {
@@ -49,68 +48,7 @@ async function makeXanoRequest(endpoint, options = {}) {
     return responseData;
 }
 
-// Helper function to get fallback animals data
-function getFallbackAnimals(orgId) {
-    const storageKey = `org_${orgId}_animals`;
-    const storedAnimals = animalsStorage.get(storageKey);
-
-    if (storedAnimals) {
-        console.log('✅ Animals found in memory storage:', storedAnimals);
-        return storedAnimals;
-    }
-
-    // Default fallback animals
-    const fallbackAnimals = [
-        {
-            id: 1,
-            name: 'Buddy',
-            species: 'Dog',
-            breed: 'Golden Retriever Mix',
-            age: '3 years',
-            gender: 'Male',
-            size: 'Large',
-            description: 'Buddy is a friendly and energetic dog who loves playing fetch and going on long walks. He\'s great with kids and other dogs!',
-            image_url: 'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400',
-            status: 'Available',
-            org_id: parseInt(orgId),
-            created_at: new Date().toISOString()
-        },
-        {
-            id: 2,
-            name: 'Luna',
-            species: 'Dog',
-            breed: 'Border Collie',
-            age: '2 years',
-            gender: 'Female',
-            size: 'Medium',
-            description: 'Luna is an intelligent and loyal companion. She knows several tricks and would thrive in an active household.',
-            image_url: 'https://images.unsplash.com/photo-1551717743-49959800b1f6?w=400',
-            status: 'Available',
-            org_id: parseInt(orgId),
-            created_at: new Date().toISOString()
-        },
-        {
-            id: 3,
-            name: 'Max',
-            species: 'Dog',
-            breed: 'Labrador Mix',
-            age: '5 years',
-            gender: 'Male',
-            size: 'Large',
-            description: 'Max is a gentle giant who loves cuddles and treats. He\'s perfect for a family looking for a calm, loving companion.',
-            image_url: 'https://images.unsplash.com/photo-1518717758536-85ae29035b6d?w=400',
-            status: 'Available',
-            org_id: parseInt(orgId),
-            created_at: new Date().toISOString()
-        }
-    ];
-
-    // Store the fallback data
-    animalsStorage.set(storageKey, fallbackAnimals);
-    console.log('✅ Using fallback animals data and storing in memory');
-
-    return fallbackAnimals;
-}
+// Note: Using shared storage from utils/storage.js
 
 // GET - Fetch all animals for organization
 export async function GET({ request }) {
@@ -124,8 +62,8 @@ export async function GET({ request }) {
             animals = await makeXanoRequest(`/orgs/${orgId}/animals`);
             console.log('✅ Animals fetched from Xano:', animals);
         } catch (xanoError) {
-            console.warn('⚠️ Xano fetch failed, using fallback animals:', xanoError.message);
-            animals = getFallbackAnimals(orgId);
+            console.warn('⚠️ Xano fetch failed, using shared storage:', xanoError.message);
+            animals = getAnimals(orgId);
         }
 
         return new Response(JSON.stringify(animals), {
@@ -142,7 +80,7 @@ export async function GET({ request }) {
 
         // Return fallback animals as last resort
         const orgId = new URL(request.url).searchParams.get('orgId') || '3';
-        const fallbackAnimals = getFallbackAnimals(orgId);
+        const fallbackAnimals = getAnimals(orgId);
 
         return new Response(JSON.stringify(fallbackAnimals), {
             status: 200,
@@ -180,17 +118,10 @@ export async function POST({ request }) {
             });
             console.log('✅ Animal created in Xano:', newAnimal);
         } catch (xanoError) {
-            console.warn('⚠️ Xano create failed, using in-memory storage:', xanoError.message);
+            console.warn('⚠️ Xano create failed, using shared storage:', xanoError.message);
 
-            // Add to in-memory storage
-            const storageKey = `org_${orgId}_animals`;
-            const existingAnimals = animalsStorage.get(storageKey) || getFallbackAnimals(orgId);
-
-            newAnimal = { ...dataWithOrg };
-            existingAnimals.push(newAnimal);
-            animalsStorage.set(storageKey, existingAnimals);
-
-            console.log('✅ Animal created in memory storage:', newAnimal);
+            // Use shared storage to add animal
+            newAnimal = addAnimal(orgId, animalData);
         }
 
         return new Response(JSON.stringify(newAnimal), {
