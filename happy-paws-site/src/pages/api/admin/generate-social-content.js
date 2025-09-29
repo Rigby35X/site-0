@@ -21,13 +21,25 @@ export async function POST({ request }) {
             orgName = 'Happy Paws Dog Rescue'
         } = body;
 
-        if (!OPENAI_API_KEY) {
-            console.log('OpenAI API key not found in environment variables');
+        if (!OPENAI_API_KEY || OPENAI_API_KEY === 'sk-dummy-key-for-deployment') {
+            console.log('OpenAI API key not configured, using fallback content generation');
+
+            // Generate fallback content without OpenAI
+            const fallbackContent = generateFallbackContent(postType, platform, platformConfig, animalData, customPrompt, tone, orgName);
+
             return new Response(JSON.stringify({
-                error: 'OpenAI API key not configured. Please add VITE_OPENAI_API_KEY to your environment variables.'
+                success: true,
+                ...fallbackContent,
+                platform,
+                postType,
+                fallback: true,
+                message: 'Generated using fallback templates (OpenAI not configured)'
             }), {
-                status: 400,
-                headers: { 'Content-Type': 'application/json' }
+                status: 200,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                }
             });
         }
 
@@ -265,6 +277,107 @@ IMAGE_PROMPT: [a brief description for an image that would accompany this post, 
     }
 
     return prompt;
+}
+
+// Helper function to generate fallback content without OpenAI
+function generateFallbackContent(postType, platform, platformConfig, animalData, customPrompt, tone, orgName) {
+    const contentType = platformConfig?.type || 'post';
+
+    // Fallback content templates
+    const templates = {
+        new_arrival: {
+            content: animalData ?
+                `🐾 Meet ${animalData.name}! This adorable ${animalData.breed || 'pup'} just arrived at ${orgName} and is looking for their forever home. ${animalData.description || 'They\'re full of love and ready to bring joy to a special family!'} Could that be you? 💕` :
+                `🐾 We have a wonderful new arrival at ${orgName}! This sweet pup is looking for their forever home. Could that be you? 💕`,
+            hashtags: ['NewArrival', 'AdoptDontShop', 'RescueDog', 'ForeverHome', 'AnimalRescue'],
+            imagePrompt: animalData ? `Photo of ${animalData.name}, a ${animalData.breed || 'dog'} available for adoption` : 'Photo of a cute dog available for adoption'
+        },
+        adoption_update: {
+            content: animalData ?
+                `🎉 ADOPTED! ${animalData.name} has found their forever family! We're so happy to see this sweet ${animalData.breed || 'pup'} start their new chapter. Thank you to their new family for choosing adoption! ❤️` :
+                `🎉 ADOPTED! Another success story from ${orgName}! We're so happy to see another pup find their forever family. Thank you for choosing adoption! ❤️`,
+            hashtags: ['Adopted', 'SuccessStory', 'ForeverHome', 'AdoptDontShop', 'HappyEnding'],
+            imagePrompt: animalData ? `Happy photo of ${animalData.name} with their new family` : 'Happy photo of an adopted dog with their new family'
+        },
+        fundraiser: {
+            content: `🚨 Help us help them! ${orgName} needs your support to continue our mission of rescuing and caring for animals in need. Every donation, no matter the size, makes a difference in an animal's life. Can you help us reach our goal? 🙏`,
+            hashtags: ['Fundraiser', 'DonateNow', 'AnimalRescue', 'HelpAnimals', 'MakeADifference'],
+            imagePrompt: 'Heartwarming photo of rescued animals being cared for'
+        },
+        volunteer_need: {
+            content: `🙋‍♀️ Calling all animal lovers! ${orgName} is looking for amazing volunteers to help with our mission. Whether you can walk dogs, help with events, or assist with admin tasks, we need YOU! Join our pack and make a difference! 🐕`,
+            hashtags: ['Volunteer', 'JoinOurTeam', 'AnimalRescue', 'MakeADifference', 'CommunitySupport'],
+            imagePrompt: 'Photo of volunteers happily working with rescue animals'
+        },
+        success_story: {
+            content: animalData ?
+                `💕 Success Story Saturday! Remember ${animalData.name}? This amazing ${animalData.breed || 'pup'} was once in need of rescue, and now look at them thriving in their forever home! Stories like this remind us why we do what we do. ✨` :
+                `💕 Success Story Saturday! Another amazing transformation thanks to the power of rescue and love. Stories like this remind us why we do what we do at ${orgName}! ✨`,
+            hashtags: ['SuccessStory', 'Transformation', 'RescueStory', 'ForeverHome', 'LoveWins'],
+            imagePrompt: animalData ? `Before and after photos of ${animalData.name} showing their transformation` : 'Before and after photos showing a rescue transformation'
+        },
+        event: {
+            content: `📅 Mark your calendars! ${orgName} has an exciting event coming up and we'd love to see you there! Join us for a day of fun, furry friends, and community. Details in our bio! 🎉`,
+            hashtags: ['Event', 'CommunityEvent', 'FunForAll', 'AnimalRescue', 'JoinUs'],
+            imagePrompt: 'Promotional image for an animal rescue event with happy people and dogs'
+        },
+        general: {
+            content: customPrompt || `🐾 Every day at ${orgName}, we're working hard to give animals the second chance they deserve. From rescue to rehabilitation to finding forever homes, it's all about love. Thank you for being part of our mission! ❤️`,
+            hashtags: ['AnimalRescue', 'SecondChances', 'AdoptDontShop', 'RescueLife', 'LoveAnimals'],
+            imagePrompt: 'Heartwarming photo of rescue animals being cared for'
+        }
+    };
+
+    // Get template or use general
+    const template = templates[postType] || templates.general;
+
+    // Adjust content for platform
+    let content = template.content;
+    let hashtags = [...template.hashtags];
+
+    // Platform-specific adjustments
+    if (platform === 'twitter') {
+        // Shorten for Twitter
+        if (content.length > 240) {
+            content = content.substring(0, 237) + '...';
+        }
+        hashtags = hashtags.slice(0, 3); // Fewer hashtags for Twitter
+    } else if (platform === 'instagram') {
+        // Add more emojis for Instagram
+        content = content.replace(/\./g, ' ✨');
+        hashtags.push('Instadog', 'PuppyLove', 'RescueLife');
+    } else if (platform === 'linkedin') {
+        // More professional tone for LinkedIn
+        content = content.replace(/🐾|🎉|💕/g, '').trim();
+        hashtags = ['AnimalWelfare', 'CommunityImpact', 'SocialGood', 'Nonprofit'];
+    }
+
+    // Add platform-specific hashtags
+    const platformHashtags = {
+        instagram: ['DogsOfInstagram', 'RescueDogsOfInstagram', 'AdoptDontShop'],
+        facebook: ['AnimalRescue', 'CommunitySupport', 'AdoptDontShop'],
+        twitter: ['RescueDogs', 'AdoptDontShop'],
+        linkedin: ['AnimalWelfare', 'SocialImpact'],
+        tiktok: ['RescueDogs', 'DogsOfTikTok', 'AdoptDontShop']
+    };
+
+    if (platformHashtags[platform]) {
+        hashtags.push(...platformHashtags[platform]);
+    }
+
+    // Remove duplicates and limit hashtags
+    hashtags = [...new Set(hashtags)].slice(0, platform === 'instagram' ? 15 : 8);
+
+    return {
+        content,
+        hashtags,
+        imagePrompt: template.imagePrompt,
+        animalImages: animalData ? {
+            animalName: animalData.name,
+            images: animalData.image_url ? [animalData.image_url] : [],
+            mainImage: animalData.image_url
+        } : null
+    };
 }
 
 // Helper function to parse generated content
