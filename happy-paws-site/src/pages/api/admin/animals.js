@@ -3,7 +3,7 @@
  * Handles CRUD operations for animals via Xano
  */
 
-import { getAnimals, setAnimals, addAnimal } from '../../utils/storage.js';
+import { getAnimals, setAnimals, addAnimal } from '../../../utils/storage.js';
 
 // Xano Configuration
 const XANO_CONFIG = {
