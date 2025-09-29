@@ -32,7 +32,7 @@ const { title, image } = Astro.props
 @media only screen and (min-width: 0em) {
     #int-hero {
         min-height: 30vh;
-        padding-top: (50/16rem);
+        padding-top: calc(50 / 16 * 1rem);
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -75,10 +75,10 @@ const { title, image } = Astro.props
             font-size: var(--headerFontSize);
             text-align: center;
             width: 96%;
-            max-width: (500/16rem);
+            max-width: calc(500 / 16 * 1rem);
             margin: 0 auto;
-            margin-top: (70/16rem);
-            margin-bottom: (30/16rem);
+            margin-top: calc(70 / 16 * 1rem);
+            margin-bottom: calc(30 / 16 * 1rem);
             color: #fff;
             position: relative;
         }
@@ -86,9 +86,9 @@ const { title, image } = Astro.props
         p {
             text-align: center;
             width: 96%;
-            max-width: (400/16rem);
+            max-width: calc(400 / 16 * 1rem);
             margin: auto;
-            margin-bottom: (30/16rem);
+            margin-bottom: calc(30 / 16 * 1rem);
             color: #fff;
             display: block;
         }
@@ -99,10 +99,10 @@ const { title, image } = Astro.props
 @media only screen and (min-width: 64em) {
     #int-hero {
         height: auto;
-        min-height: (300/16rem);
-        padding-top: (180/16rem);
+        min-height: calc(300 / 16 * 1rem);
+        padding-top: calc(180 / 16 * 1rem);
         background-attachment: fixed;
-        padding-block-end: (100/16rem);
+        padding-block-end: calc(100 / 16 * 1rem);
     }
 }
 </style>
