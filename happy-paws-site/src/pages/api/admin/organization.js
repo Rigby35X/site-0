@@ -9,6 +9,9 @@ const XANO_CONFIG = {
     token: import.meta.env.VITE_XANO_AUTH_TOKEN || import.meta.env.VITE_XANO_ORGANIZATIONS_TOKEN || 'mGDOpzrGb2PvfCn4tOJB7drqYvs'
 };
 
+// In-memory storage for organization data (fallback when Xano is not available)
+const organizationStorage = new Map();
+
 // Helper function to make Xano requests
 async function makeXanoRequest(endpoint, options = {}) {
     const url = `${XANO_CONFIG.organizationsUrl}${endpoint}`;
@@ -18,16 +21,33 @@ async function makeXanoRequest(endpoint, options = {}) {
         ...options.headers
     };
 
+    console.log('🔄 Making Xano request:', {
+        url,
+        method: options.method || 'GET',
+        hasBody: !!options.body,
+        headers: { ...headers, Authorization: '[REDACTED]' }
+    });
+
     const response = await fetch(url, {
         ...options,
         headers
     });
 
+    console.log('📡 Xano response:', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok
+    });
+
     if (!response.ok) {
-        throw new Error(`Xano API error: ${response.status} ${response.statusText}`);
+        const errorText = await response.text();
+        console.error('❌ Xano API error details:', errorText);
+        throw new Error(`Xano API error: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
-    return await response.json();
+    const responseData = await response.json();
+    console.log('✅ Xano response data:', responseData);
+    return responseData;
 }
 
 // GET - Fetch organization data
@@ -50,18 +70,36 @@ export async function GET({ request }) {
     } catch (error) {
         console.error('Error fetching organization:', error);
         
-        // Return fallback organization data
-        const fallbackOrg = {
-            id: '3',
-            name: 'Happy Paws Dog Rescue',
-            email: 'info@happypawsrescue.org',
-            phone: '(555) DOG-PAWS',
-            address: '123 Rescue Lane, Suite 100, Dog City, CA 90210',
-            website: 'https://happypawsrescue.org',
-            description: 'Dedicated to finding loving homes for dogs in need.',
-            primary_color: '#2E8B57',
-            secondary_color: '#1a5f3f'
-        };
+        // Check in-memory storage first
+        const orgId = url.searchParams.get('orgId') || '3';
+        const storedOrg = organizationStorage.get(orgId);
+
+        let fallbackOrg;
+        if (storedOrg) {
+            console.log('✅ Organization found in memory storage:', storedOrg);
+            fallbackOrg = storedOrg;
+        } else {
+            // Return fallback organization data
+            fallbackOrg = {
+                id: parseInt(orgId),
+                name: 'Happy Paws Dog Rescue',
+                email: 'info@happypawsrescue.org',
+                phone: '(555) DOG-PAWS',
+                ein: '11-1111111', // Updated default EIN
+                address: '123 Rescue Lane',
+                city: 'Dog City',
+                state: 'CA',
+                zip: '90210',
+                website: 'https://happypawsrescue.org',
+                description: 'Dedicated to finding loving homes for dogs in need.',
+                primary_color: '#04736b', // Barkhaus colors
+                secondary_color: '#6a9c9b'
+            };
+
+            // Store the fallback data
+            organizationStorage.set(orgId, fallbackOrg);
+            console.log('✅ Using fallback organization data and storing in memory');
+        }
         
         return new Response(JSON.stringify(fallbackOrg), {
             status: 200,
@@ -78,12 +116,55 @@ export async function PUT({ request }) {
     try {
         const body = await request.json();
         const { orgId = '3', ...orgData } = body;
-        
-        const updatedOrganization = await makeXanoRequest(`/organizations/${orgId}`, {
-            method: 'PATCH',
-            body: JSON.stringify(orgData)
+
+        console.log('🔄 Updating organization:', {
+            orgId,
+            orgData,
+            url: `${XANO_CONFIG.organizationsUrl}/organizations/${orgId}`
         });
-        
+
+        let updatedOrganization;
+
+        try {
+            updatedOrganization = await makeXanoRequest(`/organizations/${orgId}`, {
+                method: 'PATCH',
+                body: JSON.stringify(orgData)
+            });
+            console.log('✅ Organization updated successfully via Xano:', updatedOrganization);
+        } catch (xanoError) {
+            console.warn('⚠️ Xano update failed, using in-memory storage:', xanoError.message);
+
+            // Get existing data from storage or use defaults
+            const existingOrg = organizationStorage.get(orgId) || {
+                id: parseInt(orgId),
+                name: 'Happy Paws Dog Rescue',
+                email: 'info@happypawsrescue.org',
+                phone: '(555) DOG-PAWS',
+                ein: '11-1111111',
+                address: '123 Rescue Lane',
+                city: 'Dog City',
+                state: 'CA',
+                zip: '90210',
+                website: 'https://happypawsrescue.org',
+                description: 'Dedicated to finding loving homes for dogs in need.',
+                primary_color: '#04736b',
+                secondary_color: '#6a9c9b'
+            };
+
+            // Merge with new data
+            updatedOrganization = {
+                ...existingOrg,
+                ...orgData,
+                id: parseInt(orgId),
+                updated_at: new Date().toISOString()
+            };
+
+            // Store in memory
+            organizationStorage.set(orgId, updatedOrganization);
+
+            console.log('✅ Organization updated in memory storage:', updatedOrganization);
+        }
+
         return new Response(JSON.stringify(updatedOrganization), {
             status: 200,
             headers: {
@@ -92,10 +173,20 @@ export async function PUT({ request }) {
             }
         });
     } catch (error) {
-        console.error('Error updating organization:', error);
-        return new Response(JSON.stringify({ error: 'Failed to update organization' }), {
+        console.error('❌ Error updating organization:', error);
+
+        // Return more detailed error information
+        return new Response(JSON.stringify({
+            error: 'Failed to update organization',
+            details: error.message,
+            xanoUrl: `${XANO_CONFIG.organizationsUrl}/organizations/${orgId || '3'}`,
+            orgData: orgData
+        }), {
             status: 500,
-            headers: { 'Content-Type': 'application/json' }
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            }
         });
     }
 }

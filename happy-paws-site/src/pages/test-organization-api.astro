@@ -1,0 +1,343 @@
+---
+// Test page for organization API
+---
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Organization API Test - Barkhaus</title>
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f8fafc;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    h1 {
+      color: #04736b;
+      margin-bottom: 30px;
+    }
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+    }
+    .section h2 {
+      color: #132f2d;
+      margin-top: 0;
+    }
+    button {
+      background: #04736b;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 5px;
+    }
+    button:hover {
+      background: #132f2d;
+    }
+    button:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-family: inherit;
+      margin: 5px 0;
+      box-sizing: border-box;
+    }
+    .result {
+      background: #f1f5f9;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 15px;
+      white-space: pre-wrap;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 12px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .success {
+      background: #dcfce7;
+      border-left: 4px solid #16a34a;
+    }
+    .error {
+      background: #fef2f2;
+      border-left: 4px solid #dc2626;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #374151;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧪 Organization API Test - Barkhaus</h1>
+    
+    <!-- Get Organization -->
+    <div class="section">
+      <h2>📖 Get Organization Data</h2>
+      <div class="form-group">
+        <label for="getOrgId">Organization ID:</label>
+        <input type="text" id="getOrgId" value="3" placeholder="Enter organization ID">
+      </div>
+      <button onclick="getOrganization()">📥 Get Organization</button>
+      <div id="getResult" class="result" style="display: none;"></div>
+    </div>
+
+    <!-- Update Organization -->
+    <div class="section">
+      <h2>✏️ Update Organization Data</h2>
+      <div class="form-group">
+        <label for="updateOrgId">Organization ID:</label>
+        <input type="text" id="updateOrgId" value="3" placeholder="Enter organization ID">
+      </div>
+      <div class="form-group">
+        <label for="orgName">Organization Name:</label>
+        <input type="text" id="orgName" value="Happy Paws Dog Rescue" placeholder="Enter organization name">
+      </div>
+      <div class="form-group">
+        <label for="orgEin">EIN:</label>
+        <input type="text" id="orgEin" value="11-1111111" placeholder="Enter EIN">
+      </div>
+      <div class="form-group">
+        <label for="orgEmail">Email:</label>
+        <input type="email" id="orgEmail" value="info@happypawsrescue.org" placeholder="Enter email">
+      </div>
+      <div class="form-group">
+        <label for="orgPhone">Phone:</label>
+        <input type="text" id="orgPhone" value="(555) DOG-PAWS" placeholder="Enter phone">
+      </div>
+      <div class="form-group">
+        <label for="orgAddress">Address:</label>
+        <input type="text" id="orgAddress" value="123 Rescue Lane" placeholder="Enter address">
+      </div>
+      <div class="form-group">
+        <label for="orgCity">City:</label>
+        <input type="text" id="orgCity" value="Dog City" placeholder="Enter city">
+      </div>
+      <div class="form-group">
+        <label for="orgState">State:</label>
+        <input type="text" id="orgState" value="CA" placeholder="Enter state">
+      </div>
+      <div class="form-group">
+        <label for="orgZip">ZIP:</label>
+        <input type="text" id="orgZip" value="90210" placeholder="Enter ZIP">
+      </div>
+      <button onclick="updateOrganization()">💾 Update Organization</button>
+      <div id="updateResult" class="result" style="display: none;"></div>
+    </div>
+
+    <!-- Test Client Data -->
+    <div class="section">
+      <h2>🌐 Test Client Data API</h2>
+      <div class="form-group">
+        <label for="clientOrgId">Organization ID:</label>
+        <input type="text" id="clientOrgId" value="3" placeholder="Enter organization ID">
+      </div>
+      <button onclick="getClientData()">🔄 Get Client Data</button>
+      <div id="clientResult" class="result" style="display: none;"></div>
+    </div>
+
+    <!-- Quick EIN Test -->
+    <div class="section">
+      <h2>⚡ Quick EIN Update Test</h2>
+      <div class="form-group">
+        <label for="quickEin">New EIN:</label>
+        <input type="text" id="quickEin" value="22-2222222" placeholder="Enter new EIN">
+      </div>
+      <button onclick="quickEinTest()">🚀 Quick EIN Update</button>
+      <div id="quickResult" class="result" style="display: none;"></div>
+    </div>
+  </div>
+
+  <script>
+    // Get organization data
+    async function getOrganization() {
+      const orgId = document.getElementById('getOrgId').value;
+      const resultDiv = document.getElementById('getResult');
+      
+      try {
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'result';
+        resultDiv.textContent = '🔄 Loading organization data...';
+        
+        const response = await fetch(`/api/admin/organization?orgId=${encodeURIComponent(orgId)}`);
+        const result = await response.json();
+        
+        if (response.ok) {
+          resultDiv.className = 'result success';
+          resultDiv.textContent = JSON.stringify(result, null, 2);
+          
+          // Populate update form with current data
+          if (result.name) document.getElementById('orgName').value = result.name;
+          if (result.ein) document.getElementById('orgEin').value = result.ein;
+          if (result.email) document.getElementById('orgEmail').value = result.email;
+          if (result.phone) document.getElementById('orgPhone').value = result.phone;
+          if (result.address) document.getElementById('orgAddress').value = result.address;
+          if (result.city) document.getElementById('orgCity').value = result.city;
+          if (result.state) document.getElementById('orgState').value = result.state;
+          if (result.zip) document.getElementById('orgZip').value = result.zip;
+        } else {
+          resultDiv.className = 'result error';
+          resultDiv.textContent = `❌ Error: ${JSON.stringify(result, null, 2)}`;
+        }
+      } catch (error) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = `❌ Network Error: ${error.message}`;
+      }
+    }
+
+    // Update organization data
+    async function updateOrganization() {
+      const orgId = document.getElementById('updateOrgId').value;
+      const resultDiv = document.getElementById('updateResult');
+      
+      const orgData = {
+        orgId: orgId,
+        name: document.getElementById('orgName').value,
+        ein: document.getElementById('orgEin').value,
+        email: document.getElementById('orgEmail').value,
+        phone: document.getElementById('orgPhone').value,
+        address: document.getElementById('orgAddress').value,
+        city: document.getElementById('orgCity').value,
+        state: document.getElementById('orgState').value,
+        zip: document.getElementById('orgZip').value
+      };
+      
+      try {
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'result';
+        resultDiv.textContent = '🔄 Updating organization...';
+        
+        const response = await fetch('/api/admin/organization', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(orgData)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          resultDiv.className = 'result success';
+          resultDiv.textContent = `✅ Organization updated successfully!\n\n${JSON.stringify(result, null, 2)}`;
+        } else {
+          resultDiv.className = 'result error';
+          resultDiv.textContent = `❌ Update failed: ${JSON.stringify(result, null, 2)}`;
+        }
+      } catch (error) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = `❌ Network Error: ${error.message}`;
+      }
+    }
+
+    // Get client data
+    async function getClientData() {
+      const orgId = document.getElementById('clientOrgId').value;
+      const resultDiv = document.getElementById('clientResult');
+      
+      try {
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'result';
+        resultDiv.textContent = '🔄 Loading client data...';
+        
+        const response = await fetch(`/api/client-data?orgId=${encodeURIComponent(orgId)}`);
+        const result = await response.json();
+        
+        if (response.ok) {
+          resultDiv.className = 'result success';
+          resultDiv.textContent = JSON.stringify(result, null, 2);
+        } else {
+          resultDiv.className = 'result error';
+          resultDiv.textContent = `❌ Error: ${JSON.stringify(result, null, 2)}`;
+        }
+      } catch (error) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = `❌ Network Error: ${error.message}`;
+      }
+    }
+
+    // Quick EIN test
+    async function quickEinTest() {
+      const newEin = document.getElementById('quickEin').value;
+      const resultDiv = document.getElementById('quickResult');
+      
+      try {
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'result';
+        resultDiv.textContent = '🔄 Testing EIN update...';
+        
+        // Step 1: Update EIN
+        const updateResponse = await fetch('/api/admin/organization', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            orgId: '3',
+            ein: newEin
+          })
+        });
+        
+        const updateResult = await updateResponse.json();
+        
+        if (!updateResponse.ok) {
+          throw new Error(`Update failed: ${JSON.stringify(updateResult)}`);
+        }
+        
+        // Step 2: Get client data to verify
+        const clientResponse = await fetch('/api/client-data?orgId=3');
+        const clientResult = await clientResponse.json();
+        
+        if (!clientResponse.ok) {
+          throw new Error(`Client data fetch failed: ${JSON.stringify(clientResult)}`);
+        }
+        
+        // Step 3: Check if EIN was updated
+        const updatedEin = clientResult.ein;
+        
+        if (updatedEin === newEin) {
+          resultDiv.className = 'result success';
+          resultDiv.textContent = `✅ EIN update successful!\n\nUpdate Response:\n${JSON.stringify(updateResult, null, 2)}\n\nClient Data EIN: ${updatedEin}`;
+        } else {
+          resultDiv.className = 'result error';
+          resultDiv.textContent = `❌ EIN update failed!\n\nExpected: ${newEin}\nActual: ${updatedEin}\n\nUpdate Response:\n${JSON.stringify(updateResult, null, 2)}`;
+        }
+        
+      } catch (error) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = `❌ Test Error: ${error.message}`;
+      }
+    }
+
+    // Load initial data on page load
+    window.addEventListener('load', () => {
+      getOrganization();
+    });
+  </script>
+</body>
+</html>
