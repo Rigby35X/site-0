@@ -1,26 +1,111 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
 import CTA from "@components/CTA.astro";
-import { getAnimalById } from "../../lib/xano.js";
 
-// Force server-side rendering to get fresh data on each request
-export const prerender = false;
-
-// Get the animal ID from URL params
-const { id } = Astro.params;
-
-// Fetch the animal data fresh from Xano on each request
-let animal: any = null;
-if (id) {
-  try {
-    animal = await getAnimalById(id);
-    console.log(`Loaded animal ${id} from Xano:`, animal?.name);
-  } catch (error) {
-    console.error(`Error loading animal ${id}:`, error);
-  }
+// Generate static paths for all animals
+export async function getStaticPaths() {
+  return [
+    { params: { id: "luna" } },
+    { params: { id: "max" } },
+    { params: { id: "bella" } },
+    { params: { id: "rocky" } },
+    { params: { id: "daisy" } },
+    { params: { id: "charlie" } }
+  ];
 }
 
-// Handle case where animal data is not found
+// Get the animal ID from the URL
+const { id } = Astro.params;
+
+// Sample animal data - in a real implementation, this would come from a CMS or database
+const animals = {
+  "luna": {
+    id: "luna",
+    name: "Luna",
+    type: "Dog",
+    breed: "Golden Retriever Mix",
+    age: "3 years",
+    gender: "Female",
+    size: "Large",
+    weight: "65 lbs",
+    status: "Available",
+    arrivalDate: "2024-01-15",
+    images: [
+      "/assets/images/animals/luna-1.jpg",
+      "/assets/images/animals/luna-2.jpg",
+      "/assets/images/animals/luna-3.jpg"
+    ],
+    description: "Luna is a sweet and gentle girl who loves playing fetch and cuddling on the couch. She's been with us for a few months and has shown incredible resilience and love despite her difficult past.",
+    personality: [
+      "Gentle and calm",
+      "Loves to play fetch",
+      "Great with children",
+      "Enjoys car rides",
+      "House trained"
+    ],
+    medicalInfo: {
+      spayedNeutered: true,
+      vaccinated: true,
+      microchipped: true,
+      specialNeeds: false,
+      medications: "None",
+      vetNotes: "Healthy and ready for adoption"
+    },
+    compatibility: {
+      goodWithKids: true,
+      goodWithCats: true,
+      goodWithDogs: true,
+      energyLevel: "Medium",
+      exerciseNeeds: "Daily walks and playtime"
+    },
+    story: "Luna came to us when her elderly owner could no longer care for her. Despite the big change in her life, she has remained sweet and loving. She's looking for a family who will appreciate her gentle nature and give her the love she deserves."
+  },
+  "max": {
+    id: "max",
+    name: "Max",
+    type: "Cat",
+    breed: "Domestic Shorthair",
+    age: "2 years",
+    gender: "Male",
+    size: "Medium",
+    weight: "12 lbs",
+    status: "Available",
+    arrivalDate: "2024-02-20",
+    images: [
+      "/assets/images/animals/max-1.jpg",
+      "/assets/images/animals/max-2.jpg",
+      "/assets/images/animals/max-3.jpg"
+    ],
+    description: "Max is a playful tabby who loves toys and sunny windowsills. He's a curious cat who enjoys exploring and would do well in a home with plenty of enrichment.",
+    personality: [
+      "Playful and energetic",
+      "Loves interactive toys",
+      "Enjoys climbing",
+      "Affectionate with humans",
+      "Litter box trained"
+    ],
+    medicalInfo: {
+      spayedNeutered: true,
+      vaccinated: true,
+      microchipped: true,
+      specialNeeds: false,
+      medications: "None",
+      vetNotes: "Healthy young cat"
+    },
+    compatibility: {
+      goodWithKids: true,
+      goodWithCats: true,
+      goodWithDogs: false,
+      energyLevel: "High",
+      exerciseNeeds: "Interactive play sessions"
+    },
+    story: "Max was found as a stray kitten and has blossomed into a confident, loving cat. He's ready to find his forever family and bring joy and entertainment to their home."
+  }
+};
+
+// Get the specific animal or return 404
+const animal = animals[id as keyof typeof animals];
+
 if (!animal) {
   return Astro.redirect('/404');
 }
@@ -48,7 +133,7 @@ if (!animal) {
             />
           </div>
           <div class="cs-thumbnail-gallery">
-            {animal.images.map((image: string, index: number) => (
+            {animal.images.map((image, index) => (
               <img
                 src={image}
                 alt={`${animal.name} photo ${index + 1}`}
@@ -60,7 +145,7 @@ if (!animal) {
             ))}
           </div>
         </div>
-
+        
         <div class="cs-info">
           <div class="cs-status-badge cs-status-{animal.status.toLowerCase()}">
             {animal.status}
@@ -83,9 +168,9 @@ if (!animal) {
               <strong>Weight:</strong> {animal.weight}
             </div>
           </div>
-
+          
           <p class="cs-description">{animal.description}</p>
-
+          
           <div class="cs-action-buttons">
             <a href="/applications" class="cs-button-solid">Apply to Adopt {animal.name}</a>
             <a href="/contact" class="cs-button-transparent">Ask About {animal.name}</a>
@@ -106,12 +191,12 @@ if (!animal) {
         <div class="cs-detail-card">
           <h2>Personality</h2>
           <ul class="cs-personality-list">
-            {animal.personality.map((trait: string) => (
+            {animal.personality.map((trait) => (
               <li>{trait}</li>
             ))}
           </ul>
         </div>
-
+        
         <!-- Medical Information -->
         <div class="cs-detail-card">
           <h2>Medical Information</h2>
@@ -142,11 +227,11 @@ if (!animal) {
             </div>
             <div class="cs-medical-item">
               <span class="cs-label">Medications:</span>
-              <span class="cs-value">{animal.medicalInfo.medicalNotes}</span>
+              <span class="cs-value">{animal.medicalInfo.medications}</span>
             </div>
             <div class="cs-medical-item">
               <span class="cs-label">Vet Notes:</span>
-              <span class="cs-value">{animal.medicalInfo.medicalNotes}</span>
+              <span class="cs-value">{animal.medicalInfo.vetNotes}</span>
             </div>
           </div>
         </div>
@@ -157,37 +242,37 @@ if (!animal) {
           <div class="cs-compatibility-grid">
             <div class="cs-compatibility-item">
               <span class="cs-label">Good with Kids:</span>
-              <span class={`cs-value ${animal.goodWithKids ? 'cs-yes' : 'cs-no'}`}>
-                {animal.goodWithKids ? 'Yes' : 'No'}
+              <span class={`cs-value ${animal.compatibility.goodWithKids ? 'cs-yes' : 'cs-no'}`}>
+                {animal.compatibility.goodWithKids ? 'Yes' : 'No'}
               </span>
             </div>
             <div class="cs-compatibility-item">
               <span class="cs-label">Good with Cats:</span>
-              <span class={`cs-value ${animal.goodWithCats ? 'cs-yes' : 'cs-no'}`}>
-                {animal.goodWithCats ? 'Yes' : 'No'}
+              <span class={`cs-value ${animal.compatibility.goodWithCats ? 'cs-yes' : 'cs-no'}`}>
+                {animal.compatibility.goodWithCats ? 'Yes' : 'No'}
               </span>
             </div>
             <div class="cs-compatibility-item">
               <span class="cs-label">Good with Dogs:</span>
-              <span class={`cs-value ${animal.goodWithDogs ? 'cs-yes' : 'cs-no'}`}>
-                {animal.goodWithDogs ? 'Yes' : 'No'}
+              <span class={`cs-value ${animal.compatibility.goodWithDogs ? 'cs-yes' : 'cs-no'}`}>
+                {animal.compatibility.goodWithDogs ? 'Yes' : 'No'}
               </span>
             </div>
             <div class="cs-compatibility-item">
               <span class="cs-label">Energy Level:</span>
-              <span class="cs-value">{animal.energyLevel}</span>
+              <span class="cs-value">{animal.compatibility.energyLevel}</span>
             </div>
             <div class="cs-compatibility-item">
               <span class="cs-label">Exercise Needs:</span>
-              <span class="cs-value">{animal.energyLevel} energy</span>
+              <span class="cs-value">{animal.compatibility.exerciseNeeds}</span>
             </div>
           </div>
         </div>
-
+        
         <!-- Story -->
         <div class="cs-detail-card cs-story-card">
           <h2>{animal.name}'s Story</h2>
-          <p class="cs-story-text">{animal.description}</p>
+          <p class="cs-story-text">{animal.story}</p>
           <div class="cs-arrival-info">
             <strong>Arrived at our rescue:</strong> {new Date(animal.arrivalDate).toLocaleDateString()}
           </div>
@@ -225,7 +310,7 @@ if (!animal) {
           <p>Complete the adoption paperwork and welcome {animal.name} to their new home!</p>
         </div>
       </div>
-
+      
       <div class="cs-adoption-cta">
         <a href="/applications" class="cs-button-solid">Start Adoption Process</a>
         <a href="/our-animals" class="cs-button-transparent">View Other Animals</a>
@@ -315,14 +400,11 @@ if (!animal) {
         gap: 0.75rem;
         margin-bottom: 1.5rem;
         padding: 1.5rem;
-        background: #f8f9fa;
+        background: var(--accent);
         border-radius: 12px;
-        border: 1px solid #e9ecef;
       }
 
       .cs-info-item {
-        color: var(--bodyTextColor);
-
         strong {
           color: var(--headerColor);
         }
@@ -383,11 +465,9 @@ if (!animal) {
 
       .cs-arrival-info {
         padding: 1rem;
-        background: #f8f9fa;
+        background: var(--accent);
         border-radius: 8px;
         font-size: 0.875rem;
-        color: var(--bodyTextColor);
-        border: 1px solid #e9ecef;
       }
     }
 
@@ -398,11 +478,9 @@ if (!animal) {
       li {
         padding: 0.75rem;
         margin-bottom: 0.5rem;
-        background: #f8f9fa;
+        background: var(--accent);
         border-radius: 8px;
         border-left: 4px solid var(--primary);
-        color: var(--bodyTextColor);
-        border: 1px solid #e9ecef;
       }
     }
 
@@ -444,7 +522,6 @@ if (!animal) {
   #adoption-process {
     padding: var(--sectionPadding);
     text-align: center;
-    background: #f8f9fa;
 
     .cs-section-title {
       font-size: 2.5rem;
@@ -454,17 +531,12 @@ if (!animal) {
 
     .cs-process-steps {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 2rem;
       margin-bottom: 3rem;
-      max-width: 800px;
+      max-width: 1000px;
       margin-left: auto;
       margin-right: auto;
-
-      @media screen and (max-width: 768px) {
-        grid-template-columns: 1fr;
-        max-width: 400px;
-      }
     }
 
     .cs-step {
@@ -515,34 +587,30 @@ if (!animal) {
     font-weight: 600;
     text-decoration: none;
     transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    display: inline-block;
     text-align: center;
     min-width: 180px;
-    line-height: 1.2;
   }
 
   .cs-button-solid {
     background: var(--primary);
-    color: white !important;
+    color: white;
     border: 2px solid var(--primary);
 
     &:hover {
-      background: var(--primaryLight);
-      border-color: var(--primaryLight);
-      color: white !important;
+      background: var(--primaryDark);
+      border-color: var(--primaryDark);
     }
   }
 
   .cs-button-transparent {
     background: transparent;
-    color: var(--primary) !important;
+    color: var(--primary);
     border: 2px solid var(--primary);
 
     &:hover {
       background: var(--primary);
-      color: white !important;
+      color: white;
     }
   }
 

@@ -1,0 +1,341 @@
+---
+// Test page for EIN update end-to-end
+---
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EIN Update Test - Barkhaus</title>
+  <style>
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f8fafc;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+    h1 {
+      color: #04736b;
+      margin-bottom: 30px;
+    }
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+    }
+    .section h2 {
+      color: #132f2d;
+      margin-top: 0;
+    }
+    button {
+      background: #04736b;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin: 5px;
+    }
+    button:hover {
+      background: #132f2d;
+    }
+    button:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-family: inherit;
+      margin: 5px 0;
+      box-sizing: border-box;
+    }
+    .result {
+      background: #f1f5f9;
+      padding: 15px;
+      border-radius: 6px;
+      margin-top: 15px;
+      white-space: pre-wrap;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 12px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .success {
+      background: #dcfce7;
+      border-left: 4px solid #16a34a;
+    }
+    .error {
+      background: #fef2f2;
+      border-left: 4px solid #dc2626;
+    }
+    .current-ein {
+      font-size: 18px;
+      font-weight: bold;
+      color: #04736b;
+      padding: 10px;
+      background: #f0fdfa;
+      border-radius: 6px;
+      margin: 10px 0;
+    }
+    .step {
+      margin: 20px 0;
+      padding: 15px;
+      border-left: 4px solid #04736b;
+      background: #f8fafc;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🧪 EIN Update End-to-End Test</h1>
+    
+    <div class="section">
+      <h2>📊 Current Status</h2>
+      <div class="current-ein" id="currentEin">Loading current EIN...</div>
+      <button onclick="loadCurrentEin()">🔄 Refresh Current EIN</button>
+    </div>
+
+    <div class="section">
+      <h2>✏️ Update EIN</h2>
+      <div class="step">
+        <strong>Step 1:</strong> Enter a new EIN value
+      </div>
+      <input type="text" id="newEin" placeholder="Enter new EIN (e.g., 22-2222222)" value="22-2222222">
+      
+      <div class="step">
+        <strong>Step 2:</strong> Update the organization
+      </div>
+      <button onclick="updateEin()">💾 Update EIN</button>
+      
+      <div class="step">
+        <strong>Step 3:</strong> Verify the change reflects in client data
+      </div>
+      <button onclick="verifyEinUpdate()">✅ Verify Update</button>
+      
+      <div id="updateResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="section">
+      <h2>🔄 Complete Test Flow</h2>
+      <button onclick="runCompleteTest()">🚀 Run Complete EIN Update Test</button>
+      <div id="completeResult" class="result" style="display: none;"></div>
+    </div>
+
+    <div class="section">
+      <h2>🌐 Test Footer Update</h2>
+      <p>After updating the EIN, check if the footer on the main website reflects the change:</p>
+      <button onclick="openMainSite()">🏠 Open Main Website</button>
+      <p><small>Look at the footer contact information to see if the EIN has updated.</small></p>
+    </div>
+  </div>
+
+  <script>
+    // Load current EIN
+    async function loadCurrentEin() {
+      try {
+        const response = await fetch('/api/client-data?orgId=3');
+        const data = await response.json();
+        
+        if (response.ok) {
+          document.getElementById('currentEin').textContent = `Current EIN: ${data.ein || 'Not set'}`;
+        } else {
+          document.getElementById('currentEin').textContent = 'Error loading EIN';
+        }
+      } catch (error) {
+        document.getElementById('currentEin').textContent = `Error: ${error.message}`;
+      }
+    }
+
+    // Update EIN
+    async function updateEin() {
+      const newEin = document.getElementById('newEin').value;
+      const resultDiv = document.getElementById('updateResult');
+      
+      if (!newEin.trim()) {
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'result error';
+        resultDiv.textContent = '❌ Please enter a new EIN value';
+        return;
+      }
+      
+      try {
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'result';
+        resultDiv.textContent = '🔄 Updating EIN...';
+        
+        const response = await fetch('/api/admin/organization', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orgId: '3',
+            ein: newEin
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          resultDiv.className = 'result success';
+          resultDiv.textContent = `✅ EIN updated successfully!\n\nResponse:\n${JSON.stringify(result, null, 2)}`;
+          
+          // Refresh current EIN display
+          setTimeout(() => {
+            loadCurrentEin();
+          }, 500);
+        } else {
+          resultDiv.className = 'result error';
+          resultDiv.textContent = `❌ EIN update failed:\n${JSON.stringify(result, null, 2)}`;
+        }
+      } catch (error) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = `❌ Network Error: ${error.message}`;
+      }
+    }
+
+    // Verify EIN update
+    async function verifyEinUpdate() {
+      const newEin = document.getElementById('newEin').value;
+      const resultDiv = document.getElementById('updateResult');
+      
+      try {
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'result';
+        resultDiv.textContent = '🔄 Verifying EIN update...';
+        
+        const response = await fetch('/api/client-data?orgId=3');
+        const data = await response.json();
+        
+        if (response.ok) {
+          const currentEin = data.ein;
+          
+          if (currentEin === newEin) {
+            resultDiv.className = 'result success';
+            resultDiv.textContent = `✅ EIN update verified!\n\nExpected: ${newEin}\nActual: ${currentEin}\n\n✅ SUCCESS: EIN is correctly updated in client data!`;
+          } else {
+            resultDiv.className = 'result error';
+            resultDiv.textContent = `❌ EIN update verification failed!\n\nExpected: ${newEin}\nActual: ${currentEin}\n\n❌ FAILURE: EIN was not updated correctly.`;
+          }
+        } else {
+          resultDiv.className = 'result error';
+          resultDiv.textContent = `❌ Failed to fetch client data:\n${JSON.stringify(data, null, 2)}`;
+        }
+      } catch (error) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = `❌ Network Error: ${error.message}`;
+      }
+    }
+
+    // Run complete test
+    async function runCompleteTest() {
+      const newEin = document.getElementById('newEin').value;
+      const resultDiv = document.getElementById('completeResult');
+      
+      if (!newEin.trim()) {
+        resultDiv.style.display = 'block';
+        resultDiv.className = 'result error';
+        resultDiv.textContent = '❌ Please enter a new EIN value';
+        return;
+      }
+      
+      resultDiv.style.display = 'block';
+      resultDiv.className = 'result';
+      
+      let log = '🚀 Starting complete EIN update test...\n\n';
+      resultDiv.textContent = log;
+      
+      try {
+        // Step 1: Get current EIN
+        log += '📖 Step 1: Getting current EIN...\n';
+        resultDiv.textContent = log;
+        
+        const currentResponse = await fetch('/api/client-data?orgId=3');
+        const currentData = await currentResponse.json();
+        const originalEin = currentData.ein;
+        
+        log += `   Current EIN: ${originalEin}\n\n`;
+        resultDiv.textContent = log;
+        
+        // Step 2: Update EIN
+        log += '💾 Step 2: Updating EIN...\n';
+        resultDiv.textContent = log;
+        
+        const updateResponse = await fetch('/api/admin/organization', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orgId: '3',
+            ein: newEin
+          })
+        });
+        
+        const updateResult = await updateResponse.json();
+        
+        if (!updateResponse.ok) {
+          throw new Error(`Update failed: ${JSON.stringify(updateResult)}`);
+        }
+        
+        log += `   ✅ Update successful\n\n`;
+        resultDiv.textContent = log;
+        
+        // Step 3: Verify update
+        log += '✅ Step 3: Verifying update...\n';
+        resultDiv.textContent = log;
+        
+        // Wait a moment for the update to propagate
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        const verifyResponse = await fetch('/api/client-data?orgId=3');
+        const verifyData = await verifyResponse.json();
+        const updatedEin = verifyData.ein;
+        
+        log += `   Expected EIN: ${newEin}\n`;
+        log += `   Actual EIN: ${updatedEin}\n\n`;
+        
+        if (updatedEin === newEin) {
+          log += '🎉 TEST PASSED!\n';
+          log += '✅ EIN was successfully updated and verified!\n';
+          log += '✅ Organization API and Client Data API are working correctly!\n';
+          resultDiv.className = 'result success';
+        } else {
+          log += '❌ TEST FAILED!\n';
+          log += '❌ EIN was not updated correctly in client data.\n';
+          resultDiv.className = 'result error';
+        }
+        
+        resultDiv.textContent = log;
+        
+        // Update current EIN display
+        loadCurrentEin();
+        
+      } catch (error) {
+        log += `❌ TEST ERROR: ${error.message}\n`;
+        resultDiv.className = 'result error';
+        resultDiv.textContent = log;
+      }
+    }
+
+    // Open main site
+    function openMainSite() {
+      window.open('/', '_blank');
+    }
+
+    // Load current EIN on page load
+    window.addEventListener('load', () => {
+      loadCurrentEin();
+    });
+  </script>
+</body>
+</html>

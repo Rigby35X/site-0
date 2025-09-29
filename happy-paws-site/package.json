@@ -15,13 +15,10 @@
     "template:senior-sanctuary": "node scripts/process-template.js examples/senior-pet-sanctuary.config.json ./output"
   },
   "dependencies": {
-    "@astrojs/node": "^9.4.4",
-    "@astrojs/sitemap": "^3.5.1",
-    "@astrojs/vercel": "^8.2.8",
-    "astro": "^5.13.7",
+    "@astrojs/sitemap": "^3.6.0",
+    "astro": "^5.14.1",
     "astro-icon": "^1.1.5",
     "autoprefixer": "^10.4.21",
-    "dotenv": "^17.2.2",
     "less": "^4.4.1"
   },
   "description": "Dedicated to rescuing and rehoming dogs in the greater metro area since 2015",

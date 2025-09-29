@@ -51,8 +51,7 @@ const currentYear = getCurrentYear()
         /></a
       >
       <p>
-        Extra content if you need it, if not you can delete this whole p tag. I
-        usually do.
+        Dedicated to rescuing and rehoming dogs in the greater metro area since 2015. Every dog deserves a loving home.
       </p>
     </div>
     <div class="right-section">
@@ -80,10 +79,10 @@ const currentYear = getCurrentYear()
           <li>
             <h2>Services</h2>
           </li>
-          <li>Service1</li>
-          <li>Service2</li>
-          <li>Service4</li>
-          <li>Service5</li>
+          <li>Dog Adoption</li>
+          <li>Foster Program</li>
+          <li>Volunteer Opportunities</li>
+          <li>Community Education</li>
         </ul>
         <ul>
           <li>
@@ -93,15 +92,12 @@ const currentYear = getCurrentYear()
             <a href="/contact" id="footer-address">
               {client.address.lineOne}<br />
               {client.address.lineTwo}<br />
-              {client.address.city}
-              {client.address.state}
-              {client.address.zip}
+              {client.address.city} {client.address.state} {client.address.zip}
             </a>
           </li>
           <li>
             <a href={`tel:${client.phoneForTel}`} id="footer-phone">
-              T:
-              {client.phoneFormatted}
+              T: {client.phoneFormatted}
             </a>
           </li>
           <li>
@@ -123,7 +119,7 @@ const currentYear = getCurrentYear()
 
   <div class="credit">
     <span>Designed and Hand Coded by</span>
-    <a href="/" target="_blank" rel="noopener">Your Company Name</a>
+    <a href="/" target="_blank" rel="noopener">Happy Paws Dog Rescue</a>
     <span class="copyright"> Copyright {currentYear} - Present</span>
   </div>
 </footer>
@@ -139,13 +135,11 @@ const currentYear = getCurrentYear()
   async function loadDynamicClientData() {
     try {
       const orgId = '3'; // Organization ID
-      console.log('🔄 Attempting to load dynamic client data for org:', orgId);
       const response = await fetch(`/api/client-data?orgId=${orgId}`);
-      console.log('📡 API Response status:', response.status);
 
       if (response.ok) {
         const clientData = await response.json();
-        console.log('✅ Received client data:', clientData);
+        console.log('Received client data:', clientData);
 
         // Update contact information
         const addressElement = document.getElementById('footer-address');
@@ -155,7 +149,6 @@ const currentYear = getCurrentYear()
             ${clientData.address.lineTwo ? clientData.address.lineTwo + '<br />' : ''}
             ${clientData.address.city} ${clientData.address.state} ${clientData.address.zip}
           `;
-          console.log('✅ Address updated:', clientData.address);
         }
 
         // Update phone number
@@ -163,14 +156,12 @@ const currentYear = getCurrentYear()
         if (phoneElement && clientData.phoneFormatted) {
           phoneElement.href = `tel:${clientData.phoneForTel}`;
           phoneElement.innerHTML = `T: ${clientData.phoneFormatted}`;
-          console.log('✅ Phone updated:', clientData.phoneFormatted);
         }
 
         // Update email
         const emailElement = document.getElementById('footer-email');
         if (emailElement && clientData.email) {
           emailElement.href = `mailto:${clientData.email}`;
-          console.log('✅ Email updated:', clientData.email);
         }
 
         // Update EIN using specific ID
@@ -182,22 +173,17 @@ const currentYear = getCurrentYear()
           console.warn('EIN element not found or no EIN data:', { einElement, ein: clientData.ein });
         }
 
-        console.log('✅ Dynamic client data loaded successfully');
-      } else {
-        console.error('❌ API request failed with status:', response.status);
-        const errorText = await response.text();
-        console.error('❌ Error details:', errorText);
+        console.log('Dynamic client data loaded successfully');
       }
     } catch (error) {
-      console.error('❌ Failed to load dynamic client data:', error);
-      console.log('🔄 Falling back to static client data');
+      console.warn('Failed to load dynamic client data:', error);
     }
   }
 
   async function loadSocialMediaIcons() {
     try {
       // Get organization ID from environment or default to 3
-      const orgId = import.meta.env.PUBLIC_ORG_ID || '3';
+      const orgId = '3';
 
       // Try to load from API first
       let socialMedia = {};

@@ -7,7 +7,7 @@ import FAQ from "@components/FAQ.astro";
 // Optimize our landing image and pass it as props to the BaseLayout (for preloading) and Landing (for rendering)
 import landingImage from "@assets/images/landing.jpg" // <-- THE PATH TO THE ASSET YOU WANT TO PRELOAD - The asset must live in src
 import { getImage } from "astro:assets";
-const optimizedImage = await getImage({src: landingImage, format: 'avif'});
+const optimizedImage = await getImage({src: landingImage, format: 'avif'})
 ---
 
 <BaseLayout
@@ -83,7 +83,8 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'});
         </p>
         <div class="cs-flex-group">
           <p class="cs-flex-p">
-            Our goal is to rescue as many animals as possible and get them into loving homes.
+            In consequat tincidunt turpis sit amet imperdiet. Praesent Classei
+            consequat tincidunt turpis sit amet imperdiet for mind.
           </p>
           <span class="cs-name">Justin Time</span>
           <span class="cs-job">CEO-Founder</span>
@@ -119,13 +120,13 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'});
 
       .cs-container {
         width: 100%;
-        max-width: calc(1280 / 16 * 1rem);
+        max-width: (1280/16rem);
         margin: auto;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        row-gap: calc(40 / 16 * 1rem);
+        row-gap: (40/16rem);
       }
 
       .cs-left {
@@ -173,28 +174,28 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'});
       }
 
       .cs-right {
-        max-width: calc(542 / 16 * 1rem);
+        max-width: (542/16rem);
         margin: auto;
       }
 
       .cs-topper {
         text-align: left;
-        margin-bottom: calc(4 / 16 * 1rem);
+        margin-bottom: (4/16rem);
       }
 
       .cs-title {
         text-align: left;
-        max-width: calc(800 / 16 * 1rem);
+        max-width: (800/16rem);
       }
 
       .cs-text {
         text-align: left;
-        max-width: calc(750 / 16 * 1rem);
-        margin-bottom: calc(16 / 16 * 1rem);
+        max-width: (750/16rem);
+        margin-bottom: (16/16rem);
         color: var(--bodyTextColor);
 
         &:last-of-type {
-          margin-bottom: calc(32 / 16 * 1rem);
+          margin-bottom: (32/16rem);
         }
       }
 
@@ -202,7 +203,7 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'});
         /* 16px - 32px */
         padding: clamp(1rem, 3vw, 2rem);
         background-color: #f7f7f7;
-        border-radius: calc(16 / 16 * 1rem);
+        border-radius: (16/16rem);
         position: relative;
       }
 
@@ -210,22 +211,22 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'});
         /* 14px - 16px */
         font-size: clamp(0.875rem, 1.5vw, 1rem);
         line-height: 1.5em;
-        margin: 0 0 calc(16 / 16 * 1rem);
+        margin: 0 0 (16/16rem);
         color: #353535;
       }
 
       .cs-name {
-        font-size: calc(16 / 16 * 1rem);
+        font-size: (16/16rem);
         font-weight: bold;
         line-height: 1.2em;
         text-transform: uppercase;
-        margin: 0 0 calc(4 / 16 * 1rem);
+        margin: 0 0 (4/16rem);
         color: var(--headerColor);
         display: block;
       }
 
       .cs-job {
-        font-size: calc(14 / 16 * 1rem);
+        font-size: (14/16rem);
         line-height: 1.5em;
         color: #353535;
         display: block;
@@ -238,11 +239,11 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'});
         position: absolute;
         /* 16px - 32px */
         right: clamp(1rem, 4vw, 2rem);
-        bottom: calc(0 / 16 * 1rem);
+        bottom: (0/16rem);
       }
 
       .cs-button-solid {
-        margin-top: calc(32 / 16 * 1rem);
+        margin-top: (32/16rem);
       }
     }
   }
@@ -253,7 +254,7 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'});
       .cs-container {
         flex-flow: row;
         justify-content: space-between;
-        gap: calc(52 / 16 * 1rem);
+        gap: (52/16rem);
       }
 
       .cs-left {

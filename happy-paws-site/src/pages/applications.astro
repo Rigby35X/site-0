@@ -360,8 +360,7 @@ import CTA from "@components/CTA.astro";
         margin-bottom: 2rem;
 
         .cs-fee-list {
-          background: #f8f9fa;
-          border: 1px solid #e9ecef;
+          background: var(--accent);
           padding: 1.5rem;
           border-radius: 8px;
           margin-bottom: 1rem;
@@ -403,23 +402,14 @@ import CTA from "@components/CTA.astro";
       }
 
       .cs-opportunity {
-        background: #f8f9fa;
-        border: 1px solid #e9ecef;
+        background: var(--accent);
         padding: 1rem;
         border-radius: 8px;
-        transition: all 0.3s ease;
-
-        &:hover {
-          background: #e9ecef;
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
 
         strong {
           display: block;
           margin-bottom: 0.5rem;
           color: var(--headerColor);
-          font-size: 1rem;
         }
 
         p {

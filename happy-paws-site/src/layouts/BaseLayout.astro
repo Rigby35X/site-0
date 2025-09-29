@@ -97,14 +97,7 @@ const { description, title, preloadedImage } = Astro.props as Props;
                 <slot/>
             </main>
             <Footer />
-
-            <!-- Back to Top Button -->
-            <button id="back-to-top" class="back-to-top" aria-label="Back to top">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="m18 15-6-6-6 6"/>
-                </svg>
-            </button>
-
+    
         </body>
 </html>
 
@@ -143,40 +136,4 @@ const { description, title, preloadedImage } = Astro.props as Props;
     setTheme();
   
     document.addEventListener("astro:after-swap", setTheme); // For View Transitions purposes - astro:after-swap ensures that the theme is kept after navigating to a new page.
-
-    // Back to Top Button functionality
-    function initBackToTop() {
-        const backToTopButton = document.getElementById('back-to-top');
-        if (!backToTopButton) return;
-
-        // Show/hide button based on scroll position
-        function toggleBackToTop() {
-            if (window.scrollY > 300) {
-                backToTopButton.classList.add('visible');
-            } else {
-                backToTopButton.classList.remove('visible');
-            }
-        }
-
-        // Scroll to top when clicked
-        function scrollToTop() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        }
-
-        // Event listeners
-        window.addEventListener('scroll', toggleBackToTop);
-        backToTopButton.addEventListener('click', scrollToTop);
-
-        // Initial check
-        toggleBackToTop();
-    }
-
-    // Initialize on page load
-    initBackToTop();
-
-    // Re-initialize after page transitions
-    document.addEventListener("astro:after-swap", initBackToTop);
   </script>

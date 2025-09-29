@@ -3,13 +3,14 @@
  * Handles organization data via Xano
  */
 
-import { getOrganization, setOrganization, hasOrganization } from '../../utils/storage.js';
-
 // Xano Configuration
 const XANO_CONFIG = {
     organizationsUrl: import.meta.env.VITE_XANO_ORGANIZATIONS_URL || 'https://x8ki-letl-twmt.n7.xano.io/api:siXQEdjz',
     token: import.meta.env.VITE_XANO_AUTH_TOKEN || import.meta.env.VITE_XANO_ORGANIZATIONS_TOKEN || 'mGDOpzrGb2PvfCn4tOJB7drqYvs'
 };
+
+// Simple global storage for organization data
+globalThis.organizationData = globalThis.organizationData || new Map();
 
 // Helper function to make Xano requests
 async function makeXanoRequest(endpoint, options = {}) {
@@ -69,9 +70,36 @@ export async function GET({ request }) {
     } catch (error) {
         console.error('Error fetching organization:', error);
         
-        // Use shared storage
+        // Use global storage
         const orgId = url.searchParams.get('orgId') || '3';
-        const fallbackOrg = getOrganization(orgId);
+        const stored = globalThis.organizationData.get(orgId);
+
+        let fallbackOrg;
+        if (stored) {
+            console.log('✅ Organization found in global storage:', stored);
+            fallbackOrg = stored;
+        } else {
+            // Default organization data
+            fallbackOrg = {
+                id: parseInt(orgId),
+                name: 'Happy Paws Dog Rescue',
+                email: 'info@happypawsrescue.org',
+                phone: '(555) DOG-PAWS',
+                ein: '11-1111111', // Updated default EIN
+                address: '123 Rescue Lane',
+                city: 'Dog City',
+                state: 'CA',
+                zip: '90210',
+                website: 'https://happypawsrescue.org',
+                description: 'Dedicated to finding loving homes for dogs in need.',
+                primary_color: '#04736b', // Barkhaus colors
+                secondary_color: '#6a9c9b'
+            };
+
+            // Store the default data
+            globalThis.organizationData.set(orgId, fallbackOrg);
+            console.log('✅ Using default organization data and storing in global storage');
+        }
         
         return new Response(JSON.stringify(fallbackOrg), {
             status: 200,
@@ -104,10 +132,37 @@ export async function PUT({ request }) {
             });
             console.log('✅ Organization updated successfully via Xano:', updatedOrganization);
         } catch (xanoError) {
-            console.warn('⚠️ Xano update failed, using shared storage:', xanoError.message);
+            console.warn('⚠️ Xano update failed, using global storage:', xanoError.message);
 
-            // Use shared storage to update organization
-            updatedOrganization = setOrganization(orgId, orgData);
+            // Get existing data from global storage or use defaults
+            const existingOrg = globalThis.organizationData.get(orgId) || {
+                id: parseInt(orgId),
+                name: 'Happy Paws Dog Rescue',
+                email: 'info@happypawsrescue.org',
+                phone: '(555) DOG-PAWS',
+                ein: '11-1111111',
+                address: '123 Rescue Lane',
+                city: 'Dog City',
+                state: 'CA',
+                zip: '90210',
+                website: 'https://happypawsrescue.org',
+                description: 'Dedicated to finding loving homes for dogs in need.',
+                primary_color: '#04736b',
+                secondary_color: '#6a9c9b'
+            };
+
+            // Merge with new data
+            updatedOrganization = {
+                ...existingOrg,
+                ...orgData,
+                id: parseInt(orgId),
+                updated_at: new Date().toISOString()
+            };
+
+            // Store in global storage
+            globalThis.organizationData.set(orgId, updatedOrganization);
+
+            console.log('✅ Organization updated in global storage:', updatedOrganization);
         }
 
         return new Response(JSON.stringify(updatedOrganization), {

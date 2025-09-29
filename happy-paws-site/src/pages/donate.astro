@@ -13,7 +13,7 @@ import CTA from "@components/CTA.astro";
   
   <section id="page-header">
     <div class="cs-container">
-      <h1 class="cs-title">Support Our Mission</h2>
+      <h1 class="cs-title">Support Our Mission</h1>
       <p class="cs-text">
         Your donation directly impacts the lives of animals in need. Every dollar helps us provide 
         medical care, food, shelter, and love to animals waiting for their forever homes.
@@ -53,8 +53,8 @@ import CTA from "@components/CTA.astro";
         
         <div class="cs-image-content">
           <img 
-            src="/assets/images/donation-impact.png" 
-            alt="Rescued animals receiving care and support"
+            src="/assets/images/donation-impact.jpg" 
+            alt="Rescued animals receiving care"
             width="500"
             height="400"
             loading="lazy"
@@ -293,7 +293,7 @@ import CTA from "@components/CTA.astro";
     .cs-title {
       font-size: clamp(2.5rem, 5vw, 4rem);
       margin-bottom: 1rem;
-      color: white;
+      color: rgb(0, 0, 0) !important;
     }
 
     .cs-text {
@@ -306,7 +306,6 @@ import CTA from "@components/CTA.astro";
   /* Donation Impact */
   #donation-impact {
     padding: var(--sectionPadding);
-    background: #f8f9fa;
 
     .cs-content {
       display: grid;
@@ -341,16 +340,8 @@ import CTA from "@components/CTA.astro";
     .cs-stat {
       text-align: center;
       padding: 1.5rem;
-      background: white;
+      background: var(--accent);
       border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      border: 1px solid #e9ecef;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
-      }
 
       .cs-number {
         font-size: 2.5rem;

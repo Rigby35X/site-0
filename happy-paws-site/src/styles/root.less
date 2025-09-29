@@ -67,21 +67,35 @@
 		padding: 0 (30/16rem);
 
 		// Transition Properties
-		color: white !important;
+		color: #000;
 		background-color: var(--primary);
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
+		display: inline-block;
 		position: relative;
 		z-index: 1;
-		transition: all 0.3s ease;
-		border: 2px solid var(--primary);
-		border-radius: 6px;
+		transition: color 0.3s;
+		transition-delay: 0.1s;
 
 		&:hover {
-			color: white !important;
-			background-color: var(--primaryLight);
-			border-color: var(--primaryLight);
+			color: #fff;
+			&:before {
+				width: 100%;
+			}
+		}
+
+		&:before {
+			content: "";
+
+			//Transition properties
+			width: 0;
+			height: 100%;
+			background-color: #000;
+			opacity: 1;
+			display: block;
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: -1;
+			transition: width 0.3s;
 		}
 	}
 }
@@ -309,46 +323,5 @@
 
 	.cs-hide-on-desktop {
 		display: none;
-	}
-}
-
-/*-- -------------------------- -->
-<---     Back to Top Button     -->
-<--- -------------------------- -*/
-
-.back-to-top {
-	position: fixed;
-	bottom: 2rem;
-	right: 2rem;
-	width: 3rem;
-	height: 3rem;
-	background: var(--primary);
-	color: white;
-	border: none;
-	border-radius: 50%;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-	transition: all 0.3s ease;
-	opacity: 0;
-	visibility: hidden;
-	z-index: 1000;
-
-	&:hover {
-		background: var(--primaryLight);
-		transform: translateY(-2px);
-		box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-	}
-
-	&.visible {
-		opacity: 1;
-		visibility: visible;
-	}
-
-	svg {
-		width: 1.25rem;
-		height: 1.25rem;
 	}
 }

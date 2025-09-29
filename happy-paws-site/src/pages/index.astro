@@ -6,12 +6,12 @@ import FAQ from "@components/FAQ.astro";
 // Optimize our landing image and pass it as props to the BaseLayout (for preloading) and Landing (for rendering)
 import landingImage from "@assets/images/landing.jpg" // <-- THE PATH TO THE ASSET YOU WANT TO PRELOAD - The asset must live in src
 import { getImage } from "astro:assets";
-const optimizedImage = await getImage({src: landingImage, format: 'avif'});
+const optimizedImage = await getImage({src: landingImage, format: 'avif'})
 ---
 
 <BaseLayout
-  title="Saving Dogs, Finding Forever Homes"
-  description="Dedicated to rescuing and rehoming dogs in the greater metro area since 2015"
+  title="Happy Paws Dog Rescue - Every Dog Deserves a Loving Home"
+  description="Happy Paws Dog Rescue is dedicated to finding loving homes for dogs in need. Browse our available animals and learn how you can help make a difference."
   preloadedImage = {optimizedImage}
 >
   <!-- ============================================ -->
@@ -21,13 +21,13 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'});
   <section id="hero">
     <div class="cs-container">
       <div class="cs-flex-group">
-        <span class="cs-topper">Dog Rescue & Adoption</span>
+        <span class="cs-topper">Rescue • Love • Adopt</span>
         <h1 class="cs-title">Every Dog Deserves a Loving Home</h1>
         <p class="cs-text">
-          Happy Paws Dog Rescue has been saving lives and finding forever homes for dogs in need since 2015. Our dedicated team works tirelessly to rescue, rehabilitate, and rehome dogs of all ages and breeds.
+          At Happy Paws Dog Rescue, we're dedicated to finding loving homes for dogs in need. Browse our available animals and discover how you can make a difference in a dog's life today.
         </p>
-        <a href="/our-animals" class="cs-button-solid">Adopt a Dog</a>
-        <a href="/about" class="cs-button-transparent">
+        <a href="/our-animals/" class="cs-button-solid">Meet Our Dogs</a>
+        <a href="/about/" class="cs-button-transparent">
           <img
             class="cs-img"
             loading="lazy"
@@ -37,7 +37,7 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'});
             width="17"
             height="17"
           />
-          Learn About Us
+          Our Story
         </a>
       </div>
     </div>
@@ -79,10 +79,10 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'});
           height="48"
         />
       </picture>
-      <h2>Adoption</h2>
+      <h2>Service 1</h2>
       <p>
-        Find your perfect companion from our loving dogs waiting for forever homes.
-        Our adoption process ensures the best match for both you and your new family member.
+        Talk about the service with keywords people will be searching for it by.
+        Keep it 1-2 sentences.
       </p>
     </div>
     <div class="card">
@@ -91,15 +91,15 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'});
           aria-hidden="true"
           decoding="async"
           src="/assets/svgs/service2.svg"
-          alt="foster care"
+          alt="appliance"
           width="48"
           height="48"
         />
       </picture>
-      <h2>Foster</h2>
+      <h2>Service 2</h2>
       <p>
-        Provide temporary loving care for dogs in need while they await their forever homes.
-        Foster families are the heart of our rescue mission.
+        Talk about the service with keywords people will be searching for it by.
+        Keep it 1-2 sentences.
       </p>
     </div>
     <div class="card">
@@ -108,15 +108,15 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'});
           aria-hidden="true"
           decoding="async"
           src="/assets/svgs/service3.svg"
-          alt="volunteer"
+          alt="appliance"
           width="48"
           height="48"
         />
       </picture>
-      <h2>Volunteer</h2>
+      <h2>Service 3</h2>
       <p>
-        Join our dedicated team of volunteers helping with dog care, events, and administrative tasks.
-        Every hour you give makes a difference in a dog's life.
+        Talk about the service with keywords people will be searching for it by.
+        Keep it 1-2 sentences.
       </p>
     </div>
   </section>
@@ -171,24 +171,26 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'});
       <!-- Right Content Section-->
       <div class="cs-right">
         <span class="cs-topper">About Us</span>
-        <h2 class="cs-title">About Happy Paws Rescue</h2>
+        <h2 class="cs-title">About Company Title</h2>
         <p class="cs-text">
-          We are a community of passionate animal lovers dedicated to giving every dog and cat the chance they deserve. At Happy Paws Rescue, we believe every animal’s story matters. From abandoned puppies to senior dogs in need of a second chance, our mission is to rescue, rehabilitate, and rehome with love.
+          In consequat tincidunt turpis sit amet imperdiet. Praesent Class
+          officelan nonatoureanor mauris laoreet, iaculis libero quis. Curabitur
+          et tempus eri consequat tincidunt turpis sit amet imperdiet. Praesent
+          nonatourean olei aptent taciti sociosqu ad litora torquent per.
         </p>
         <p class="cs-text">
-          Our work goes beyond simple rescue. We provide:
-
-Safe Shelter & Care – Every animal receives medical treatment, nutritious food, and a warm place to heal.
-
-Adoption Services – We carefully match pets with families to ensure lifelong homes.
-
-Foster Network – Our foster families give animals the comfort of a home while they await adoption.
-
-Community Education – We promote responsible pet ownership, spay/neuter programs, and compassionate care.
+          In consequat tincidunt turpis sit amet imperdiet. Praesent Class
+          officelan nonatoureanor mauris laoreet, iaculis libero quis. Curabitur
+          et tempus eri consequat tincidunt turpis sit amet imperdiet. Praesent
+          nonatourean olei aptent taciti sociosqu ad litora torquent per.
         </p>
         <div class="cs-flex-group">
           <p class="cs-flex-p">
-            
+            In consequat tincidunt turpis sit amet imperdiet. Praesent Classei
+            consequat tincidunt turpis sit amet imperdiet for mind.
+          </p>
+          <span class="cs-name">Justin Time</span>
+          <span class="cs-job">CEO-Founder</span>
           <img
             class="cs-quote-icon"
             loading="lazy"
