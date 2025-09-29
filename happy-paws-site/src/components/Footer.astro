@@ -139,11 +139,13 @@ const currentYear = getCurrentYear()
   async function loadDynamicClientData() {
     try {
       const orgId = '3'; // Organization ID
+      console.log('🔄 Attempting to load dynamic client data for org:', orgId);
       const response = await fetch(`/api/client-data?orgId=${orgId}`);
+      console.log('📡 API Response status:', response.status);
 
       if (response.ok) {
         const clientData = await response.json();
-        console.log('Received client data:', clientData);
+        console.log('✅ Received client data:', clientData);
 
         // Update contact information
         const addressElement = document.querySelector('a[href="/contact"]');
@@ -177,10 +179,15 @@ const currentYear = getCurrentYear()
           console.warn('EIN element not found or no EIN data:', { einElement, ein: clientData.ein });
         }
 
-        console.log('Dynamic client data loaded successfully');
+        console.log('✅ Dynamic client data loaded successfully');
+      } else {
+        console.error('❌ API request failed with status:', response.status);
+        const errorText = await response.text();
+        console.error('❌ Error details:', errorText);
       }
     } catch (error) {
-      console.warn('Failed to load dynamic client data:', error);
+      console.error('❌ Failed to load dynamic client data:', error);
+      console.log('🔄 Falling back to static client data');
     }
   }
 
