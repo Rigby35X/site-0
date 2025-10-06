@@ -231,17 +231,17 @@ const content = {
         <picture class="cs-picture cs-picture1">
           <source
             media="(max-width: 600px)"
-            srcset="/assets/images/cabinets2-m.jpg"
+            srcset={content.about_us.featured_image_url || "/assets/images/cabinets2-m.jpg"}
           />
           <source
             media="(min-width: 601px)"
-            srcset="/assets/images/cabinets2.jpg"
+            srcset={content.about_us.featured_image_url || "/assets/images/cabinets2.jpg"}
           />
           <img
             aria-hidden="true"
             decoding="async"
-            src="/assets/images/cabinets2.jpg"
-            alt="cabinets"
+            src={content.about_us.featured_image_url || "/assets/images/cabinets2.jpg"}
+            alt="about us"
             loading="lazy"
             width="400"
             height="563"
@@ -250,17 +250,17 @@ const content = {
         <picture class="cs-picture cs-picture2">
           <source
             media="(max-width: 600px)"
-            srcset="/assets/images/construction-m.jpg"
+            srcset={content.about_us.secondary_image_url || "/assets/images/construction-m.jpg"}
           />
           <source
             media="(min-width: 601px)"
-            srcset="/assets/images/construction.jpg"
+            srcset={content.about_us.secondary_image_url || "/assets/images/construction.jpg"}
           />
           <img
             aria-hidden="true"
             decoding="async"
-            src="/assets/images/construction.jpg"
-            alt="house"
+            src={content.about_us.secondary_image_url || "/assets/images/construction.jpg"}
+            alt="about us secondary"
             loading="lazy"
             width="400"
             height="563"

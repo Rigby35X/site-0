@@ -1039,7 +1039,7 @@
                                                     <textarea id="about-description" class="form-input" rows="4" placeholder="Tell your story..."></textarea>
                                                 </div>
                                                 <div class="form-group">
-                                                    <label class="form-label">About Image</label>
+                                                    <label class="form-label">Featured Image (Main)</label>
                                                     <div class="space-y-2">
                                                         <input type="url" id="about-image-url" class="form-input" placeholder="https://example.com/image.jpg">
                                                         <div class="text-center">
@@ -1047,6 +1047,19 @@
                                                         </div>
                                                         <input type="file" id="about-image-upload" class="form-input" accept="image/*">
                                                         <div id="about-image-preview" class="hidden mt-2">
+                                                            <img class="w-32 h-20 object-cover rounded border">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="form-label">Secondary Image</label>
+                                                    <div class="space-y-2">
+                                                        <input type="url" id="about-secondary-image-url" class="form-input" placeholder="https://example.com/image.jpg">
+                                                        <div class="text-center">
+                                                            <span class="text-gray-500">or</span>
+                                                        </div>
+                                                        <input type="file" id="about-secondary-image-upload" class="form-input" accept="image/*">
+                                                        <div id="about-secondary-image-preview" class="hidden mt-2">
                                                             <img class="w-32 h-20 object-cover rounded border">
                                                         </div>
                                                     </div>
@@ -5801,11 +5814,21 @@
                     if (content.about_us) {
                         document.getElementById('about-title').value = content.about_us.headline || '';
                         document.getElementById('about-description').value = content.about_us.body_text || '';
-                        document.getElementById('about-image-url').value = content.about_us.image_url || '';
+                        // Use featured_image_url which is the correct field in Xano
+                        document.getElementById('about-image-url').value = content.about_us.featured_image_url || '';
+                        document.getElementById('about-secondary-image-url').value = content.about_us.secondary_image_url || '';
 
-                        // Update image preview if URL exists
-                        if (content.about_us.image_url) {
-                            updateImagePreview(content.about_us.image_url, document.getElementById('about-image-preview'));
+                        console.log('About section images:', {
+                            featured: content.about_us.featured_image_url,
+                            secondary: content.about_us.secondary_image_url
+                        });
+
+                        // Update image previews if URLs exist
+                        if (content.about_us.featured_image_url) {
+                            updateImagePreview(content.about_us.featured_image_url, document.getElementById('about-image-preview'));
+                        }
+                        if (content.about_us.secondary_image_url) {
+                            updateImagePreview(content.about_us.secondary_image_url, document.getElementById('about-secondary-image-preview'));
                         }
                     }
 
@@ -6049,7 +6072,8 @@
             const aboutData = {
                 headline: document.getElementById('about-title').value,
                 body_text: document.getElementById('about-description').value,
-                image_url: document.getElementById('about-image-url').value
+                featured_image_url: document.getElementById('about-image-url').value,
+                secondary_image_url: document.getElementById('about-secondary-image-url').value
             };
 
             console.log('Saving about section:', aboutData);
@@ -6207,7 +6231,7 @@
 
             if (heroBgUpload) {
                 heroBgUpload.addEventListener('change', function(e) {
-                    handleImageUpload(e, heroBgUrl, heroBgPreview);
+                    handleImageUpload(e, heroBgUrl, heroBgPreview, 'hero');
                 });
             }
 
@@ -6218,7 +6242,18 @@
 
             if (aboutImageUpload) {
                 aboutImageUpload.addEventListener('change', function(e) {
-                    handleImageUpload(e, aboutImageUrl, aboutImagePreview);
+                    handleImageUpload(e, aboutImageUrl, aboutImagePreview, 'about');
+                });
+            }
+
+            // About secondary image upload
+            const aboutSecondaryImageUpload = document.getElementById('about-secondary-image-upload');
+            const aboutSecondaryImageUrl = document.getElementById('about-secondary-image-url');
+            const aboutSecondaryImagePreview = document.getElementById('about-secondary-image-preview');
+
+            if (aboutSecondaryImageUpload) {
+                aboutSecondaryImageUpload.addEventListener('change', function(e) {
+                    handleImageUpload(e, aboutSecondaryImageUrl, aboutSecondaryImagePreview, 'about-secondary');
                 });
             }
 
@@ -6234,9 +6269,15 @@
                     updateImagePreview(e.target.value, aboutImagePreview);
                 });
             }
+
+            if (aboutSecondaryImageUrl) {
+                aboutSecondaryImageUrl.addEventListener('input', function(e) {
+                    updateImagePreview(e.target.value, aboutSecondaryImagePreview);
+                });
+            }
         }
 
-        function handleImageUpload(event, urlInput, previewContainer) {
+        function handleImageUpload(event, urlInput, previewContainer, section = 'website-content') {
             const file = event.target.files[0];
             if (!file) return;
 
@@ -6252,10 +6293,13 @@
                 return;
             }
 
+            console.log(`🔄 Uploading image for section: ${section}`);
+
             // Create FormData for upload
             const formData = new FormData();
             formData.append('image', file);
-            formData.append('orgId', currentOrgId);
+            formData.append('section', section);
+            formData.append('orgId', currentOrgId || '9');
 
             // Show upload progress
             const uploadButton = event.target.parentElement.querySelector('.upload-progress');
@@ -6304,30 +6348,25 @@
 
         async function uploadImageToServer(formData) {
             try {
-                // This would be the actual upload endpoint
+                console.log('🔄 Uploading image to server...');
+
                 const response = await fetch('/api/upload-image', {
                     method: 'POST',
                     body: formData
                 });
 
                 if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
                 }
 
-                return await response.json();
+                const result = await response.json();
+                console.log('✅ Image upload successful:', result);
+
+                return result;
             } catch (error) {
-                // For now, simulate a successful upload with a placeholder
-                console.log('Simulating image upload...', formData.get('image').name);
-
-                // Create a local URL for preview
-                const file = formData.get('image');
-                const localUrl = URL.createObjectURL(file);
-
-                return {
-                    success: true,
-                    imageUrl: localUrl,
-                    message: 'Image uploaded successfully (simulated)'
-                };
+                console.error('❌ Image upload failed:', error);
+                throw error;
             }
         }
 
