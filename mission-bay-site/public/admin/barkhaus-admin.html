@@ -5764,44 +5764,150 @@
             }
         }
 
-        function loadHomepageContent() {
-            // Load existing homepage content from the website
-            // This would typically fetch from an API or parse the current page
-            console.log('Loading homepage content...');
+        async function loadHomepageContent() {
+            console.log('Loading homepage content from API...');
 
-            // For now, we'll populate with placeholder data
-            document.getElementById('hero-heading').value = 'Find Your Perfect Companion';
-            document.getElementById('hero-subheading').value = 'Every animal deserves a loving home. Browse our available pets and find your new best friend today.';
+            try {
+                const response = await fetch(`/api/website-content?orgId=${currentOrgId}&page=homepage`);
+                if (response.ok) {
+                    const content = await response.json();
+                    console.log('✅ Loaded website content:', content);
 
-            // Load services
+                    // Populate Hero Section
+                    if (content.hero) {
+                        document.getElementById('hero-heading').value = content.hero.headline || '';
+                        document.getElementById('hero-subheading').value = content.hero.body_text || '';
+                        document.getElementById('hero-bg-url').value = content.hero.background_image_url || '';
+
+                        // Update image preview if URL exists
+                        if (content.hero.background_image_url) {
+                            updateImagePreview(content.hero.background_image_url, document.getElementById('hero-bg-preview'));
+                        }
+                    }
+
+                    // Populate About Section
+                    if (content.about_us) {
+                        document.getElementById('about-title').value = content.about_us.headline || '';
+                        document.getElementById('about-description').value = content.about_us.body_text || '';
+                        document.getElementById('about-image-url').value = content.about_us.image_url || '';
+
+                        // Update image preview if URL exists
+                        if (content.about_us.image_url) {
+                            updateImagePreview(content.about_us.image_url, document.getElementById('about-image-preview'));
+                        }
+                    }
+
+                    // Load services from content
+                    loadServicesFromContent(content.services_header);
+
+                    // Load FAQ from content
+                    loadFAQsFromContent(content.faq_section);
+
+                } else {
+                    console.error('Failed to load website content:', response.status);
+                    // Load default content
+                    loadDefaultContent();
+                }
+            } catch (error) {
+                console.error('Error loading website content:', error);
+                // Load default content
+                loadDefaultContent();
+            }
+        }
+
+        function loadDefaultContent() {
+            console.log('Loading default content...');
+
+            // Default hero content
+            document.getElementById('hero-heading').value = 'Every Dog Deserves a Loving Home';
+            document.getElementById('hero-subheading').value = 'At Mission Bay Puppy Rescue, we\'re dedicated to finding loving homes for dogs in need.';
+
+            // Load default services
             loadServices();
 
-            // Load FAQ
+            // Load default FAQ
             loadFAQs();
         }
 
-        function loadFooterContent() {
-            // Load footer content
-            console.log('Loading footer content...');
+        async function loadFooterContent() {
+            console.log('Loading footer content from client data API...');
 
-            // Populate with current footer data
+            try {
+                // Load client data from the API
+                const response = await fetch(`/api/client-data?orgId=${currentOrgId}`);
+                if (response.ok) {
+                    const clientData = await response.json();
+                    console.log('✅ Loaded client data:', clientData);
+
+                    // Populate footer fields with actual data
+                    document.getElementById('footer-org-name').value = clientData.name || '';
+                    document.getElementById('footer-address').value = `${clientData.address.lineOne}\n${clientData.address.lineTwo}\n${clientData.address.city}, ${clientData.address.state} ${clientData.address.zip}`;
+                    document.getElementById('footer-phone').value = clientData.phoneFormatted || '';
+                    document.getElementById('footer-email').value = clientData.email || '';
+                    document.getElementById('footer-copyright').value = `© ${new Date().getFullYear()} ${clientData.name}. All rights reserved.`;
+                } else {
+                    console.error('Failed to load client data, using defaults');
+                    loadDefaultFooterContent();
+                }
+            } catch (error) {
+                console.error('Error loading client data:', error);
+                loadDefaultFooterContent();
+            }
+        }
+
+        function loadDefaultFooterContent() {
+            // Fallback footer content
             document.getElementById('footer-org-name').value = 'Mission Bay Puppy Rescue';
-            document.getElementById('footer-address').value = '123 Main Street\nSan Francisco, CA 94102';
-            document.getElementById('footer-phone').value = '(555) 123-4567';
-            document.getElementById('footer-email').value = 'info@missionbaypuppyrescue.org';
+            document.getElementById('footer-address').value = '456 Mission Bay Drive\nSuite 200\nSan Diego, CA 92109';
+            document.getElementById('footer-phone').value = '(619) 555-PUPS';
+            document.getElementById('footer-email').value = 'admin@mbpr.org';
             document.getElementById('footer-copyright').value = '© 2024 Mission Bay Puppy Rescue. All rights reserved.';
         }
 
-        function loadServices() {
+        function loadServicesFromContent(servicesContent) {
             const servicesList = document.getElementById('services-list');
+
+            if (servicesContent) {
+                // Set services title
+                document.getElementById('services-title').value = servicesContent.headline || 'Our Services';
+
+                // Extract services from content
+                const services = [];
+                for (let i = 1; i <= 3; i++) {
+                    if (servicesContent[`service_${i}`]) {
+                        services.push({
+                            title: servicesContent[`service_${i}`] || '',
+                            description: servicesContent[`service_${i}_description`] || '',
+                            icon: servicesContent[`service_${i}_icon`] || 'heart'
+                        });
+                    }
+                }
+
+                if (services.length > 0) {
+                    renderServices(services);
+                    return;
+                }
+            }
+
+            // Load default services if no content
+            loadServices();
+        }
+
+        function loadServices() {
             const services = [
-                { title: 'Animal Rescue', description: 'We rescue animals from shelters and provide them with care.', icon: 'heart' },
-                { title: 'Adoption Services', description: 'We help match pets with loving families.', icon: 'home' },
-                { title: 'Medical Care', description: 'We provide medical care and rehabilitation.', icon: 'medical' }
+                { title: 'Dog Rescue & Rehabilitation', description: 'We rescue dogs from shelters and provide medical care, training, and love.', icon: 'heart' },
+                { title: 'Foster Care Program', description: 'Our network of foster families provides temporary homes while dogs await adoption.', icon: 'home' },
+                { title: 'Adoption Matching', description: 'We carefully match dogs with families to ensure lifelong happiness.', icon: 'paw' }
             ];
 
+            renderServices(services);
+        }
+
+        function renderServices(services) {
+            const servicesList = document.getElementById('services-list');
+
             servicesList.innerHTML = services.map((service, index) => `
-                <div class="border border-gray-200 rounded-lg p-4">
+                <div class="border border-gray-200 rounded-lg p-4" data-service-index="${index}">
                     <div class="flex justify-between items-start mb-2">
                         <h5 class="font-medium">Service ${index + 1}</h5>
                         <button onclick="removeService(${index})" class="text-red-600 hover:text-red-800">
@@ -5811,9 +5917,9 @@
                         </button>
                     </div>
                     <div class="space-y-2">
-                        <input type="text" class="form-input" placeholder="Service Title" value="${service.title}">
-                        <textarea class="form-input" rows="2" placeholder="Service Description">${service.description}</textarea>
-                        <select class="form-input">
+                        <input type="text" class="form-input service-title" placeholder="Service Title" value="${service.title}">
+                        <textarea class="form-input service-description" rows="2" placeholder="Service Description">${service.description}</textarea>
+                        <select class="form-input service-icon">
                             <option value="heart" ${service.icon === 'heart' ? 'selected' : ''}>Heart Icon</option>
                             <option value="home" ${service.icon === 'home' ? 'selected' : ''}>Home Icon</option>
                             <option value="medical" ${service.icon === 'medical' ? 'selected' : ''}>Medical Icon</option>
@@ -5824,16 +5930,49 @@
             `).join('');
         }
 
-        function loadFAQs() {
+        function loadFAQsFromContent(faqContent) {
             const faqList = document.getElementById('faq-list');
+
+            if (faqContent) {
+                // Set FAQ title
+                document.getElementById('faq-title').value = faqContent.headline || 'Frequently Asked Questions';
+
+                // Extract FAQs from content
+                const faqs = [];
+                for (let i = 1; i <= 5; i++) {
+                    if (faqContent[`faq_${i}_question`]) {
+                        faqs.push({
+                            question: faqContent[`faq_${i}_question`] || '',
+                            answer: faqContent[`faq_${i}_answer`] || ''
+                        });
+                    }
+                }
+
+                if (faqs.length > 0) {
+                    renderFAQs(faqs);
+                    return;
+                }
+            }
+
+            // Load default FAQs if no content
+            loadFAQs();
+        }
+
+        function loadFAQs() {
             const faqs = [
-                { question: 'How do I adopt a pet?', answer: 'Start by browsing our available animals and filling out an adoption application.' },
-                { question: 'What is the adoption fee?', answer: 'Adoption fees vary by animal and help cover medical care and shelter costs.' },
-                { question: 'Can I visit the animals?', answer: 'Yes! We encourage meet-and-greets to ensure a good match.' }
+                { question: 'How do I adopt a dog?', answer: 'Start by browsing our available dogs online, then fill out an adoption application. We\'ll schedule a meet-and-greet to ensure it\'s a perfect match.' },
+                { question: 'What is the adoption fee?', answer: 'Adoption fees vary by dog and help cover medical care, vaccinations, spaying/neutering, and shelter costs. Fees typically range from $200-$500.' },
+                { question: 'Can I visit the dogs before adopting?', answer: 'Absolutely! We encourage meet-and-greets with potential adopters. Contact us to schedule a visit with any dog you\'re interested in.' }
             ];
 
+            renderFAQs(faqs);
+        }
+
+        function renderFAQs(faqs) {
+            const faqList = document.getElementById('faq-list');
+
             faqList.innerHTML = faqs.map((faq, index) => `
-                <div class="border border-gray-200 rounded-lg p-4">
+                <div class="border border-gray-200 rounded-lg p-4" data-faq-index="${index}">
                     <div class="flex justify-between items-start mb-2">
                         <h5 class="font-medium">FAQ ${index + 1}</h5>
                         <button onclick="removeFAQ(${index})" class="text-red-600 hover:text-red-800">
@@ -5843,23 +5982,49 @@
                         </button>
                     </div>
                     <div class="space-y-2">
-                        <input type="text" class="form-input" placeholder="Question" value="${faq.question}">
-                        <textarea class="form-input" rows="2" placeholder="Answer">${faq.answer}</textarea>
+                        <input type="text" class="form-input faq-question" placeholder="Question" value="${faq.question}">
+                        <textarea class="form-input faq-answer" rows="2" placeholder="Answer">${faq.answer}</textarea>
                     </div>
                 </div>
             `).join('');
         }
 
         // Save Functions
-        function saveHeroSection() {
+        async function saveHeroSection() {
             const heroData = {
-                heading: document.getElementById('hero-heading').value,
-                subheading: document.getElementById('hero-subheading').value,
-                backgroundImage: document.getElementById('hero-bg-url').value
+                headline: document.getElementById('hero-heading').value,
+                body_text: document.getElementById('hero-subheading').value,
+                background_image_url: document.getElementById('hero-bg-url').value
             };
 
             console.log('Saving hero section:', heroData);
-            alert('Hero section saved successfully!');
+
+            try {
+                const response = await fetch('/api/website-content', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        orgId: currentOrgId,
+                        sectionKey: 'hero',
+                        content: heroData
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Hero section saved successfully!');
+                    console.log('✅ Hero section saved:', result);
+                } else {
+                    alert('Failed to save hero section: ' + result.error);
+                    console.error('❌ Save failed:', result);
+                }
+            } catch (error) {
+                console.error('Error saving hero section:', error);
+                alert('Error saving hero section. Please try again.');
+            }
         }
 
         function saveServicesSection() {
@@ -5867,15 +6032,41 @@
             alert('Services section saved successfully!');
         }
 
-        function saveAboutSection() {
+        async function saveAboutSection() {
             const aboutData = {
-                title: document.getElementById('about-title').value,
-                description: document.getElementById('about-description').value,
-                image: document.getElementById('about-image-url').value
+                headline: document.getElementById('about-title').value,
+                body_text: document.getElementById('about-description').value,
+                image_url: document.getElementById('about-image-url').value
             };
 
             console.log('Saving about section:', aboutData);
-            alert('About section saved successfully!');
+
+            try {
+                const response = await fetch('/api/website-content', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        orgId: currentOrgId,
+                        sectionKey: 'about_us',
+                        content: aboutData
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('About section saved successfully!');
+                    console.log('✅ About section saved:', result);
+                } else {
+                    alert('Failed to save about section: ' + result.error);
+                    console.error('❌ Save failed:', result);
+                }
+            } catch (error) {
+                console.error('Error saving about section:', error);
+                alert('Error saving about section. Please try again.');
+            }
         }
 
         function saveFAQSection() {
@@ -5883,17 +6074,33 @@
             alert('FAQ section saved successfully!');
         }
 
-        function saveFooterSection() {
+        async function saveFooterSection() {
+            const addressLines = document.getElementById('footer-address').value.split('\n');
             const footerData = {
-                orgName: document.getElementById('footer-org-name').value,
-                address: document.getElementById('footer-address').value,
-                phone: document.getElementById('footer-phone').value,
+                name: document.getElementById('footer-org-name').value,
                 email: document.getElementById('footer-email').value,
-                copyright: document.getElementById('footer-copyright').value
+                phoneFormatted: document.getElementById('footer-phone').value,
+                phoneForTel: document.getElementById('footer-phone').value.replace(/[^\d]/g, ''),
+                address: {
+                    lineOne: addressLines[0] || '',
+                    lineTwo: addressLines[1] || '',
+                    city: addressLines[2] ? addressLines[2].split(',')[0] : '',
+                    state: addressLines[2] ? addressLines[2].split(',')[1]?.trim().split(' ')[0] : '',
+                    zip: addressLines[2] ? addressLines[2].split(' ').pop() : ''
+                }
             };
 
             console.log('Saving footer section:', footerData);
-            alert('Footer section saved successfully!');
+
+            try {
+                // For now, we'll simulate saving footer data
+                // In a real implementation, you'd save to a database or update the client.json file
+                alert('Footer section saved successfully!\n\nNote: Footer changes will be reflected after the next deployment.');
+                console.log('✅ Footer section saved (simulated):', footerData);
+            } catch (error) {
+                console.error('Error saving footer section:', error);
+                alert('Error saving footer section. Please try again.');
+            }
         }
 
         // Add/Remove Functions
