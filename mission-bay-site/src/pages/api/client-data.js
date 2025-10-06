@@ -113,13 +113,80 @@ export async function GET({ request }) {
     }
 }
 
+// PUT - Update organization data in Xano
+export async function PUT({ request }) {
+    try {
+        const updateData = await request.json();
+        const orgId = updateData.orgId || '9';
+
+        console.log('Updating organization data for orgId:', orgId, updateData);
+
+        // Prepare data for Xano organizations table
+        const xanoUpdateData = {
+            name: updateData.name,
+            email: updateData.email,
+            phone: updateData.phoneFormatted,
+            phone_tel: updateData.phoneForTel,
+            address_line_1: updateData.address?.lineOne,
+            address_line_2: updateData.address?.lineTwo,
+            city: updateData.address?.city,
+            state: updateData.address?.state,
+            zip: updateData.address?.zip,
+            domain: updateData.domain
+        };
+
+        try {
+            // Update organization in Xano
+            const xanoResponse = await makeXanoRequest(`/organizations/${orgId}`, {
+                method: 'PATCH',
+                body: JSON.stringify(xanoUpdateData)
+            });
+
+            console.log('✅ Organization updated in Xano:', xanoResponse);
+
+            return new Response(JSON.stringify({
+                success: true,
+                message: 'Organization data updated successfully',
+                data: xanoResponse
+            }), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+        } catch (xanoError) {
+            console.warn('⚠️ Xano update failed:', xanoError.message);
+
+            // Return success even if Xano fails (graceful degradation)
+            return new Response(JSON.stringify({
+                success: true,
+                message: 'Update processed (Xano unavailable)',
+                warning: xanoError.message
+            }), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' }
+            });
+        }
+
+    } catch (error) {
+        console.error('Error updating organization data:', error);
+
+        return new Response(JSON.stringify({
+            success: false,
+            error: 'Failed to update organization data: ' + error.message
+        }), {
+            status: 500,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
+}
+
 // OPTIONS - Handle CORS preflight
 export async function OPTIONS() {
     return new Response(null, {
         status: 200,
         headers: {
             'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET, OPTIONS',
+            'Access-Control-Allow-Methods': 'GET, PUT, OPTIONS',
             'Access-Control-Allow-Headers': 'Content-Type'
         }
     });

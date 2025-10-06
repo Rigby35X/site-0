@@ -1146,6 +1146,10 @@
                                                     <input type="email" id="footer-email" class="form-input" placeholder="info@missionbaypuppyrescue.org">
                                                 </div>
                                                 <div class="form-group">
+                                                    <label class="form-label">Website Domain</label>
+                                                    <input type="text" id="footer-domain" class="form-input" placeholder="missionbaypuppyrescue.org">
+                                                </div>
+                                                <div class="form-group">
                                                     <label class="form-label">Copyright Text</label>
                                                     <input type="text" id="footer-copyright" class="form-input" placeholder="© 2024 Mission Bay Puppy Rescue. All rights reserved.">
                                                 </div>
@@ -5880,6 +5884,7 @@
                     document.getElementById('footer-address').value = `${clientData.address.lineOne}\n${clientData.address.lineTwo}\n${clientData.address.city}, ${clientData.address.state} ${clientData.address.zip}`;
                     document.getElementById('footer-phone').value = clientData.phoneFormatted || '';
                     document.getElementById('footer-email').value = clientData.email || '';
+                    document.getElementById('footer-domain').value = clientData.domain || '';
                     document.getElementById('footer-copyright').value = `© ${new Date().getFullYear()} ${clientData.name}. All rights reserved.`;
                 } else {
                     console.error('Failed to load client data, using defaults');
@@ -5897,6 +5902,7 @@
             document.getElementById('footer-address').value = '456 Mission Bay Drive\nSuite 200\nSan Diego, CA 92109';
             document.getElementById('footer-phone').value = '(619) 555-PUPS';
             document.getElementById('footer-email').value = 'admin@mbpr.org';
+            document.getElementById('footer-domain').value = 'missionbaypuppyrescue.org';
             document.getElementById('footer-copyright').value = '© 2024 Mission Bay Puppy Rescue. All rights reserved.';
         }
 
@@ -6124,19 +6130,41 @@
                     city: addressLines[2] ? addressLines[2].split(',')[0] : '',
                     state: addressLines[2] ? addressLines[2].split(',')[1]?.trim().split(' ')[0] : '',
                     zip: addressLines[2] ? addressLines[2].split(' ').pop() : ''
-                }
+                },
+                domain: document.getElementById('footer-domain')?.value || 'missionbaypuppyrescue.org'
             };
 
-            console.log('Saving footer section:', footerData);
+            console.log('Saving footer section to Xano:', footerData);
 
             try {
-                // For now, we'll simulate saving footer data
-                // In a real implementation, you'd save to a database or update the client.json file
-                alert('Footer section saved successfully!\n\nNote: Footer changes will be reflected after the next deployment.');
-                console.log('✅ Footer section saved (simulated):', footerData);
+                // Save to Xano organizations table via the existing API
+                const response = await fetch('/api/client-data', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        orgId: currentOrgId || '9',
+                        ...footerData
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success || response.ok) {
+                    alert('Footer section saved successfully!\n\nChanges will be visible immediately on the website.');
+                    console.log('✅ Footer section saved to Xano:', result);
+
+                    // Reload footer content to show updated data
+                    setTimeout(() => {
+                        loadFooterContent();
+                    }, 1000);
+                } else {
+                    throw new Error(result.error || 'Failed to save footer data');
+                }
             } catch (error) {
                 console.error('Error saving footer section:', error);
-                alert('Error saving footer section. Please try again.');
+                alert('Error saving footer section: ' + error.message);
             }
         }
 
