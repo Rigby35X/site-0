@@ -140,7 +140,32 @@ export async function PUT({ request }) {
             );
 
             if (!recordToUpdate) {
-                throw new Error(`No record found for section '${sectionKey}' in org ${orgId}`);
+                console.log(`📝 No existing record found for section '${sectionKey}', creating new record`);
+
+                // Create new record
+                const newRecord = {
+                    org_id: parseInt(orgId),
+                    section_key: sectionKey,
+                    page_slug: 'homepage',
+                    is_visible: true,
+                    content: content
+                };
+
+                const createdRecord = await makeXanoRequest('/website_content', {
+                    method: 'POST',
+                    body: JSON.stringify(newRecord)
+                });
+
+                console.log('✅ Created new website content record:', createdRecord);
+
+                return new Response(JSON.stringify({
+                    success: true,
+                    message: 'Content created successfully',
+                    data: createdRecord
+                }), {
+                    status: 201,
+                    headers: { 'Content-Type': 'application/json' }
+                });
             }
 
             console.log('📝 Found record to update:', recordToUpdate.id);

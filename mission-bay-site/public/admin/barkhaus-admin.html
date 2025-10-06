@@ -5884,7 +5884,11 @@
                     console.log('✅ Loaded website content:', websiteContent);
 
                     // Extract footer data from website content
-                    const footerData = websiteContent.footer || {};
+                    const footerSection = websiteContent.footer || {};
+                    const footerData = footerSection.content || {};
+
+                    console.log('Footer section:', footerSection);
+                    console.log('Footer content:', footerData);
 
                     // Populate footer fields with website content data
                     document.getElementById('footer-org-name').value = footerData.footer_organization_name || '';

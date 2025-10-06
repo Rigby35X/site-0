@@ -161,7 +161,11 @@ const content = {
         console.log('✅ Dynamic website content loaded for footer:', data);
 
         // Extract footer content from website content
-        const footerContent = data.footer || {};
+        const footerSection = data.footer || {};
+        const footerContent = footerSection.content || {};
+
+        console.log('Footer section data:', footerSection);
+        console.log('Footer content data:', footerContent);
 
         // Update all footer content dynamically
         updateFooterContent(footerContent);
