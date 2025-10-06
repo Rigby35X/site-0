@@ -5261,20 +5261,10 @@
 
         // Load website content from API
         async function loadWebsiteContent() {
-            try {
-                const response = await fetch(`/api/website-content?orgId=${currentOrgId}`);
-                if (response.ok) {
-                    websiteContent = await response.json();
-                    console.log('✅ Website content loaded:', Object.keys(websiteContent));
-                    displayWebsiteContent();
-                } else {
-                    throw new Error('Failed to fetch website content');
-                }
-            } catch (error) {
-                console.error('Error loading website content:', error);
-                document.getElementById('websiteContentSections').innerHTML =
-                    '<div class="text-center py-8 text-red-500">Error loading website content</div>';
-            }
+            console.log('🎨 Loading website content for tab...');
+
+            // Initialize the homepage content section by default
+            showContentSection('homepage');
         }
 
         // Display website content sections for editing
@@ -5765,24 +5755,46 @@
         }
 
         async function loadHomepageContent() {
-            console.log('Loading homepage content from API...');
+            const orgId = currentOrgId || '9'; // Fallback to orgId 9 if not set
+            console.log('Loading homepage content from API for orgId:', orgId);
 
             try {
-                const response = await fetch(`/api/website-content?orgId=${currentOrgId}&page=homepage`);
+                const response = await fetch(`/api/website-content?orgId=${orgId}&page=homepage`);
+                console.log('API response status:', response.status);
+
                 if (response.ok) {
                     const content = await response.json();
                     console.log('✅ Loaded website content:', content);
 
                     // Populate Hero Section
+                    console.log('Populating hero section with:', content.hero);
+                    const heroHeadingEl = document.getElementById('hero-heading');
+                    const heroSubheadingEl = document.getElementById('hero-subheading');
+                    const heroBgUrlEl = document.getElementById('hero-bg-url');
+
+                    console.log('Form elements found:', {
+                        heroHeading: !!heroHeadingEl,
+                        heroSubheading: !!heroSubheadingEl,
+                        heroBgUrl: !!heroBgUrlEl
+                    });
+
                     if (content.hero) {
-                        document.getElementById('hero-heading').value = content.hero.headline || '';
-                        document.getElementById('hero-subheading').value = content.hero.body_text || '';
-                        document.getElementById('hero-bg-url').value = content.hero.background_image_url || '';
+                        if (heroHeadingEl) heroHeadingEl.value = content.hero.headline || '';
+                        if (heroSubheadingEl) heroSubheadingEl.value = content.hero.body_text || '';
+                        if (heroBgUrlEl) heroBgUrlEl.value = content.hero.background_image_url || '';
+
+                        console.log('Set hero values:', {
+                            headline: content.hero.headline,
+                            body_text: content.hero.body_text,
+                            background_image_url: content.hero.background_image_url
+                        });
 
                         // Update image preview if URL exists
                         if (content.hero.background_image_url) {
                             updateImagePreview(content.hero.background_image_url, document.getElementById('hero-bg-preview'));
                         }
+                    } else {
+                        console.log('No hero content found in API response');
                     }
 
                     // Populate About Section
@@ -5830,11 +5842,12 @@
         }
 
         async function loadFooterContent() {
-            console.log('Loading footer content from client data API...');
+            const orgId = currentOrgId || '9'; // Fallback to orgId 9 if not set
+            console.log('Loading footer content from client data API for orgId:', orgId);
 
             try {
                 // Load client data from the API
-                const response = await fetch(`/api/client-data?orgId=${currentOrgId}`);
+                const response = await fetch(`/api/client-data?orgId=${orgId}`);
                 if (response.ok) {
                     const clientData = await response.json();
                     console.log('✅ Loaded client data:', clientData);
