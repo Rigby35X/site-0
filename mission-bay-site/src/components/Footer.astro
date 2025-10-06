@@ -5,20 +5,19 @@ import { getCurrentYear } from "@js/utils"
 
 const currentYear = getCurrentYear()
 
-// Use static client.json as initial fallback, will be updated client-side
+// Use static client.json as initial fallback, will be updated client-side with website content
 const content = {
   footer: {
-    name: client.name || "Mission Bay Puppy Rescue",
+    organization_name: client.name || "Mission Bay Puppy Rescue",
     address_line_one: client.address?.lineOne || "123 Main Street",
     address_line_two: client.address?.lineTwo || "Suite 200",
     address_city: client.address?.city || "San Diego",
     address_state: client.address?.state || "CA",
     address_zip: client.address?.zip || "92109",
-    email: client.email || "info@missionbaypuppyrescue.org",
     phone: client.phoneFormatted || "(619) 555-1234",
     phone_tel: client.phoneForTel || "6195551234",
-    domain: (client as any).domain || "missionbaypuppyrescue.org",
-    ein: (client as any).ein || "XX-XXXXXXX",
+    email: client.email || "info@missionbaypuppyrescue.org",
+    ein: (client as any).ein || "87-2984609",
     copyright: `© ${currentYear} ${client.name || "Mission Bay Puppy Rescue"}. All rights reserved.`
   }
 };
@@ -107,7 +106,7 @@ const content = {
             <h2>Contact</h2>
           </li>
           <li>
-            <a href="/contact">
+            <a href="/contact" id="footer-address">
               {content.footer.address_line_one}<br />
               {content.footer.address_line_two && (
                 <>
@@ -118,7 +117,7 @@ const content = {
             </a>
           </li>
           <li>
-            <a href={`tel:${content.footer.phone_tel}`}>
+            <a href={`tel:${content.footer.phone_tel}`} id="footer-phone">
               T: {content.footer.phone}
             </a>
           </li>
@@ -155,62 +154,82 @@ const content = {
   async function loadDynamicClientData() {
     try {
       const orgId = '9'; // Mission Bay Puppy Rescue organization ID
-      const response = await fetch(`/api/client-data?orgId=${orgId}`);
+      const response = await fetch(`/api/website-content?orgId=${orgId}&page=homepage`);
 
       if (response.ok) {
         const data = await response.json();
-        console.log('✅ Dynamic client data loaded:', data);
+        console.log('✅ Dynamic website content loaded for footer:', data);
+
+        // Extract footer content from website content
+        const footerContent = data.footer || {};
 
         // Update all footer content dynamically
-        updateFooterContent(data);
+        updateFooterContent(footerContent);
 
-        // Load social media icons
+        // Load social media icons from client data
+        loadSocialMediaFromClientData();
+      }
+    } catch (error) {
+      console.error('Error loading dynamic website content:', error);
+    }
+  }
+
+  async function loadSocialMediaFromClientData() {
+    try {
+      const orgId = '9';
+      const response = await fetch(`/api/client-data?orgId=${orgId}`);
+      if (response.ok) {
+        const data = await response.json();
         if (data.socialMedia) {
           loadSocialMediaIcons(data.socialMedia);
         }
       }
     } catch (error) {
-      console.error('Error loading dynamic client data:', error);
+      console.log('Social media data not available');
     }
   }
 
-  function updateFooterContent(data) {
+  function updateFooterContent(footerData) {
+    console.log('Updating footer with data:', footerData);
+
     // Update address
-    const addressElement = document.querySelector('#footer a[href="/contact"]');
-    if (addressElement && data.address) {
+    const addressElement = document.getElementById('footer-address');
+    if (addressElement) {
       const addressHtml = `
-        ${data.address.lineOne}<br />
-        ${data.address.lineTwo ? data.address.lineTwo + '<br />' : ''}
-        ${data.address.city}, ${data.address.state} ${data.address.zip}
+        ${footerData.footer_address_line_one || '123 Main Street'}<br />
+        ${footerData.footer_address_line_two ? footerData.footer_address_line_two + '<br />' : ''}
+        ${footerData.footer_address_city || 'San Diego'}, ${footerData.footer_address_state || 'CA'} ${footerData.footer_address_zip || '92109'}
       `;
       addressElement.innerHTML = addressHtml;
     }
 
     // Update phone
-    const phoneElement = document.querySelector('#footer a[href^="tel:"]');
-    if (phoneElement && data.phoneFormatted && data.phoneForTel) {
-      phoneElement.href = `tel:${data.phoneForTel}`;
-      phoneElement.innerHTML = `T: ${data.phoneFormatted}`;
+    const phoneElement = document.getElementById('footer-phone');
+    if (phoneElement && footerData.footer_phone) {
+      const phoneForTel = footerData.footer_phone.replace(/[^\d]/g, '');
+      phoneElement.href = `tel:${phoneForTel}`;
+      phoneElement.innerHTML = `T: ${footerData.footer_phone}`;
     }
 
     // Update email
     const emailElement = document.getElementById('footer-email');
-    if (emailElement && data.email) {
-      emailElement.href = `mailto:${data.email}`;
-      emailElement.textContent = data.email;
+    if (emailElement && footerData.footer_email) {
+      emailElement.href = `mailto:${footerData.footer_email}`;
+      emailElement.textContent = footerData.footer_email;
     }
 
     // Update EIN
     const einElement = document.getElementById('ein-display');
-    if (einElement && data.ein) {
-      einElement.textContent = `EIN: ${data.ein}`;
+    if (einElement && footerData.footer_ein) {
+      einElement.textContent = `EIN: ${footerData.footer_ein}`;
     }
 
     // Update copyright
     const copyrightElement = document.querySelector('.copyright');
-    if (copyrightElement && data.name) {
+    if (copyrightElement) {
       const currentYear = new Date().getFullYear();
-      copyrightElement.textContent = `© ${currentYear} ${data.name}. All rights reserved.`;
+      const orgName = footerData.footer_organization_name || 'Mission Bay Puppy Rescue';
+      copyrightElement.textContent = footerData.footer_copyright || `© ${currentYear} ${orgName}. All rights reserved.`;
     }
   }
 

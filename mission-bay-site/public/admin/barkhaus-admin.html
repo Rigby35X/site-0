@@ -1150,6 +1150,10 @@
                                                     <input type="text" id="footer-domain" class="form-input" placeholder="missionbaypuppyrescue.org">
                                                 </div>
                                                 <div class="form-group">
+                                                    <label class="form-label">EIN (Tax ID)</label>
+                                                    <input type="text" id="footer-ein" class="form-input" placeholder="87-2984609">
+                                                </div>
+                                                <div class="form-group">
                                                     <label class="form-label">Copyright Text</label>
                                                     <input type="text" id="footer-copyright" class="form-input" placeholder="© 2024 Mission Bay Puppy Rescue. All rights reserved.">
                                                 </div>
@@ -5870,28 +5874,48 @@
 
         async function loadFooterContent() {
             const orgId = currentOrgId || '9'; // Fallback to orgId 9 if not set
-            console.log('Loading footer content from client data API for orgId:', orgId);
+            console.log('Loading footer content from website content API for orgId:', orgId);
 
             try {
-                // Load client data from the API
-                const response = await fetch(`/api/client-data?orgId=${orgId}`);
+                // Load website content from the API
+                const response = await fetch(`/api/website-content?orgId=${orgId}&page=homepage`);
                 if (response.ok) {
-                    const clientData = await response.json();
-                    console.log('✅ Loaded client data:', clientData);
+                    const websiteContent = await response.json();
+                    console.log('✅ Loaded website content:', websiteContent);
 
-                    // Populate footer fields with actual data
-                    document.getElementById('footer-org-name').value = clientData.name || '';
-                    document.getElementById('footer-address').value = `${clientData.address.lineOne}\n${clientData.address.lineTwo}\n${clientData.address.city}, ${clientData.address.state} ${clientData.address.zip}`;
-                    document.getElementById('footer-phone').value = clientData.phoneFormatted || '';
-                    document.getElementById('footer-email').value = clientData.email || '';
-                    document.getElementById('footer-domain').value = clientData.domain || '';
-                    document.getElementById('footer-copyright').value = `© ${new Date().getFullYear()} ${clientData.name}. All rights reserved.`;
+                    // Extract footer data from website content
+                    const footerData = websiteContent.footer || {};
+
+                    // Populate footer fields with website content data
+                    document.getElementById('footer-org-name').value = footerData.footer_organization_name || '';
+
+                    // Reconstruct address from individual fields
+                    const addressLines = [
+                        footerData.footer_address_line_one || '',
+                        footerData.footer_address_line_two || '',
+                        `${footerData.footer_address_city || ''}, ${footerData.footer_address_state || ''} ${footerData.footer_address_zip || ''}`
+                    ].filter(line => line.trim() && line.trim() !== ', ');
+
+                    document.getElementById('footer-address').value = addressLines.join('\n');
+                    document.getElementById('footer-phone').value = footerData.footer_phone || '';
+                    document.getElementById('footer-email').value = footerData.footer_email || '';
+                    document.getElementById('footer-copyright').value = footerData.footer_copyright || '';
+
+                    // Set domain and EIN if fields exist
+                    const domainField = document.getElementById('footer-domain');
+                    if (domainField) {
+                        domainField.value = footerData.footer_domain || '';
+                    }
+                    const einField = document.getElementById('footer-ein');
+                    if (einField) {
+                        einField.value = footerData.footer_ein || '';
+                    }
                 } else {
-                    console.error('Failed to load client data, using defaults');
+                    console.error('Failed to load website content, using defaults');
                     loadDefaultFooterContent();
                 }
             } catch (error) {
-                console.error('Error loading client data:', error);
+                console.error('Error loading footer content:', error);
                 loadDefaultFooterContent();
             }
         }
@@ -5903,6 +5927,7 @@
             document.getElementById('footer-phone').value = '(619) 555-PUPS';
             document.getElementById('footer-email').value = 'admin@mbpr.org';
             document.getElementById('footer-domain').value = 'missionbaypuppyrescue.org';
+            document.getElementById('footer-ein').value = '87-2984609';
             document.getElementById('footer-copyright').value = '© 2024 Mission Bay Puppy Rescue. All rights reserved.';
         }
 
@@ -6120,32 +6145,31 @@
         async function saveFooterSection() {
             const addressLines = document.getElementById('footer-address').value.split('\n');
             const footerData = {
-                name: document.getElementById('footer-org-name').value,
-                email: document.getElementById('footer-email').value,
-                phoneFormatted: document.getElementById('footer-phone').value,
-                phoneForTel: document.getElementById('footer-phone').value.replace(/[^\d]/g, ''),
-                address: {
-                    lineOne: addressLines[0] || '',
-                    lineTwo: addressLines[1] || '',
-                    city: addressLines[2] ? addressLines[2].split(',')[0] : '',
-                    state: addressLines[2] ? addressLines[2].split(',')[1]?.trim().split(' ')[0] : '',
-                    zip: addressLines[2] ? addressLines[2].split(' ').pop() : ''
-                },
-                domain: document.getElementById('footer-domain')?.value || 'missionbaypuppyrescue.org'
+                footer_organization_name: document.getElementById('footer-org-name').value,
+                footer_address_line_one: addressLines[0] || '',
+                footer_address_line_two: addressLines[1] || '',
+                footer_address_city: addressLines[2] ? addressLines[2].split(',')[0] : '',
+                footer_address_state: addressLines[2] ? addressLines[2].split(',')[1]?.trim().split(' ')[0] : '',
+                footer_address_zip: addressLines[2] ? addressLines[2].split(' ').pop() : '',
+                footer_phone: document.getElementById('footer-phone').value,
+                footer_email: document.getElementById('footer-email').value,
+                footer_ein: document.getElementById('footer-ein')?.value || '87-2984609',
+                footer_copyright: document.getElementById('footer-copyright')?.value || `© ${new Date().getFullYear()} ${document.getElementById('footer-org-name').value}. All rights reserved.`
             };
 
-            console.log('Saving footer section to Xano:', footerData);
+            console.log('Saving footer section to website content:', footerData);
 
             try {
-                // Save to Xano organizations table via the existing API
-                const response = await fetch('/api/client-data', {
+                // Save to Xano website_content table via the website-content API
+                const response = await fetch('/api/website-content', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         orgId: currentOrgId || '9',
-                        ...footerData
+                        sectionKey: 'footer',
+                        content: footerData
                     })
                 });
 
@@ -6153,7 +6177,7 @@
 
                 if (result.success || response.ok) {
                     alert('Footer section saved successfully!\n\nChanges will be visible immediately on the website.');
-                    console.log('✅ Footer section saved to Xano:', result);
+                    console.log('✅ Footer section saved to website content:', result);
 
                     // Reload footer content to show updated data
                     setTimeout(() => {
