@@ -4,6 +4,39 @@ import navData from "@data/navData.json";
 import { getCurrentYear } from "@js/utils"
 
 const currentYear = getCurrentYear()
+
+// Fetch dynamic client data from API
+let dynamicClientData: any = null;
+try {
+  const orgId = '9'; // Mission Bay Puppy Rescue organization ID
+  const response = await fetch(`${Astro.url.origin}/api/client-data?orgId=${orgId}`);
+  if (response.ok) {
+    dynamicClientData = await response.json();
+    console.log('✅ Dynamic client data loaded in Footer:', dynamicClientData);
+  } else {
+    console.warn('⚠️ Failed to load dynamic client data, using fallback');
+  }
+} catch (error) {
+  console.warn('⚠️ Error loading dynamic client data:', error.message);
+}
+
+// Create content object with dynamic data and fallbacks
+const content = {
+  footer: {
+    name: dynamicClientData?.name || client.name || "Mission Bay Puppy Rescue",
+    address_line_one: dynamicClientData?.address?.lineOne || client.address?.lineOne || "123 Main Street",
+    address_line_two: dynamicClientData?.address?.lineTwo || client.address?.lineTwo || "Suite 200",
+    address_city: dynamicClientData?.address?.city || client.address?.city || "San Diego",
+    address_state: dynamicClientData?.address?.state || client.address?.state || "CA",
+    address_zip: dynamicClientData?.address?.zip || client.address?.zip || "92109",
+    email: dynamicClientData?.email || client.email || "info@missionbaypuppyrescue.org",
+    phone: dynamicClientData?.phoneFormatted || client.phoneFormatted || "(619) 555-1234",
+    phone_tel: dynamicClientData?.phoneForTel || client.phoneForTel || "6195551234",
+    domain: dynamicClientData?.domain || (client as any).domain || "missionbaypuppyrescue.org",
+    ein: dynamicClientData?.ein || (client as any).ein || "XX-XXXXXXX",
+    copyright: `© ${currentYear} ${dynamicClientData?.name || client.name || "Mission Bay Puppy Rescue"}. All rights reserved.`
+  }
+};
 ---
 
 <style>
@@ -90,24 +123,25 @@ const currentYear = getCurrentYear()
           </li>
           <li>
             <a href="/contact">
-              {client.address.lineOne}<br />
-              {client.address.lineTwo}<br />
-              {client.address.city}
-              {client.address.state}
-              {client.address.zip}
+              {content.footer.address_line_one}<br />
+              {content.footer.address_line_two && (
+                <>
+                  {content.footer.address_line_two}<br />
+                </>
+              )}
+              {content.footer.address_city}, {content.footer.address_state} {content.footer.address_zip}
             </a>
           </li>
           <li>
-            <a href={`tel:${client.phoneForTel}`}>
-              T:
-              {client.phoneFormatted}
+            <a href={`tel:${content.footer.phone_tel}`}>
+              T: {content.footer.phone}
             </a>
           </li>
           <li>
-            <a href={`mailto:${client.email}`} id="footer-email">Click to Email</a>
+            <a href={`mailto:${content.footer.email}`} id="footer-email">{content.footer.email}</a>
           </li>
           <li>
-            <span id="ein-display">EIN: {client.ein}</span>
+            <span id="ein-display">EIN: {content.footer.ein}</span>
           </li>
         </ul>
         <ul id="social-media-links" class="social-media">
@@ -123,7 +157,7 @@ const currentYear = getCurrentYear()
   <div class="credit">
     <span>Designed and Hand Coded by</span>
     <a href="/" target="_blank" rel="noopener">Your Company Name</a>
-    <span class="copyright"> Copyright {currentYear} - Present</span>
+    <span class="copyright">{content.footer.copyright}</span>
   </div>
 </footer>
 
@@ -135,7 +169,7 @@ const currentYear = getCurrentYear()
 
   async function loadDynamicClientData() {
     try {
-      const orgId = '{{organization.id}}'; // Organization ID
+      const orgId = '9'; // Mission Bay Puppy Rescue organization ID
       const response = await fetch(`/api/client-data?orgId=${orgId}`);
 
       if (response.ok) {
@@ -171,7 +205,7 @@ const currentYear = getCurrentYear()
   async function loadSocialMediaIcons(socialMediaData = null) {
     try {
       // Get organization ID from environment or default to 3
-      const orgId = '{{organization.id}}';
+      const orgId = '9';
 
       // Use passed data or try to load from API
       let socialMedia = socialMediaData || {};
