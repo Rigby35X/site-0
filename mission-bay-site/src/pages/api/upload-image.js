@@ -1,18 +1,15 @@
 /**
  * API Endpoint for Image Upload
- * Handles image uploads for website content sections
+ * Handles image uploads for website content sections using Cloudinary
  */
-
-import { writeFile, mkdir } from 'fs/promises';
-import { existsSync } from 'fs';
-import path from 'path';
 
 export async function POST({ request }) {
     try {
         const formData = await request.formData();
         const image = formData.get('image');
         const section = formData.get('section') || 'general';
-        
+        const orgId = formData.get('orgId') || '9';
+
         if (!image || !image.name) {
             return new Response(JSON.stringify({
                 success: false,
@@ -47,35 +44,71 @@ export async function POST({ request }) {
             });
         }
 
-        // Create upload directory if it doesn't exist
-        const uploadDir = path.join(process.cwd(), 'public', 'uploads', section);
-        if (!existsSync(uploadDir)) {
-            await mkdir(uploadDir, { recursive: true });
-        }
-
-        // Generate unique filename
-        const timestamp = Date.now();
-        const extension = path.extname(image.name);
-        const filename = `${timestamp}-${Math.random().toString(36).substring(2)}${extension}`;
-        const filepath = path.join(uploadDir, filename);
-
-        // Convert image to buffer and save
+        // Convert image to base64 for Cloudinary upload
         const bytes = await image.arrayBuffer();
         const buffer = Buffer.from(bytes);
-        await writeFile(filepath, buffer);
+        const base64 = buffer.toString('base64');
+        const dataURI = `data:${image.type};base64,${base64}`;
 
-        // Return the public URL
-        const imageUrl = `/uploads/${section}/${filename}`;
+        // Generate unique public_id
+        const timestamp = Date.now();
+        const randomId = Math.random().toString(36).substring(2);
+        const publicId = `mission-bay/${section}/${orgId}/${timestamp}-${randomId}`;
 
-        console.log('✅ Image uploaded successfully:', imageUrl);
+        // Try to upload to Cloudinary if configured, otherwise use temporary solution
+        const cloudinaryCloudName = process.env.CLOUDINARY_CLOUD_NAME;
+        const cloudinaryUploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
+
+        if (cloudinaryCloudName && cloudinaryUploadPreset) {
+            try {
+                console.log('🔄 Uploading to Cloudinary...');
+
+                const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${cloudinaryCloudName}/image/upload`;
+
+                const cloudinaryFormData = new FormData();
+                cloudinaryFormData.append('file', dataURI);
+                cloudinaryFormData.append('upload_preset', cloudinaryUploadPreset);
+                cloudinaryFormData.append('public_id', publicId);
+                cloudinaryFormData.append('folder', `mission-bay/${section}`);
+
+                const cloudinaryResponse = await fetch(cloudinaryUrl, {
+                    method: 'POST',
+                    body: cloudinaryFormData
+                });
+
+                if (cloudinaryResponse.ok) {
+                    const cloudinaryResult = await cloudinaryResponse.json();
+                    console.log('✅ Image uploaded to Cloudinary:', cloudinaryResult.secure_url);
+
+                    return new Response(JSON.stringify({
+                        success: true,
+                        imageUrl: cloudinaryResult.secure_url,
+                        filename: image.name,
+                        size: image.size,
+                        type: image.type,
+                        cloudinaryId: cloudinaryResult.public_id,
+                        message: 'Image uploaded successfully to Cloudinary'
+                    }), {
+                        status: 200,
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                }
+            } catch (cloudinaryError) {
+                console.warn('⚠️ Cloudinary upload failed:', cloudinaryError.message);
+            }
+        }
+
+        // Fallback: Use data URL for immediate functionality
+        console.log('📝 Using data URL fallback (configure Cloudinary for permanent storage)');
 
         return new Response(JSON.stringify({
             success: true,
-            imageUrl: imageUrl,
-            filename: filename,
+            imageUrl: dataURI,
+            filename: image.name,
             size: image.size,
             type: image.type,
-            message: 'Image uploaded successfully'
+            message: 'Image processed successfully (temporary data URL - configure Cloudinary for permanent storage)',
+            temporary: true
         }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' }
@@ -83,7 +116,7 @@ export async function POST({ request }) {
 
     } catch (error) {
         console.error('❌ Image upload error:', error);
-        
+
         return new Response(JSON.stringify({
             success: false,
             error: 'Failed to upload image: ' + error.message
