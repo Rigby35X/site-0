@@ -110,7 +110,7 @@ class TemplateProcessor {
   // Copy assets and other files
   copyAssets() {
     const assetDirs = ['public', 'src/assets', 'src/components', 'src/content', 'src/icons', 'src/js'];
-    
+
     assetDirs.forEach(dir => {
       if (fs.existsSync(dir)) {
         const outputPath = path.join(this.outputDir, dir);
@@ -122,6 +122,104 @@ class TemplateProcessor {
         }
       }
     });
+
+    // Ensure admin setup is complete
+    this.ensureAdminSetup();
+  }
+
+  // Ensure admin files are properly set up
+  ensureAdminSetup() {
+    const adminDir = path.join(this.outputDir, 'public', 'admin');
+
+    // Create admin directory if it doesn't exist
+    if (!fs.existsSync(adminDir)) {
+      fs.mkdirSync(adminDir, { recursive: true });
+    }
+
+    // Create admin index.html if it doesn't exist
+    const adminIndexPath = path.join(adminDir, 'index.html');
+    if (!fs.existsSync(adminIndexPath)) {
+      const adminIndexContent = `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Content Management System - Admin</title>
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  </head>
+  <body>
+    <!-- Include the script that builds the page and powers Decap CMS -->
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+
+    <!-- Netlify Identity Widget -->
+    <script>
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on("init", user => {
+          if (!user) {
+            window.netlifyIdentity.on("login", () => {
+              document.location.href = "/admin/";
+            });
+          }
+        });
+      }
+    </script>
+  </body>
+</html>`;
+
+      fs.writeFileSync(adminIndexPath, adminIndexContent);
+      console.log(`✓ Created: admin/index.html -> ${adminIndexPath}`);
+    }
+
+    // Create default config.yml if it doesn't exist
+    const configPath = path.join(adminDir, 'config.yml');
+    if (!fs.existsSync(configPath)) {
+      const configContent = `# Use DecapBridge auth (required)
+backend:
+  name: git-gateway
+  repo: CodeStitchOfficial/Intermediate-Astro-Decap-CMS
+  branch: main
+  identity_url: https://auth.decapbridge.com/sites/1ea1e8dd-3c54-40d7-bbe1-74af6c8f16f6
+  gateway_url: https://gateway.decapbridge.com
+
+  # Quickly see who did what (optional)
+  commit_messages:
+    create: Create {{collection}} "{{slug}}" - {{author-name}} <{{author-login}}> via DecapBridge
+    update: Update {{collection}} "{{slug}}" - {{author-name}} <{{author-login}}> via DecapBridge
+    delete: Delete {{collection}} "{{slug}}" - {{author-name}} <{{author-login}}> via DecapBridge
+    uploadMedia: Upload "{{path}}" - {{author-name}} <{{author-login}}> via DecapBridge
+    deleteMedia: Delete "{{path}}" - {{author-name}} <{{author-login}}> via DecapBridge
+    openAuthoring: Message {{message}} - {{author-name}} <{{author-login}}> via DecapBridge
+
+# Logo for Decap login page. Change url to a link to the image you want to use, no file paths, must be a URL
+logo_url: https://decapbridge.com/decapcms-with-bridge.svg
+
+# Add site link in DecapCMS (optional)
+site_url: https://intermediate-astro-kit-decap-cms.netlify.app
+
+media_folder: src/assets/images/blog # Location where files will be stored in the repo - we store them in src so that Astro can optimize them.
+public_folder: src/assets/images/blog # Ensure that this path is the same as the media_folder path above.
+
+collections:
+  - name: "blog" # Used in routes, e.g., /admin/collections/blog. Is also the key when fetching data from the CMS.
+    label: "Blog" # Used in the admin dashboard UI
+    folder: "src/content/blog" # The path to the folder where the documents are stored
+    create: true # Allow users to create new documents in this collection
+    fields: # The fields for each document
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Description", name: "description", widget: "string" }
+      - { label: "Author", name: "author", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Cover Image", name: "image", widget: "image" }
+      - { label: "Image Caption", name: "imageAlt", widget: "string" }
+      - { label: "Is it a featured post?", name: "isFeatured", widget: "boolean", default: false }
+      - { label: "Body", name: "body", widget: "markdown" }
+`;
+
+      fs.writeFileSync(configPath, configContent);
+      console.log(`✓ Created: admin/config.yml -> ${configPath}`);
+    }
+
+    console.log(`✓ Admin setup verified and complete`);
   }
 
   // Generate package.json with updated name and description

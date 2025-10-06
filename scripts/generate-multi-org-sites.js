@@ -114,7 +114,10 @@ Object.values(organizations).forEach(org => {
   
   // Update package.json
   updatePackageJson(siteDir, org);
-  
+
+  // Ensure admin setup is complete
+  ensureAdminSetup(siteDir, org);
+
   console.log(`✅ ${org.name} site created at: ${siteDir}`);
   console.log(`   🌐 Local URL: http://localhost:${org.port}`);
   console.log(`   🏢 Organization ID: ${org.id}`);
@@ -231,14 +234,14 @@ NODE_ENV=development
  */
 function updatePackageJson(siteDir, org) {
   const packageJsonPath = path.join(siteDir, 'package.json');
-  
+
   if (fs.existsSync(packageJsonPath)) {
     const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-    
+
     // Update name and description
     packageJson.name = `${org.slug}-rescue-site`;
     packageJson.description = `Animal rescue website for ${org.name}`;
-    
+
     // Add organization-specific metadata
     packageJson.organization = {
       id: org.id,
@@ -246,12 +249,84 @@ function updatePackageJson(siteDir, org) {
       slug: org.slug,
       type: 'animal-rescue'
     };
-    
+
     // Update dev script to use custom port
     if (packageJson.scripts && packageJson.scripts.dev) {
       packageJson.scripts.dev = `astro dev --port ${org.port}`;
     }
-    
+
     fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
   }
+}
+
+/**
+ * Ensure admin setup is complete with all necessary files
+ */
+function ensureAdminSetup(siteDir, org) {
+  const adminDir = path.join(siteDir, 'public', 'admin');
+
+  // Create admin directory if it doesn't exist
+  if (!fs.existsSync(adminDir)) {
+    fs.mkdirSync(adminDir, { recursive: true });
+  }
+
+  // Create admin index.html if it doesn't exist
+  const adminIndexPath = path.join(adminDir, 'index.html');
+  if (!fs.existsSync(adminIndexPath)) {
+    const adminIndexContent = `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${org.name} - Admin</title>
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  </head>
+  <body>
+    <!-- Include the script that builds the page and powers Decap CMS -->
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+
+    <!-- Netlify Identity Widget -->
+    <script>
+      if (window.netlifyIdentity) {
+        window.netlifyIdentity.on("init", user => {
+          if (!user) {
+            window.netlifyIdentity.on("login", () => {
+              document.location.href = "/admin/";
+            });
+          }
+        });
+      }
+    </script>
+  </body>
+</html>`;
+
+    fs.writeFileSync(adminIndexPath, adminIndexContent);
+    console.log(`✓ Created: admin/index.html for ${org.name}`);
+  }
+
+  // Ensure BaseLayout.astro has Netlify Identity widget
+  const baseLayoutPath = path.join(siteDir, 'src', 'layouts', 'BaseLayout.astro');
+  if (fs.existsSync(baseLayoutPath)) {
+    let content = fs.readFileSync(baseLayoutPath, 'utf8');
+
+    // Check if Netlify Identity widget is already included
+    if (!content.includes('netlify-identity-widget.js')) {
+      // Add Netlify Identity widget to head
+      content = content.replace(
+        /(\s*<!-- Sitewide Scripts -->)/,
+        '\n            <!-- Netlify Identity Widget for CMS Authentication -->\n            <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>\n$1'
+      );
+
+      // Add initialization script before closing body tag
+      content = content.replace(
+        /(\s*<\/body>)/,
+        '\n            <!-- Netlify Identity Widget Initialization -->\n            <script is:inline>\n              if (window.netlifyIdentity) {\n                window.netlifyIdentity.on("init", user => {\n                  if (!user) {\n                    window.netlifyIdentity.on("login", () => {\n                      document.location.href = "/admin/";\n                    });\n                  }\n                });\n              }\n            </script>$1'
+      );
+
+      fs.writeFileSync(baseLayoutPath, content);
+      console.log(`✓ Updated: BaseLayout.astro with Netlify Identity widget for ${org.name}`);
+    }
+  }
+
+  console.log(`✓ Admin setup complete for ${org.name}`);
 }

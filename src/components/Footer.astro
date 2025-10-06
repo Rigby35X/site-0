@@ -6,6 +6,36 @@ import { getCurrentYear } from "@js/utils"
 const currentYear = getCurrentYear()
 ---
 
+<style>
+  .social-media {
+    display: none; /* Hidden by default, shown when social links are available */
+  }
+
+  .social-media li {
+    margin-bottom: 8px;
+  }
+
+  .social-media a {
+    display: flex;
+    align-items: center;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    transition: opacity 0.3s ease;
+  }
+
+  .social-media a:hover {
+    opacity: 0.8;
+  }
+
+  .social-media svg {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    fill: currentColor;
+  }
+</style>
+
 <!-- ============================================ --><!--                   Footer                     --><!-- ============================================ -->
 <footer id="footer">
   <div class="container">
@@ -14,10 +44,10 @@ const currentYear = getCurrentYear()
         ><img
           loading="lazy"
           decoding="async"
-          src="/assets/svgs/logo-white.svg"
-          alt="logo"
-          width="264"
-          height="78"
+          src="/assets/svgs/happy-paws-white.svg"
+          alt="Happy Paws Dog Rescue"
+          width="280"
+          height="110"
         /></a
       >
       <p>
@@ -40,6 +70,11 @@ const currentYear = getCurrentYear()
               </li>
             ))
           }
+          <li class="cs-li">
+            <a href="/admin/index.html">
+              Admin Login
+            </a>
+          </li>
         </ul>
         <ul>
           <li>
@@ -70,8 +105,17 @@ const currentYear = getCurrentYear()
             </a>
           </li>
           <li>
-            <a href={`mailto:${client.email}`}>Click to Email</a>
+            <a href={`mailto:${client.email}`} id="footer-email">Click to Email</a>
           </li>
+          <li>
+            <span id="ein-display">EIN: {client.ein}</span>
+          </li>
+        </ul>
+        <ul id="social-media-links" class="social-media">
+          <li>
+            <h2>Follow Us</h2>
+          </li>
+          <!-- Social media icons will be dynamically added here -->
         </ul>
       </div>
     </div>
@@ -83,6 +127,171 @@ const currentYear = getCurrentYear()
     <span class="copyright"> Copyright {currentYear} - Present</span>
   </div>
 </footer>
+
+<script>
+  // Load and display social media icons
+  document.addEventListener('DOMContentLoaded', function() {
+    loadDynamicClientData();
+  });
+
+  async function loadDynamicClientData() {
+    try {
+      const orgId = '{{organization.id}}'; // Organization ID
+      const response = await fetch(`/api/client-data?orgId=${orgId}`);
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('✅ Dynamic client data loaded:', data);
+
+        // Update email if available
+        if (data.email) {
+          const emailElement = document.getElementById('footer-email');
+          if (emailElement) {
+            emailElement.href = `mailto:${data.email}`;
+          }
+        }
+
+        // Update EIN if available
+        if (data.ein) {
+          const einElement = document.getElementById('ein-display');
+          if (einElement) {
+            einElement.textContent = `EIN: ${data.ein}`;
+          }
+        }
+
+        // Load social media icons
+        if (data.socialMedia) {
+          loadSocialMediaIcons(data.socialMedia);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading dynamic client data:', error);
+    }
+  }
+
+  async function loadSocialMediaIcons(socialMediaData = null) {
+    try {
+      // Get organization ID from environment or default to 3
+      const orgId = '{{organization.id}}';
+
+      // Use passed data or try to load from API
+      let socialMedia = socialMediaData || {};
+
+      if (!socialMediaData) {
+        try {
+          const response = await fetch(`/api/client-data?orgId=${orgId}`);
+          if (response.ok) {
+            const data = await response.json();
+            socialMedia = data.socialMedia || {};
+          }
+        } catch (error) {
+          console.log('API not available, checking localStorage');
+        }
+      }
+
+      // Fallback to localStorage
+      if (!socialMedia.instagram && !socialMedia.facebook && !socialMedia.twitter) {
+        const stored = localStorage.getItem(`socialMedia_${orgId}`);
+        if (stored) {
+          socialMedia = JSON.parse(stored);
+        }
+      }
+
+      // Display social media icons if any URLs are provided
+      const socialContainer = document.getElementById('social-media-links');
+      if (socialContainer && (socialMedia.instagram || socialMedia.facebook || socialMedia.twitter)) {
+
+        // Clear existing content except the header
+        const header = socialContainer.querySelector('h2');
+        socialContainer.innerHTML = '';
+        if (header) {
+          const headerLi = document.createElement('li');
+          headerLi.appendChild(header);
+          socialContainer.appendChild(headerLi);
+        }
+
+        // Add social media icons
+        if (socialMedia.instagram) {
+          addSocialIcon(socialContainer, 'instagram', socialMedia.instagram);
+        }
+
+        if (socialMedia.facebook) {
+          addSocialIcon(socialContainer, 'facebook', socialMedia.facebook);
+        }
+
+        if (socialMedia.twitter) {
+          addSocialIcon(socialContainer, 'twitter', socialMedia.twitter);
+        }
+
+        // Show the social media section
+        socialContainer.style.display = 'block';
+      } else {
+        // Hide social media section if no links
+        if (socialContainer) {
+          socialContainer.style.display = 'none';
+        }
+      }
+    } catch (error) {
+      console.error('Error loading social media icons:', error);
+    }
+  }
+
+  function addSocialIcon(container, platform, url) {
+    const li = document.createElement('li');
+    li.style.marginBottom = '8px';
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.style.display = 'flex';
+    link.style.alignItems = 'center';
+    link.style.color = 'white';
+    link.style.textDecoration = 'none';
+    link.style.fontSize = '14px';
+
+    // Add icon and text
+    const icon = getSocialIcon(platform);
+    const text = document.createElement('span');
+    text.textContent = platform.charAt(0).toUpperCase() + platform.slice(1);
+    text.style.marginLeft = '8px';
+
+    link.appendChild(icon);
+    link.appendChild(text);
+    li.appendChild(link);
+    container.appendChild(li);
+  }
+
+  function getSocialIcon(platform) {
+    const icon = document.createElement('div');
+    icon.style.width = '20px';
+    icon.style.height = '20px';
+    icon.style.fill = 'currentColor';
+
+    let svgContent = '';
+
+    switch (platform) {
+      case 'instagram':
+        svgContent = `<svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+        </svg>`;
+        break;
+      case 'facebook':
+        svgContent = `<svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>`;
+        break;
+      case 'twitter':
+        svgContent = `<svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+        </svg>`;
+        break;
+    }
+
+    icon.innerHTML = svgContent;
+    return icon;
+  }
+</script>
 
 <style lang="less">
   /* Mobile */

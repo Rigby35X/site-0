@@ -4,21 +4,44 @@ import CTA from "@components/CTA.astro";
 
 // Generate static paths for all animals
 export async function getStaticPaths() {
-  return [
-    { params: { id: "luna" } },
-    { params: { id: "max" } },
-    { params: { id: "bella" } },
-    { params: { id: "rocky" } },
-    { params: { id: "daisy" } },
-    { params: { id: "charlie" } }
-  ];
+  try {
+    const response = await fetch(`http://localhost:4321/api/admin/animals?orgId=3`);
+    if (response.ok) {
+      const animals = await response.json();
+      return animals.map(animal => ({
+        params: { id: animal.id.toString() }
+      }));
+    }
+  } catch (error) {
+    console.error('Error fetching animals for static paths:', error);
+  }
+
+  // Fallback to empty array if API fails
+  return [];
 }
 
 // Get the animal ID from the URL
 const { id } = Astro.params;
 
-// Sample animal data - in a real implementation, this would come from a CMS or database
-const animals = {
+// Fetch animal data from API
+let animal = null;
+try {
+  const response = await fetch(`${Astro.url.origin}/api/admin/animals?orgId=3`);
+  if (response.ok) {
+    const animals = await response.json();
+    animal = animals.find(a => a.id.toString() === id);
+  }
+} catch (error) {
+  console.error('Error fetching animal details:', error);
+}
+
+// If animal not found, redirect to 404
+if (!animal) {
+  return Astro.redirect('/404');
+}
+
+// Fallback animal data if API fails
+const fallbackAnimals = {
   "luna": {
     id: "luna",
     name: "Luna",

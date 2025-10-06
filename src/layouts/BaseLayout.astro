@@ -85,6 +85,9 @@ const { description, title, preloadedImage } = Astro.props as Props;
             }
             </title>
 
+            <!-- Netlify Identity Widget for CMS Authentication -->
+            <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
             <!-- Sitewide Scripts -->
             <script src="@js/nav.js"></script>
         </head>
@@ -97,7 +100,19 @@ const { description, title, preloadedImage } = Astro.props as Props;
                 <slot/>
             </main>
             <Footer />
-    
+
+            <!-- Netlify Identity Widget Initialization -->
+            <script is:inline>
+              if (window.netlifyIdentity) {
+                window.netlifyIdentity.on("init", user => {
+                  if (!user) {
+                    window.netlifyIdentity.on("login", () => {
+                      document.location.href = "/admin/";
+                    });
+                  }
+                });
+              }
+            </script>
         </body>
 </html>
 

@@ -2,58 +2,19 @@
 import BaseLayout from "@layouts/BaseLayout.astro";
 import CTA from "@components/CTA.astro";
 
-// Sample animal data - in a real implementation, this would come from a CMS or database
-// This data would be populated from the template configuration
-const animals = [
-  {
-    id: "luna",
-    name: "Luna",
-    type: "Dog",
-    breed: "Golden Retriever Mix",
-    age: "3 years",
-    gender: "Female",
-    size: "Large",
-    status: "Available",
-    image: "/assets/images/animals/luna.jpg",
-    description: "Luna is a sweet and gentle girl who loves playing fetch and cuddling on the couch.",
-    specialNeeds: false,
-    goodWithKids: true,
-    goodWithCats: true,
-    goodWithDogs: true
-  },
-  {
-    id: "max",
-    name: "Max",
-    type: "Cat",
-    breed: "Domestic Shorthair",
-    age: "2 years",
-    gender: "Male",
-    size: "Medium",
-    status: "Available",
-    image: "/assets/images/animals/max.jpg",
-    description: "Max is a playful tabby who loves toys and sunny windowsills.",
-    specialNeeds: false,
-    goodWithKids: true,
-    goodWithCats: true,
-    goodWithDogs: false
-  },
-  {
-    id: "bella",
-    name: "Bella",
-    type: "Dog",
-    breed: "Pit Bull Mix",
-    age: "5 years",
-    gender: "Female",
-    size: "Medium",
-    status: "Available",
-    image: "/assets/images/animals/bella.jpg",
-    description: "Bella is a loyal companion who would thrive in an active household.",
-    specialNeeds: false,
-    goodWithKids: false,
-    goodWithCats: false,
-    goodWithDogs: true
+// Fetch animals from API using organization ID from template configuration
+let animals = [];
+try {
+  const response = await fetch(`${Astro.url.origin}/api/admin/animals?orgId={{organization.id}}`);
+  if (response.ok) {
+    animals = await response.json();
+    console.log('✅ Fetched animals for our-animals page:', animals.length);
+  } else {
+    console.error('❌ Failed to fetch animals:', response.status);
   }
-];
+} catch (error) {
+  console.error('❌ Error fetching animals:', error);
+}
 ---
 
 <BaseLayout
@@ -98,21 +59,21 @@ const animals = [
     <div class="cs-container">
       <div class="cs-card-group">
         {animals.map((animal) => (
-          <div class="cs-item" data-category={`${animal.type.toLowerCase()} ${animal.status.toLowerCase()} ${animal.specialNeeds ? 'special-needs' : ''}`}>
+          <div class="cs-item" data-category={`${animal.species || 'dog'} ${animal.status?.toLowerCase() || 'available'} ${animal.special_needs ? 'special-needs' : ''}`}>
             <picture class="cs-picture">
               <img
                 loading="lazy"
                 decoding="async"
-                src={animal.image}
+                src={animal.image_url || animal.main_image?.url || '/assets/images/animals/placeholder.jpg'}
                 alt={animal.name}
                 width="400"
                 height="300"
               />
-              <div class="cs-status-badge cs-status-{animal.status.toLowerCase()}">
-                {animal.status}
+              <div class="cs-status-badge cs-status-{animal.status?.toLowerCase() || 'available'}">
+                {animal.status || 'Available'}
               </div>
             </picture>
-            
+
             <div class="cs-item-content">
               <h3 class="cs-item-title">{animal.name}</h3>
               <div class="cs-item-details">
@@ -121,18 +82,18 @@ const animals = [
                 <span class="cs-detail">{animal.gender}</span>
                 <span class="cs-detail">{animal.size}</span>
               </div>
-              
-              <p class="cs-item-text">{animal.description}</p>
-              
+
+              <p class="cs-item-text">{animal.description?.substring(0, 150)}...</p>
+
               <div class="cs-compatibility">
                 <h4>Good with:</h4>
                 <div class="cs-compatibility-tags">
-                  {animal.goodWithKids && <span class="cs-tag">Kids</span>}
-                  {animal.goodWithCats && <span class="cs-tag">Cats</span>}
-                  {animal.goodWithDogs && <span class="cs-tag">Dogs</span>}
+                  {animal.good_with_kids && <span class="cs-tag">Kids</span>}
+                  {animal.good_with_cats && <span class="cs-tag">Cats</span>}
+                  {animal.good_with_dogs && <span class="cs-tag">Dogs</span>}
                 </div>
               </div>
-              
+
               <div class="cs-button-group">
                 <a href={`/animal-details/${animal.id}`} class="cs-button-solid">Learn More</a>
                 <a href="/applications" class="cs-button-transparent">Apply to Adopt</a>

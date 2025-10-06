@@ -1,0 +1,15 @@
+{
+	"name": "Mission Bay Puppy Rescue",
+	"email": "admin@mbpr.org",
+	"phoneForTel": "619-555-PUPS",
+	"phoneFormatted": "(619) 555-PUPS",
+	"address": {
+		"lineOne": "456 Mission Bay Drive",
+		"lineTwo": "Suite 200",
+		"city": "San Diego",
+		"state": "CA",
+		"zip": "92109",
+		"mapLink": "https://maps.google.com/your-location"
+	},
+	"domain": "missionbaypuppyrescue.org"
+}

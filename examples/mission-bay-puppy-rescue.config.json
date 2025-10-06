@@ -1,0 +1,221 @@
+{
+  "meta": {
+    "templateName": "Animal Rescue Website Template",
+    "version": "2.0.0",
+    "description": "A comprehensive animal rescue and shelter website template with Astro and Decap CMS"
+  },
+  "site": {
+    "name": "Mission Bay Puppy Rescue",
+    "title": "Saving Puppies, Finding Forever Homes",
+    "description": "Dedicated to rescuing and rehoming puppies and dogs in the San Diego area",
+    "domain": "missionbaypuppyrescue.org",
+    "url": "https://missionbaypuppyrescue.org"
+  },
+  "organization": {
+    "id": "9",
+    "name": "Mission Bay Puppy Rescue",
+    "legalName": "Mission Bay Puppy Rescue",
+    "email": "admin@mbpr.org",
+    "phone": {
+      "tel": "619-555-PUPS",
+      "formatted": "(619) 555-PUPS"
+    },
+    "address": {
+      "lineOne": "456 Mission Bay Drive",
+      "lineTwo": "Suite 200",
+      "city": "San Diego",
+      "state": "CA",
+      "zip": "92109",
+      "country": "United States",
+      "mapLink": "https://maps.google.com/your-location"
+    },
+    "taxId": "98-7654321",
+    "founded": "2018",
+    "mission": "To rescue, rehabilitate, and rehome puppies and dogs in need while educating our community about responsible pet ownership and the importance of spay/neuter programs.",
+    "hours": {
+      "monday": "9:00 AM - 5:00 PM",
+      "tuesday": "9:00 AM - 5:00 PM",
+      "wednesday": "9:00 AM - 5:00 PM",
+      "thursday": "9:00 AM - 5:00 PM",
+      "friday": "9:00 AM - 5:00 PM",
+      "saturday": "10:00 AM - 4:00 PM",
+      "sunday": "12:00 PM - 4:00 PM"
+    }
+  },
+  "branding": {
+    "logo": {
+      "main": "/assets/images/mission-bay-logo.svg",
+      "white": "/assets/images/mission-bay-logo-white.svg",
+      "favicon": "/assets/images/mission-bay-favicon.ico",
+      "alt": "Mission Bay Puppy Rescue Logo",
+      "width": "210",
+      "height": "60"
+    },
+    "colors": {
+      "primary": "#1E88E5",
+      "primaryLight": "#42A5F5",
+      "primaryDark": "#1565C0",
+      "secondary": "#FF7043",
+      "accent": "#E3F2FD",
+      "headerColor": "#0D47A1",
+      "bodyTextColor": "#263238",
+      "bodyTextColorWhite": "#FFFFFF"
+    },
+    "fonts": {
+      "primary": "'Roboto', 'Arial', sans-serif",
+      "secondary": "'Open Sans', 'Arial', sans-serif",
+      "headings": "'Roboto Slab', 'Georgia', serif"
+    }
+  },
+  "homepage": {
+    "hero": {
+      "topper": "Puppy Rescue & Adoption",
+      "title": "Every Puppy Deserves a Loving Home",
+      "subtitle": "Find Your Perfect Companion Today",
+      "description": "Mission Bay Puppy Rescue has been saving lives and finding forever homes for puppies and dogs in need since 2018. Our dedicated team works tirelessly to rescue, rehabilitate, and rehome dogs of all ages and breeds in the San Diego area.",
+      "primaryCTA": {
+        "text": "Adopt a Puppy",
+        "link": "/our-animals"
+      },
+      "secondaryCTA": {
+        "text": "Learn About Us",
+        "link": "/about"
+      },
+      "backgroundImage": {
+        "desktop": "/assets/images/hero-puppies-playing.jpg",
+        "mobile": "/assets/images/hero-puppies-playing-mobile.jpg",
+        "alt": "Happy puppies playing together in Mission Bay"
+      }
+    },
+    "services": {
+      "title": "How We Help Puppies",
+      "subtitle": "Comprehensive care and support for every puppy that comes through our doors",
+      "items": [
+        {
+          "title": "Puppy Adoption",
+          "description": "Find your perfect canine companion from our carefully vetted puppies ready for their forever homes.",
+          "icon": "/assets/svgs/puppy-adoption.svg",
+          "link": "/our-animals"
+        },
+        {
+          "title": "Foster Program",
+          "description": "Provide temporary care for puppies who need extra time, medical attention, or socialization before adoption.",
+          "icon": "/assets/svgs/foster-care.svg",
+          "link": "/applications"
+        },
+        {
+          "title": "Volunteer Opportunities",
+          "description": "Join our team of dedicated volunteers helping with puppy care, events, transportation, and more.",
+          "icon": "/assets/svgs/volunteer.svg",
+          "link": "/applications"
+        },
+        {
+          "title": "Puppy Training & Support",
+          "description": "Ongoing support and training resources for adopters to ensure successful, lifelong placements.",
+          "icon": "/assets/svgs/puppy-training.svg",
+          "link": "/contact"
+        }
+      ]
+    },
+    "about": {
+      "title": "Our Mission",
+      "description": "Mission Bay Puppy Rescue was founded in 2018 with a simple but powerful mission: every puppy deserves a loving home. We rescue puppies from high-kill shelters, provide necessary medical care and rehabilitation, and work tirelessly to match them with perfect families. Our comprehensive approach includes behavioral training, medical care, and ongoing support to ensure successful adoptions.",
+      "image": "/assets/images/rescue-team-with-puppies.jpg",
+      "stats": [
+        {
+          "number": "800+",
+          "label": "Puppies Rescued"
+        },
+        {
+          "number": "98%",
+          "label": "Adoption Success Rate"
+        },
+        {
+          "number": "24/7",
+          "label": "Emergency Care"
+        }
+      ]
+    }
+  },
+  "navigation": {
+    "items": [
+      {
+        "text": "Home",
+        "link": "/"
+      },
+      {
+        "text": "About",
+        "link": "/about/"
+      },
+      {
+        "text": "Our Puppies",
+        "link": "/our-animals/"
+      },
+      {
+        "text": "Applications",
+        "link": "/applications/"
+      },
+      {
+        "text": "Donate",
+        "link": "/donate/"
+      },
+      {
+        "text": "Events",
+        "link": "/events/"
+      },
+      {
+        "text": "Contact",
+        "link": "/contact/"
+      }
+    ]
+  },
+  "pages": {
+    "animals": {
+      "hero": {
+        "title": "Meet Our Puppies",
+        "subtitle": "Find Your Perfect Companion",
+        "description": "Browse our available puppies and dogs and find your new best friend. Each puppy has been health-checked, vaccinated, and is ready for their forever home."
+      },
+      "filterLabels": {
+        "all": "All Animals",
+        "dogs": "Dogs",
+        "cats": "Cats",
+        "available": "Available",
+        "pending": "Adoption Pending",
+        "specialNeeds": "Special Needs"
+      }
+    }
+  },
+  "footer": {
+    "description": "Mission Bay Puppy Rescue is dedicated to saving lives and finding forever homes for puppies and dogs in need. Every donation helps us continue our mission of rescue, rehabilitation, and rehoming.",
+    "quickLinks": [
+      {
+        "text": "Adopt a Puppy",
+        "link": "/our-animals"
+      },
+      {
+        "text": "Volunteer",
+        "link": "/applications"
+      },
+      {
+        "text": "Donate",
+        "link": "/donate"
+      },
+      {
+        "text": "Puppy Care Tips",
+        "link": "/resources"
+      }
+    ],
+    "socialMedia": {
+      "facebook": "https://facebook.com/missionbaypuppyrescue",
+      "instagram": "https://instagram.com/missionbaypuppyrescue",
+      "twitter": "https://twitter.com/missionbaypuppyrescue"
+    }
+  },
+  "seo": {
+    "keywords": "puppy rescue, puppy adoption, pet adoption, animal rescue, puppy shelter, rescue puppies, adopt a puppy, puppy fostering, volunteer with puppies, San Diego",
+    "author": "Mission Bay Puppy Rescue",
+    "robots": "index, follow",
+    "canonical": "https://missionbaypuppyrescue.org"
+  }
+}

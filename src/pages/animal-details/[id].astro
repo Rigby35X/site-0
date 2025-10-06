@@ -4,21 +4,39 @@ import CTA from "@components/CTA.astro";
 
 // Generate static paths for all animals
 export async function getStaticPaths() {
-  return [
-    { params: { id: "luna" } },
-    { params: { id: "max" } },
-    { params: { id: "bella" } },
-    { params: { id: "rocky" } },
-    { params: { id: "daisy" } },
-    { params: { id: "charlie" } }
-  ];
+  try {
+    const response = await fetch(`http://localhost:4321/api/admin/animals?orgId={{organization.id}}`);
+    if (response.ok) {
+      const animals = await response.json();
+      return animals.map(animal => ({
+        params: { id: animal.id.toString() }
+      }));
+    }
+  } catch (error) {
+    console.error('Error fetching animals for static paths:', error);
+  }
+
+  // Fallback to empty array if API fails
+  return [];
 }
 
 // Get the animal ID from the URL
 const { id } = Astro.params;
 
-// Sample animal data - in a real implementation, this would come from a CMS or database
-const animals = {
+// Fetch animal data from API
+let animal = null;
+try {
+  const response = await fetch(`${Astro.url.origin}/api/admin/animals?orgId={{organization.id}}`);
+  if (response.ok) {
+    const animals = await response.json();
+    animal = animals.find(a => a.id.toString() === id);
+  }
+} catch (error) {
+  console.error('Error fetching animal details:', error);
+}
+
+// Fallback animal data if API fails
+const fallbackAnimals = {
   "luna": {
     id: "luna",
     name: "Luna",
@@ -103,6 +121,16 @@ const animals = {
   }
 };
 
+// If animal not found from API, try fallback data
+if (!animal) {
+  animal = fallbackAnimals[id];
+}
+
+// If still not found, redirect to 404
+if (!animal) {
+  return Astro.redirect('/404');
+}
+
 // Get the specific animal or return 404
 const animal = animals[id as keyof typeof animals];
 
@@ -125,7 +153,7 @@ if (!animal) {
         <div class="cs-image-gallery">
           <div class="cs-main-image">
             <img
-              src={animal.images[0]}
+              src={animal.image_url || animal.main_image?.url || '/assets/images/animals/placeholder.jpg'}
               alt={animal.name}
               width="600"
               height="400"
@@ -133,7 +161,13 @@ if (!animal) {
             />
           </div>
           <div class="cs-thumbnail-gallery">
-            {animal.images.map((image, index) => (
+            {[
+              animal.main_image?.url,
+              animal.additional_image_1?.url,
+              animal.additional_image_2?.url,
+              animal.additional_image_3?.url,
+              animal.additional_image_4?.url
+            ].filter(Boolean).map((image, index) => (
               <img
                 src={image}
                 alt={`${animal.name} photo ${index + 1}`}
@@ -169,7 +203,7 @@ if (!animal) {
             </div>
           </div>
           
-          <p class="cs-description">{animal.description}</p>
+          <div class="cs-description" set:html={animal.description?.replace(/\n/g, '<br>').replace(/�/g, "'") || ''}></div>
           
           <div class="cs-action-buttons">
             <a href="/applications" class="cs-button-solid">Apply to Adopt {animal.name}</a>
@@ -187,14 +221,10 @@ if (!animal) {
   <section id="animal-details">
     <div class="cs-container">
       <div class="cs-details-grid">
-        <!-- Personality -->
+        <!-- Story -->
         <div class="cs-detail-card">
-          <h2>Personality</h2>
-          <ul class="cs-personality-list">
-            {animal.personality.map((trait) => (
-              <li>{trait}</li>
-            ))}
-          </ul>
+          <h2>About {animal.name}</h2>
+          <div class="cs-story" set:html={(animal.description_long || animal.description)?.replace(/\n/g, '<br>').replace(/�/g, "'") || ''}></div>
         </div>
         
         <!-- Medical Information -->
@@ -203,36 +233,34 @@ if (!animal) {
           <div class="cs-medical-info">
             <div class="cs-medical-item">
               <span class="cs-label">Spayed/Neutered:</span>
-              <span class={`cs-value ${animal.medicalInfo.spayedNeutered ? 'cs-yes' : 'cs-no'}`}>
-                {animal.medicalInfo.spayedNeutered ? 'Yes' : 'No'}
+              <span class={`cs-value ${animal.spayed_neutered ? 'cs-yes' : 'cs-no'}`}>
+                {animal.spayed_neutered ? 'Yes' : 'No'}
               </span>
             </div>
             <div class="cs-medical-item">
               <span class="cs-label">Vaccinated:</span>
-              <span class={`cs-value ${animal.medicalInfo.vaccinated ? 'cs-yes' : 'cs-no'}`}>
-                {animal.medicalInfo.vaccinated ? 'Yes' : 'No'}
+              <span class={`cs-value ${animal.vaccinated ? 'cs-yes' : 'cs-no'}`}>
+                {animal.vaccinated ? 'Yes' : 'No'}
               </span>
             </div>
             <div class="cs-medical-item">
               <span class="cs-label">Microchipped:</span>
-              <span class={`cs-value ${animal.medicalInfo.microchipped ? 'cs-yes' : 'cs-no'}`}>
-                {animal.medicalInfo.microchipped ? 'Yes' : 'No'}
+              <span class={`cs-value ${animal.microchip ? 'cs-yes' : 'cs-no'}`}>
+                {animal.microchip ? 'Yes' : 'No'}
               </span>
             </div>
             <div class="cs-medical-item">
               <span class="cs-label">Special Needs:</span>
-              <span class={`cs-value ${animal.medicalInfo.specialNeeds ? 'cs-yes' : 'cs-no'}`}>
-                {animal.medicalInfo.specialNeeds ? 'Yes' : 'No'}
+              <span class={`cs-value ${animal.special_needs ? 'cs-yes' : 'cs-no'}`}>
+                {animal.special_needs ? 'Yes' : 'No'}
               </span>
             </div>
-            <div class="cs-medical-item">
-              <span class="cs-label">Medications:</span>
-              <span class="cs-value">{animal.medicalInfo.medications}</span>
-            </div>
-            <div class="cs-medical-item">
-              <span class="cs-label">Vet Notes:</span>
-              <span class="cs-value">{animal.medicalInfo.vetNotes}</span>
-            </div>
+            {animal.medical_notes && (
+              <div class="cs-medical-item">
+                <span class="cs-label">Medical Notes:</span>
+                <span class="cs-value">{animal.medical_notes}</span>
+              </div>
+            )}
           </div>
         </div>
         
@@ -242,41 +270,39 @@ if (!animal) {
           <div class="cs-compatibility-grid">
             <div class="cs-compatibility-item">
               <span class="cs-label">Good with Kids:</span>
-              <span class={`cs-value ${animal.compatibility.goodWithKids ? 'cs-yes' : 'cs-no'}`}>
-                {animal.compatibility.goodWithKids ? 'Yes' : 'No'}
+              <span class={`cs-value ${animal.good_with_kids ? 'cs-yes' : 'cs-no'}`}>
+                {animal.good_with_kids ? 'Yes' : 'No'}
               </span>
             </div>
             <div class="cs-compatibility-item">
               <span class="cs-label">Good with Cats:</span>
-              <span class={`cs-value ${animal.compatibility.goodWithCats ? 'cs-yes' : 'cs-no'}`}>
-                {animal.compatibility.goodWithCats ? 'Yes' : 'No'}
+              <span class={`cs-value ${animal.good_with_cats ? 'cs-yes' : 'cs-no'}`}>
+                {animal.good_with_cats ? 'Yes' : 'No'}
               </span>
             </div>
             <div class="cs-compatibility-item">
               <span class="cs-label">Good with Dogs:</span>
-              <span class={`cs-value ${animal.compatibility.goodWithDogs ? 'cs-yes' : 'cs-no'}`}>
-                {animal.compatibility.goodWithDogs ? 'Yes' : 'No'}
+              <span class={`cs-value ${animal.good_with_dogs ? 'cs-yes' : 'cs-no'}`}>
+                {animal.good_with_dogs ? 'Yes' : 'No'}
               </span>
             </div>
-            <div class="cs-compatibility-item">
-              <span class="cs-label">Energy Level:</span>
-              <span class="cs-value">{animal.compatibility.energyLevel}</span>
-            </div>
-            <div class="cs-compatibility-item">
-              <span class="cs-label">Exercise Needs:</span>
-              <span class="cs-value">{animal.compatibility.exerciseNeeds}</span>
-            </div>
+            {animal.energy_level && (
+              <div class="cs-compatibility-item">
+                <span class="cs-label">Energy Level:</span>
+                <span class="cs-value">{animal.energy_level}</span>
+              </div>
+            )}
+            {animal.house_trained && (
+              <div class="cs-compatibility-item">
+                <span class="cs-label">House Trained:</span>
+                <span class={`cs-value ${animal.house_trained ? 'cs-yes' : 'cs-no'}`}>
+                  {animal.house_trained ? 'Yes' : 'No'}
+                </span>
+              </div>
+            )}
           </div>
         </div>
-        
-        <!-- Story -->
-        <div class="cs-detail-card cs-story-card">
-          <h2>{animal.name}'s Story</h2>
-          <p class="cs-story-text">{animal.story}</p>
-          <div class="cs-arrival-info">
-            <strong>Arrived at our rescue:</strong> {new Date(animal.arrivalDate).toLocaleDateString()}
-          </div>
-        </div>
+
       </div>
     </div>
   </section>
@@ -400,13 +426,19 @@ if (!animal) {
         gap: 0.75rem;
         margin-bottom: 1.5rem;
         padding: 1.5rem;
-        background: var(--accent);
+        background: #f8f9fa;
         border-radius: 12px;
+        border: 1px solid #e9ecef;
       }
 
       .cs-info-item {
         strong {
-          color: var(--headerColor);
+          color: #2c3e50;
+          font-weight: 600;
+        }
+
+        span {
+          color: #495057;
         }
       }
 

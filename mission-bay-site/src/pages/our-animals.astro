@@ -1,0 +1,411 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import CTA from "@components/CTA.astro";
+
+// Fetch animals from API using organization ID from template configuration
+let animals = [];
+try {
+  const response = await fetch(`${Astro.url.origin}/api/admin/animals?orgId=9`);
+  if (response.ok) {
+    animals = await response.json();
+    console.log('✅ Fetched animals for our-animals page:', animals.length);
+  } else {
+    console.error('❌ Failed to fetch animals:', response.status);
+  }
+} catch (error) {
+  console.error('❌ Error fetching animals:', error);
+}
+---
+
+<BaseLayout
+  title="Mission Bay Puppy Rescue - Our Animals Available for Adoption"
+  description="Meet our wonderful animals looking for their forever homes. Browse available dogs, cats, and other pets ready for adoption."
+>
+  <!-- ============================================ -->
+  <!--                 Page Header                  -->
+  <!-- ============================================ -->
+  
+  <section id="page-header">
+    <div class="cs-container">
+      <h1 class="cs-title">Our Animals</h1>
+      <p class="cs-text">
+        Meet our wonderful animals who are looking for their forever homes. Each pet has been health-checked, 
+        vaccinated, and is ready to become a beloved family member.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!--                Animal Filters               -->
+  <!-- ============================================ -->
+  
+  <section id="animal-filters">
+    <div class="cs-container">
+      <div class="cs-filter-group">
+        <button class="cs-filter-button active" data-filter="all">All Animals</button>
+        <button class="cs-filter-button" data-filter="dogs">Dogs</button>
+        <button class="cs-filter-button" data-filter="cats">Cats</button>
+        <button class="cs-filter-button" data-filter="available">Available</button>
+        <button class="cs-filter-button" data-filter="special-needs">Special Needs</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!--                Animal Grid                   -->
+  <!-- ============================================ -->
+  
+  <section id="animal-grid">
+    <div class="cs-container">
+      <div class="cs-card-group">
+        {animals.map((animal) => (
+          <div class="cs-item" data-category={`${animal.species || 'dog'} ${animal.status?.toLowerCase() || 'available'} ${animal.special_needs ? 'special-needs' : ''}`}>
+            <picture class="cs-picture">
+              <img
+                loading="lazy"
+                decoding="async"
+                src={animal.image_url || animal.main_image?.url || '/assets/images/animals/placeholder.jpg'}
+                alt={animal.name}
+                width="400"
+                height="300"
+              />
+              <div class="cs-status-badge cs-status-{animal.status?.toLowerCase() || 'available'}">
+                {animal.status || 'Available'}
+              </div>
+            </picture>
+
+            <div class="cs-item-content">
+              <h3 class="cs-item-title">{animal.name}</h3>
+              <div class="cs-item-details">
+                <span class="cs-detail">{animal.breed}</span>
+                <span class="cs-detail">{animal.age}</span>
+                <span class="cs-detail">{animal.gender}</span>
+                <span class="cs-detail">{animal.size}</span>
+              </div>
+
+              <p class="cs-item-text">{animal.description?.substring(0, 150)}...</p>
+
+              {['kids', 'cats', 'dogs'].some(key => animal[`good_with_${key}`]) && (
+  <div className="cs-compatibility">
+    <h4>Good with:</h4>
+    <div className="cs-compatibility-tags">
+      {animal.good_with_kids && <span className="cs-tag">Kids</span>}
+      {animal.good_with_cats && <span className="cs-tag">Cats</span>}
+      {animal.good_with_dogs && <span className="cs-tag">Dogs</span>}
+    </div>
+  </div>
+)}
+
+              </div>
+
+              <div class="cs-button-group">
+                <a href={`/animal-details/${animal.id}`} class="cs-button-solid">Learn More</a>
+                <a href="/applications" class="cs-button-transparent">Apply to Adopt</a>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      <div class="cs-more-info">
+        <h2>Don't See Your Perfect Match?</h2>
+        <p>
+          We have more animals in foster care and new arrivals coming in regularly. 
+          Contact us to learn about animals that may not be listed yet or to get on our waiting list 
+          for specific types of pets.
+        </p>
+        <a href="/contact" class="cs-button-solid">Contact Us</a>
+      </div>
+    </div>
+  </section>
+
+  <CTA />
+</BaseLayout>
+
+<style lang="less">
+  /* Page Header */
+  #page-header {
+    padding: var(--sectionPadding);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primaryDark) 100%);
+    color: white;
+    text-align: center;
+    
+    .cs-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .cs-title {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      margin-bottom: 1rem;
+      color: #6cb3eb; /* Change this to your desired color */
+    }
+    
+    .cs-text {
+      font-size: 1.125rem;
+      line-height: 1.6;
+      color: #6cb3eb;
+    }
+  }
+
+  /* Animal Filters */
+  #animal-filters {
+    padding: 2rem 0;
+    background: #f8f9fa;
+    
+    .cs-filter-group {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .cs-filter-button {
+      padding: 0.75rem 1.5rem;
+      border: 2px solid var(--primary);
+      background: white;
+      color: var(--primary);
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      
+      &:hover,
+      &.active {
+        background: var(--primary);
+        color: white;
+      }
+    }
+  }
+
+  /* Animal Grid */
+  #animal-grid {
+    padding: var(--sectionPadding);
+    
+    .cs-card-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+    
+    .cs-item {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      }
+    }
+    
+    .cs-picture {
+      position: relative;
+      display: block;
+      
+      img {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+      }
+    }
+    
+    .cs-status-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      
+      &.cs-status-available {
+        background: #27ae60;
+        color: white;
+      }
+      
+      &.cs-status-pending {
+        background: #f39c12;
+        color: white;
+      }
+      
+      &.cs-status-adopted {
+        background: #95a5a6;
+        color: white;
+      }
+    }
+    
+    .cs-item-content {
+      padding: 1.5rem;
+    }
+    
+    .cs-item-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--headerColor);
+    }
+    
+    .cs-item-details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    .cs-detail {
+      background: var(--accent);
+      padding: 0.25rem 0.75rem;
+      border-radius: 15px;
+      font-size: 0.875rem;
+      color: var(--bodyTextColor);
+    }
+    
+    .cs-item-text {
+      margin-bottom: 1rem;
+      line-height: 1.6;
+    }
+    
+    .cs-compatibility {
+      margin-bottom: 1.5rem;
+      
+      h4 {
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: var(--headerColor);
+      }
+    }
+    
+    .cs-compatibility-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    
+    .cs-tag {
+      background: var(--primaryLight);
+      color: white;
+      padding: 0.25rem 0.75rem;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    
+    .cs-button-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .cs-button-solid,
+    .cs-button-transparent {
+      flex: 1;
+      min-width: 120px;
+      text-align: center;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    
+    .cs-button-solid {
+      background: var(--primary);
+      color: white;
+      border: 2px solid var(--primary);
+      
+      &:hover {
+        background: var(--primaryDark);
+        border-color: var(--primaryDark);
+      }
+    }
+    
+    .cs-button-transparent {
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+      
+      &:hover {
+        background: var(--primary);
+        color: white;
+      }
+    }
+    
+    .cs-more-info {
+      text-align: center;
+      padding: 3rem 2rem;
+      background: var(--accent);
+      border-radius: 12px;
+      
+      h2 {
+        margin-bottom: 1rem;
+        color: var(--headerColor);
+      }
+      
+      p {
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
+      }
+    }
+  }
+
+  /* Mobile Responsive */
+  @media only screen and (max-width: 768px) {
+    .cs-card-group {
+      grid-template-columns: 1fr;
+    }
+    
+    .cs-filter-group {
+      justify-content: center;
+    }
+    
+    .cs-filter-button {
+      font-size: 0.875rem;
+      padding: 0.5rem 1rem;
+    }
+    
+    .cs-button-group {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<script>
+  // Animal filtering functionality
+  document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('.cs-filter-button');
+    const animalItems = document.querySelectorAll('.cs-item');
+    
+    filterButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        // Remove active class from all buttons
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        // Add active class to clicked button
+        this.classList.add('active');
+        
+        const filter = this.getAttribute('data-filter');
+        
+        animalItems.forEach(item => {
+          const htmlItem = item as HTMLElement;
+          if (filter === 'all') {
+            htmlItem.style.display = 'block';
+          } else {
+            const categories = htmlItem.getAttribute('data-category');
+            if (categories && categories.includes(filter)) {
+              htmlItem.style.display = 'block';
+            } else {
+              htmlItem.style.display = 'none';
+            }
+          }
+        });
+      });
+    });
+  });
+</script>

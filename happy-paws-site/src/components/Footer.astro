@@ -51,7 +51,8 @@ const currentYear = getCurrentYear()
         /></a
       >
       <p>
-        Dedicated to rescuing and rehoming dogs in the greater metro area since 2015. Every dog deserves a loving home.
+        Extra content if you need it, if not you can delete this whole p tag. I
+        usually do.
       </p>
     </div>
     <div class="right-section">
@@ -79,25 +80,28 @@ const currentYear = getCurrentYear()
           <li>
             <h2>Services</h2>
           </li>
-          <li>Dog Adoption</li>
-          <li>Foster Program</li>
-          <li>Volunteer Opportunities</li>
-          <li>Community Education</li>
+          <li>Service1</li>
+          <li>Service2</li>
+          <li>Service4</li>
+          <li>Service5</li>
         </ul>
         <ul>
           <li>
             <h2>Contact</h2>
           </li>
           <li>
-            <a href="/contact" id="footer-address">
+            <a href="/contact">
               {client.address.lineOne}<br />
               {client.address.lineTwo}<br />
-              {client.address.city} {client.address.state} {client.address.zip}
+              {client.address.city}
+              {client.address.state}
+              {client.address.zip}
             </a>
           </li>
           <li>
-            <a href={`tel:${client.phoneForTel}`} id="footer-phone">
-              T: {client.phoneFormatted}
+            <a href={`tel:${client.phoneForTel}`}>
+              T:
+              {client.phoneFormatted}
             </a>
           </li>
           <li>
@@ -119,82 +123,70 @@ const currentYear = getCurrentYear()
 
   <div class="credit">
     <span>Designed and Hand Coded by</span>
-    <a href="/" target="_blank" rel="noopener">Happy Paws Dog Rescue</a>
+    <a href="/" target="_blank" rel="noopener">Your Company Name</a>
     <span class="copyright"> Copyright {currentYear} - Present</span>
   </div>
 </footer>
 
 <script>
-  // Load dynamic client data and social media icons
+  // Load and display social media icons
   document.addEventListener('DOMContentLoaded', function() {
     loadDynamicClientData();
-    loadSocialMediaIcons();
   });
 
-  // Function to load and update client data dynamically
   async function loadDynamicClientData() {
     try {
-      const orgId = '3'; // Organization ID
+      const orgId = '{{organization.id}}'; // Organization ID
       const response = await fetch(`/api/client-data?orgId=${orgId}`);
 
       if (response.ok) {
-        const clientData = await response.json();
-        console.log('Received client data:', clientData);
+        const data = await response.json();
+        console.log('✅ Dynamic client data loaded:', data);
 
-        // Update contact information
-        const addressElement = document.getElementById('footer-address');
-        if (addressElement && clientData.address) {
-          addressElement.innerHTML = `
-            ${clientData.address.lineOne}<br />
-            ${clientData.address.lineTwo ? clientData.address.lineTwo + '<br />' : ''}
-            ${clientData.address.city} ${clientData.address.state} ${clientData.address.zip}
-          `;
+        // Update email if available
+        if (data.email) {
+          const emailElement = document.getElementById('footer-email');
+          if (emailElement) {
+            emailElement.href = `mailto:${data.email}`;
+          }
         }
 
-        // Update phone number
-        const phoneElement = document.getElementById('footer-phone');
-        if (phoneElement && clientData.phoneFormatted) {
-          phoneElement.href = `tel:${clientData.phoneForTel}`;
-          phoneElement.innerHTML = `T: ${clientData.phoneFormatted}`;
+        // Update EIN if available
+        if (data.ein) {
+          const einElement = document.getElementById('ein-display');
+          if (einElement) {
+            einElement.textContent = `EIN: ${data.ein}`;
+          }
         }
 
-        // Update email
-        const emailElement = document.getElementById('footer-email');
-        if (emailElement && clientData.email) {
-          emailElement.href = `mailto:${clientData.email}`;
+        // Load social media icons
+        if (data.socialMedia) {
+          loadSocialMediaIcons(data.socialMedia);
         }
-
-        // Update EIN using specific ID
-        const einElement = document.getElementById('ein-display');
-        if (einElement && clientData.ein) {
-          einElement.textContent = `EIN: ${clientData.ein}`;
-          console.log('EIN updated to:', clientData.ein);
-        } else {
-          console.warn('EIN element not found or no EIN data:', { einElement, ein: clientData.ein });
-        }
-
-        console.log('Dynamic client data loaded successfully');
       }
     } catch (error) {
-      console.warn('Failed to load dynamic client data:', error);
+      console.error('Error loading dynamic client data:', error);
     }
   }
 
-  async function loadSocialMediaIcons() {
+  async function loadSocialMediaIcons(socialMediaData = null) {
     try {
       // Get organization ID from environment or default to 3
-      const orgId = '3';
+      const orgId = '{{organization.id}}';
 
-      // Try to load from API first
-      let socialMedia = {};
-      try {
-        const response = await fetch(`/api/admin/website-content?orgId=${orgId}`);
-        if (response.ok) {
-          const data = await response.json();
-          socialMedia = data.data.socialMedia || {};
+      // Use passed data or try to load from API
+      let socialMedia = socialMediaData || {};
+
+      if (!socialMediaData) {
+        try {
+          const response = await fetch(`/api/client-data?orgId=${orgId}`);
+          if (response.ok) {
+            const data = await response.json();
+            socialMedia = data.socialMedia || {};
+          }
+        } catch (error) {
+          console.log('API not available, checking localStorage');
         }
-      } catch (error) {
-        console.log('API not available, checking localStorage');
       }
 
       // Fallback to localStorage
