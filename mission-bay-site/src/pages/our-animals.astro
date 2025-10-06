@@ -1,20 +1,6 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
 import CTA from "@components/CTA.astro";
-
-// Fetch animals from API using organization ID from template configuration
-let animals = [];
-try {
-  const response = await fetch(`${Astro.url.origin}/api/admin/animals?orgId=9`);
-  if (response.ok) {
-    animals = await response.json();
-    console.log('✅ Fetched animals for our-animals page:', animals.length);
-  } else {
-    console.error('❌ Failed to fetch animals:', response.status);
-  }
-} catch (error) {
-  console.error('❌ Error fetching animals:', error);
-}
 ---
 
 <BaseLayout
@@ -54,57 +40,22 @@ try {
   <!-- ============================================ -->
   <!--                Animal Grid                   -->
   <!-- ============================================ -->
-  
+
   <section id="animal-grid">
     <div class="cs-container">
-      <div class="cs-card-group">
-        {animals.map((animal) => (
-          <div class="cs-item" data-category={`${animal.species || 'dog'} ${animal.status?.toLowerCase() || 'available'} ${animal.special_needs ? 'special-needs' : ''}`}>
-            <picture class="cs-picture">
-              <img
-                loading="lazy"
-                decoding="async"
-                src={animal.image_url || animal.main_image?.url || '/assets/images/animals/placeholder.jpg'}
-                alt={animal.name}
-                width="400"
-                height="300"
-              />
-              <div class="cs-status-badge cs-status-{animal.status?.toLowerCase() || 'available'}">
-                {animal.status || 'Available'}
-              </div>
-            </picture>
+      <!-- Loading State -->
+      <div id="loading-state" class="cs-loading">
+        <p>Loading our wonderful animals...</p>
+      </div>
 
-            <div class="cs-item-content">
-              <h3 class="cs-item-title">{animal.name}</h3>
-              <div class="cs-item-details">
-                <span class="cs-detail">{animal.breed}</span>
-                <span class="cs-detail">{animal.age}</span>
-                <span class="cs-detail">{animal.gender}</span>
-                <span class="cs-detail">{animal.size}</span>
-              </div>
+      <!-- Error State -->
+      <div id="error-state" class="cs-error" style="display: none;">
+        <p>Sorry, we're having trouble loading our animals right now. Please try again later or contact us directly.</p>
+      </div>
 
-              <p class="cs-item-text">{animal.description?.substring(0, 150)}...</p>
-
-              {['kids', 'cats', 'dogs'].some(key => animal[`good_with_${key}`]) && (
-  <div className="cs-compatibility">
-    <h4>Good with:</h4>
-    <div className="cs-compatibility-tags">
-      {animal.good_with_kids && <span className="cs-tag">Kids</span>}
-      {animal.good_with_cats && <span className="cs-tag">Cats</span>}
-      {animal.good_with_dogs && <span className="cs-tag">Dogs</span>}
-    </div>
-  </div>
-)}
-
-              </div>
-
-              <div class="cs-button-group">
-                <a href={`/animal-details/${animal.id}`} class="cs-button-solid">Learn More</a>
-                <a href="/applications" class="cs-button-transparent">Apply to Adopt</a>
-              </div>
-            </div>
-          </div>
-        ))}
+      <!-- Animals Grid -->
+      <div id="animals-grid" class="cs-card-group" style="display: none;">
+        <!-- Animals will be populated by JavaScript -->
       </div>
       
       <div class="cs-more-info">
@@ -375,23 +326,122 @@ try {
       flex-direction: column;
     }
   }
+
+  /* Loading and Error States */
+  .cs-loading,
+  .cs-error {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--bodyTextColor);
+  }
+
+  .cs-loading p,
+  .cs-error p {
+    font-size: 1.125rem;
+    margin: 0;
+  }
+
+  .cs-error {
+    color: var(--errorColor, #dc2626);
+  }
 </style>
 
 <script>
-  // Animal filtering functionality
-  document.addEventListener('DOMContentLoaded', function() {
+  // Load animals from API
+  document.addEventListener('DOMContentLoaded', async function() {
+    const loadingState = document.getElementById('loading-state');
+    const errorState = document.getElementById('error-state');
+    const animalsGrid = document.getElementById('animals-grid');
+
+    try {
+      const response = await fetch('/api/admin/animals?orgId=9');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const animals = await response.json();
+      console.log('✅ Fetched animals:', animals.length);
+
+      // Hide loading state
+      loadingState.style.display = 'none';
+
+      if (animals.length === 0) {
+        errorState.innerHTML = '<p>No animals are currently available for adoption. Please check back soon!</p>';
+        errorState.style.display = 'block';
+        return;
+      }
+
+      // Generate animal cards
+      const animalCards = animals.map(animal => {
+        const imageUrl = animal.image_url || animal.main_image?.url || '/assets/images/animals/placeholder.jpg';
+        const status = animal.status || 'Available';
+        const description = animal.description || animal.My_Story || '';
+        const shortDescription = description.length > 150 ? description.substring(0, 150) + '...' : description;
+
+        return `
+          <div class="cs-item" data-category="${animal.species || 'dog'} ${status.toLowerCase()} ${animal.special_needs ? 'special-needs' : ''}">
+            <picture class="cs-picture">
+              <img
+                loading="lazy"
+                decoding="async"
+                src="${imageUrl}"
+                alt="${animal.name || animal.Dog_Name}"
+                width="400"
+                height="300"
+              />
+              <div class="cs-status-badge cs-status-${status.toLowerCase()}">
+                ${status}
+              </div>
+            </picture>
+
+            <div class="cs-item-content">
+              <h3 class="cs-item-title">${animal.name || animal.Dog_Name}</h3>
+              <div class="cs-item-details">
+                <span class="cs-detail">${animal.breed || animal.Breed || 'Mixed'}</span>
+                <span class="cs-detail">${animal.age || 'Unknown age'}</span>
+                <span class="cs-detail">${animal.gender || animal.Gender || 'Unknown'}</span>
+                <span class="cs-detail">${animal.size || animal.Estimated_Size_When_Grown || 'Unknown size'}</span>
+              </div>
+
+              <p class="cs-item-text">${shortDescription}</p>
+
+              <div class="cs-button-group">
+                <a href="/animal-details/${animal.id}" class="cs-button-solid">Learn More</a>
+                <a href="/applications" class="cs-button-transparent">Apply to Adopt</a>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      animalsGrid.innerHTML = animalCards;
+      animalsGrid.style.display = 'grid';
+
+      // Initialize filter functionality after animals are loaded
+      initializeFilters();
+
+    } catch (error) {
+      console.error('❌ Error fetching animals:', error);
+      loadingState.style.display = 'none';
+      errorState.style.display = 'block';
+    }
+  });
+
+  // Filter functionality
+  function initializeFilters() {
     const filterButtons = document.querySelectorAll('.cs-filter-button');
     const animalItems = document.querySelectorAll('.cs-item');
-    
+
     filterButtons.forEach(button => {
       button.addEventListener('click', function() {
         // Remove active class from all buttons
         filterButtons.forEach(btn => btn.classList.remove('active'));
         // Add active class to clicked button
         this.classList.add('active');
-        
+
         const filter = this.getAttribute('data-filter');
-        
+
+        // Filter animals
         animalItems.forEach(item => {
           const htmlItem = item as HTMLElement;
           if (filter === 'all') {
@@ -407,5 +457,5 @@ try {
         });
       });
     });
-  });
+  }
 </script>
