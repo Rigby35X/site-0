@@ -1072,6 +1072,64 @@
                                         </div>
                                     </div>
 
+                                    <!-- What We Do Section Dropdown -->
+                                    <div class="border border-gray-200 rounded-lg">
+                                        <button onclick="toggleContentDropdown('whatwedo')" class="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50">
+                                            <div>
+                                                <h4 class="font-medium text-gray-900">What We Do Section</h4>
+                                                <p class="text-sm text-gray-600">Detailed description of your mission</p>
+                                            </div>
+                                            <svg id="whatwedo-chevron" class="w-5 h-5 text-gray-400 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                            </svg>
+                                        </button>
+                                        <div id="whatwedo-content" class="hidden p-4 border-t border-gray-200 bg-gray-50">
+                                            <div class="space-y-4">
+                                                <div class="form-group">
+                                                    <label class="form-label">Section Title</label>
+                                                    <input type="text" id="whatwedo-title" class="form-input" placeholder="What We Do">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="form-label">Subheadline</label>
+                                                    <input type="text" id="whatwedo-subheadline" class="form-input" placeholder="Our Mission">
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="form-label">Description</label>
+                                                    <textarea id="whatwedo-description" class="form-input" rows="4" placeholder="Describe your mission and services..."></textarea>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="form-label">Featured Image (Main)</label>
+                                                    <div class="space-y-2">
+                                                        <input type="url" id="whatwedo-image-url" class="form-input" placeholder="https://example.com/image.jpg">
+                                                        <div class="text-center">
+                                                            <span class="text-gray-500">or</span>
+                                                        </div>
+                                                        <input type="file" id="whatwedo-image-upload" class="form-input" accept="image/*">
+                                                        <div id="whatwedo-image-preview" class="hidden mt-2">
+                                                            <img class="w-32 h-20 object-cover rounded border">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="form-label">Secondary Image</label>
+                                                    <div class="space-y-2">
+                                                        <input type="url" id="whatwedo-secondary-image-url" class="form-input" placeholder="https://example.com/image.jpg">
+                                                        <div class="text-center">
+                                                            <span class="text-gray-500">or</span>
+                                                        </div>
+                                                        <input type="file" id="whatwedo-secondary-image-upload" class="form-input" accept="image/*">
+                                                        <div id="whatwedo-secondary-image-preview" class="hidden mt-2">
+                                                            <img class="w-32 h-20 object-cover rounded border">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="flex space-x-2">
+                                                    <button onclick="saveWhatWeDoSection()" class="btn-primary">Save What We Do Section</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <!-- FAQ Section Dropdown -->
                                     <div class="border border-gray-200 rounded-lg">
                                         <button onclick="toggleContentDropdown('faq')" class="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50">
@@ -3583,39 +3641,6 @@
                 `;
             }
 
-            function displayAnimalsInTab(animals) {
-                const loadingMsg = document.getElementById('loadingMessageFull');
-                const errorMsg = document.getElementById('errorMessageFull');
-                const animalsList = document.getElementById('animalsListFull');
-                const noAnimalsMsg = document.getElementById('noAnimalsMessageFull');
-
-                loadingMsg.classList.add('hidden');
-                errorMsg.classList.add('hidden');
-
-                // Store animals globally for filtering
-                allAnimals = animals;
-                filteredAnimals = animals;
-
-                // Update statistics
-                updateStatistics(animals);
-
-                if (animals.length === 0) {
-                    animalsList.classList.add('hidden');
-                    noAnimalsMsg.classList.remove('hidden');
-                    return;
-                }
-
-                noAnimalsMsg.classList.add('hidden');
-                animalsList.classList.remove('hidden');
-
-                // Display animals based on current view
-                if (currentView === 'grid') {
-                    displayGridView(animals);
-                } else {
-                    displayListView(animals);
-                }
-            }
-
             // Make functions globally accessible for other parts of the code
             window.displayAnimalsInTab = displayAnimalsInTab;
             window.switchView = switchView;
@@ -3931,6 +3956,45 @@
             }
         }
 
+        // Global variables for view state
+        let currentView = 'grid'; // 'grid' or 'list'
+        let allAnimals = []; // Store all animals for filtering
+        let filteredAnimals = []; // Store filtered animals
+
+        // Display animals in the full animals tab
+        function displayAnimalsInTab(animals) {
+            const loadingMsg = document.getElementById('loadingMessageFull');
+            const errorMsg = document.getElementById('errorMessageFull');
+            const animalsList = document.getElementById('animalsListFull');
+            const noAnimalsMsg = document.getElementById('noAnimalsMessageFull');
+
+            if (loadingMsg) loadingMsg.classList.add('hidden');
+            if (errorMsg) errorMsg.classList.add('hidden');
+
+            // Store animals globally for filtering
+            allAnimals = animals;
+            filteredAnimals = animals;
+
+            // Update statistics
+            updateStatistics(animals);
+
+            if (animals.length === 0) {
+                if (animalsList) animalsList.classList.add('hidden');
+                if (noAnimalsMsg) noAnimalsMsg.classList.remove('hidden');
+                return;
+            }
+
+            if (noAnimalsMsg) noAnimalsMsg.classList.add('hidden');
+            if (animalsList) animalsList.classList.remove('hidden');
+
+            // Display animals based on current view
+            if (currentView === 'grid') {
+                displayGridView(animals);
+            } else {
+                displayListView(animals);
+            }
+        }
+
         // Load animals for full animals tab
         async function loadAnimalsForTab() {
             try {
@@ -3941,11 +4005,158 @@
                 displayAnimalsInTab(animals);
             } catch (error) {
                 console.error('Error loading animals:', error);
-                document.getElementById('errorMessageFull').textContent = 'Error loading animals: ' + error.message;
-                document.getElementById('errorMessageFull').classList.remove('hidden');
+                const errorMsg = document.getElementById('errorMessageFull');
+                if (errorMsg) {
+                    errorMsg.textContent = 'Error loading animals: ' + error.message;
+                    errorMsg.classList.remove('hidden');
+                }
             }
         }
 
+        // Update statistics display
+        function updateStatistics(animals) {
+            const total = animals.length;
+            const available = animals.filter(a => a.status === 'Available').length;
+            const published = animals.filter(a => a.status === 'Published').length;
+            const adopted = animals.filter(a => a.status === 'Adopted').length;
+
+            const totalPetsCount = document.getElementById('totalPetsCount');
+            const availablePetsCount = document.getElementById('availablePetsCount');
+            const publishedPetsCount = document.getElementById('publishedPetsCount');
+            const adoptedPetsCount = document.getElementById('adoptedPetsCount');
+
+            if (totalPetsCount) totalPetsCount.textContent = total;
+            if (availablePetsCount) availablePetsCount.textContent = available;
+            if (publishedPetsCount) publishedPetsCount.textContent = published;
+            if (adoptedPetsCount) adoptedPetsCount.textContent = adopted;
+        }
+
+        // Display animals in grid view
+        function displayGridView(animals) {
+            const animalsList = document.getElementById('animalsListFull');
+            if (!animalsList) return;
+
+            animalsList.className = 'animals-grid';
+
+            animalsList.innerHTML = animals.map(animal => `
+                <div class="animal-card-grid">
+                    <img src="${animal.image_url || 'https://via.placeholder.com/300x200?text=No+Image'}"
+                         alt="${animal.name}" class="animal-image">
+                    <div class="animal-info">
+                        <h3>${animal.name}</h3>
+                        <p class="animal-breed">${animal.breed || 'Mixed'}</p>
+                        <p class="animal-details">${animal.age || 'Unknown age'} • ${animal.gender || 'Unknown'}</p>
+                        <span class="status-badge status-${animal.status?.toLowerCase() || 'available'}">${animal.status || 'Available'}</span>
+                        <div class="animal-actions">
+                            <button onclick="openModal(${animal.id})" class="btn-edit">Edit</button>
+                            <button onclick="deleteAnimal(${animal.id})" class="btn-delete">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Display animals in list view
+        function displayListView(animals) {
+            const animalsList = document.getElementById('animalsListFull');
+            if (!animalsList) return;
+
+            animalsList.className = 'animals-list';
+
+            animalsList.innerHTML = `
+                <div class="animals-list-header">
+                    <div></div>
+                    <div>Pet</div>
+                    <div>Breed</div>
+                    <div>Age</div>
+                    <div>Status</div>
+                    <div>Actions</div>
+                </div>
+                ${animals.map(animal => `
+                    <div class="animal-list-item">
+                        <img src="${animal.image_url || 'https://via.placeholder.com/48x48?text=No+Image'}"
+                             alt="${animal.name}" class="animal-thumbnail">
+                        <div class="animal-name">${animal.name}</div>
+                        <div class="animal-breed">${animal.breed || 'Mixed'}</div>
+                        <div class="animal-age">${animal.age || 'Unknown'}</div>
+                        <div class="animal-status">
+                            <span class="status-badge status-${animal.status?.toLowerCase() || 'available'}">${animal.status || 'Available'}</span>
+                        </div>
+                        <div class="animal-actions">
+                            <button onclick="openModal(${animal.id})" class="btn-edit">Edit</button>
+                            <button onclick="deleteAnimal(${animal.id})" class="btn-delete">Delete</button>
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+        }
+
+        // Switch between grid and list view
+        function switchView(view) {
+            currentView = view;
+
+            // Update button states
+            const gridBtn = document.getElementById('gridViewBtn');
+            const listBtn = document.getElementById('listViewBtn');
+
+            if (gridBtn && listBtn) {
+                if (view === 'grid') {
+                    gridBtn.classList.add('active');
+                    listBtn.classList.remove('active');
+                } else {
+                    listBtn.classList.add('active');
+                    gridBtn.classList.remove('active');
+                }
+            }
+
+            // Re-display animals with new view
+            if (currentView === 'grid') {
+                displayGridView(filteredAnimals);
+            } else {
+                displayListView(filteredAnimals);
+            }
+        }
+
+        // Filter animals in the tab
+        function filterAnimalsInTab() {
+            const statusFilter = document.getElementById('statusFilterFull')?.value || '';
+            const searchTerm = document.getElementById('searchInputFull')?.value?.toLowerCase() || '';
+
+            filteredAnimals = allAnimals.filter(animal => {
+                const matchesStatus = !statusFilter || animal.status === statusFilter;
+                const matchesSearch = !searchTerm ||
+                    animal.name?.toLowerCase().includes(searchTerm) ||
+                    animal.breed?.toLowerCase().includes(searchTerm) ||
+                    animal.description?.toLowerCase().includes(searchTerm);
+
+                return matchesStatus && matchesSearch;
+            });
+
+            // Update statistics with filtered results
+            updateStatistics(filteredAnimals);
+
+            // Display filtered results
+            if (currentView === 'grid') {
+                displayGridView(filteredAnimals);
+            } else {
+                displayListView(filteredAnimals);
+            }
+
+            // Show/hide no results message
+            const animalsList = document.getElementById('animalsListFull');
+            const noAnimalsMsg = document.getElementById('noAnimalsMessageFull');
+
+            if (filteredAnimals.length === 0) {
+                if (animalsList) animalsList.classList.add('hidden');
+                if (noAnimalsMsg) {
+                    noAnimalsMsg.classList.remove('hidden');
+                    noAnimalsMsg.textContent = allAnimals.length === 0 ? 'No animals found.' : 'No animals match your filters.';
+                }
+            } else {
+                if (animalsList) animalsList.classList.remove('hidden');
+                if (noAnimalsMsg) noAnimalsMsg.classList.add('hidden');
+            }
+        }
 
 
 
@@ -5840,6 +6051,28 @@
                         }
                     }
 
+                    // Populate What We Do Section
+                    if (content.what_we_do) {
+                        document.getElementById('whatwedo-title').value = content.what_we_do.headline || '';
+                        document.getElementById('whatwedo-subheadline').value = content.what_we_do.subheadline || '';
+                        document.getElementById('whatwedo-description').value = content.what_we_do.body_text || '';
+                        document.getElementById('whatwedo-image-url').value = content.what_we_do.featured_image_url || '';
+                        document.getElementById('whatwedo-secondary-image-url').value = content.what_we_do.secondary_image_url || '';
+
+                        console.log('What We Do section images:', {
+                            featured: content.what_we_do.featured_image_url,
+                            secondary: content.what_we_do.secondary_image_url
+                        });
+
+                        // Update image previews if URLs exist
+                        if (content.what_we_do.featured_image_url) {
+                            updateImagePreview(content.what_we_do.featured_image_url, document.getElementById('whatwedo-image-preview'));
+                        }
+                        if (content.what_we_do.secondary_image_url) {
+                            updateImagePreview(content.what_we_do.secondary_image_url, document.getElementById('whatwedo-secondary-image-preview'));
+                        }
+                    }
+
                     // Load services from content
                     loadServicesFromContent(content.services_header);
 
@@ -5877,11 +6110,11 @@
             console.log('Loading footer content from website content API for orgId:', orgId);
 
             try {
-                // Load website content from the API
+                // Load website content from the API - footer is now included in homepage response
                 const response = await fetch(`/api/website-content?orgId=${orgId}&page=homepage`);
                 if (response.ok) {
                     const websiteContent = await response.json();
-                    console.log('✅ Loaded website content:', websiteContent);
+                    console.log('✅ Loaded website content for footer:', websiteContent);
 
                     // Extract footer data from website content
                     const footerSection = websiteContent.footer || {};
@@ -6270,6 +6503,43 @@
             alert('Preview functionality coming soon!');
         }
 
+        async function saveWhatWeDoSection() {
+            const whatWeDoData = {
+                headline: document.getElementById('whatwedo-title').value,
+                subheadline: document.getElementById('whatwedo-subheadline').value,
+                body_text: document.getElementById('whatwedo-description').value,
+                featured_image_url: document.getElementById('whatwedo-image-url').value,
+                secondary_image_url: document.getElementById('whatwedo-secondary-image-url').value
+            };
+
+            console.log('Saving what we do section:', whatWeDoData);
+
+            try {
+                const response = await fetch('/api/website-content', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        orgId: currentOrgId,
+                        sectionKey: 'what_we_do',
+                        content: whatWeDoData
+                    })
+                });
+
+                if (response.ok) {
+                    alert('What We Do section saved successfully!');
+                    // Refresh the content to show updated data
+                    loadWebsiteContent();
+                } else {
+                    throw new Error('Failed to save what we do section');
+                }
+            } catch (error) {
+                console.error('Error saving what we do section:', error);
+                alert('Error saving what we do section. Please try again.');
+            }
+        }
+
         function previewAboutSection() {
             alert('Preview functionality coming soon!');
         }
@@ -6313,6 +6583,28 @@
                 });
             }
 
+            // What We Do image upload
+            const whatwedoImageUpload = document.getElementById('whatwedo-image-upload');
+            const whatwedoImageUrl = document.getElementById('whatwedo-image-url');
+            const whatwedoImagePreview = document.getElementById('whatwedo-image-preview');
+
+            if (whatwedoImageUpload) {
+                whatwedoImageUpload.addEventListener('change', function(e) {
+                    handleImageUpload(e, whatwedoImageUrl, whatwedoImagePreview, 'whatwedo');
+                });
+            }
+
+            // What We Do secondary image upload
+            const whatwedoSecondaryImageUpload = document.getElementById('whatwedo-secondary-image-upload');
+            const whatwedoSecondaryImageUrl = document.getElementById('whatwedo-secondary-image-url');
+            const whatwedoSecondaryImagePreview = document.getElementById('whatwedo-secondary-image-preview');
+
+            if (whatwedoSecondaryImageUpload) {
+                whatwedoSecondaryImageUpload.addEventListener('change', function(e) {
+                    handleImageUpload(e, whatwedoSecondaryImageUrl, whatwedoSecondaryImagePreview, 'whatwedo-secondary');
+                });
+            }
+
             // URL input change handlers
             if (heroBgUrl) {
                 heroBgUrl.addEventListener('input', function(e) {
@@ -6329,6 +6621,18 @@
             if (aboutSecondaryImageUrl) {
                 aboutSecondaryImageUrl.addEventListener('input', function(e) {
                     updateImagePreview(e.target.value, aboutSecondaryImagePreview);
+                });
+            }
+
+            if (whatwedoImageUrl) {
+                whatwedoImageUrl.addEventListener('input', function(e) {
+                    updateImagePreview(e.target.value, whatwedoImagePreview);
+                });
+            }
+
+            if (whatwedoSecondaryImageUrl) {
+                whatwedoSecondaryImageUrl.addEventListener('input', function(e) {
+                    updateImagePreview(e.target.value, whatwedoSecondaryImagePreview);
                 });
             }
         }
@@ -6441,6 +6745,7 @@
         window.saveHeroSection = saveHeroSection;
         window.saveServicesSection = saveServicesSection;
         window.saveAboutSection = saveAboutSection;
+        window.saveWhatWeDoSection = saveWhatWeDoSection;
         window.saveFAQSection = saveFAQSection;
         window.saveFooterSection = saveFooterSection;
         window.addService = addService;

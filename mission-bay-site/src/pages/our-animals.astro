@@ -1,6 +1,24 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
 import CTA from "@components/CTA.astro";
+
+// Fetch animals server-side
+let animals = [];
+let error = null;
+
+try {
+  // Use the same API endpoint that works
+  const response = await fetch(`${Astro.url.origin}/api/admin/animals?orgId=9`);
+  if (response.ok) {
+    animals = await response.json();
+    console.log('✅ Server-side fetch successful:', animals.length, 'animals');
+  } else {
+    throw new Error(`HTTP ${response.status}`);
+  }
+} catch (e) {
+  console.error('❌ Server-side fetch failed:', e);
+  error = e.message;
+}
 ---
 
 <BaseLayout
@@ -43,20 +61,71 @@ import CTA from "@components/CTA.astro";
 
   <section id="animal-grid">
     <div class="cs-container">
-      <!-- Loading State -->
-      <div id="loading-state" class="cs-loading">
-        <p>Loading our wonderful animals...</p>
-      </div>
 
-      <!-- Error State -->
-      <div id="error-state" class="cs-error" style="display: none;">
-        <p>Sorry, we're having trouble loading our animals right now. Please try again later or contact us directly.</p>
-      </div>
 
-      <!-- Animals Grid -->
-      <div id="animals-grid" class="cs-card-group" style="display: none;">
-        <!-- Animals will be populated by JavaScript -->
-      </div>
+      <!-- Server-side Rendered Animals -->
+      {error ? (
+        <div class="cs-error">
+          <p>Sorry, we're having trouble loading our animals right now. Please try again later.</p>
+          <p>Error: {error}</p>
+        </div>
+      ) : animals.length === 0 ? (
+        <div class="cs-loading">
+          <p>No animals are currently available for adoption. Please check back soon!</p>
+        </div>
+      ) : (
+        <div class="cs-card-group">
+          {animals.map((animal) => {
+            const imageUrl = animal.image_url || animal.main_image?.url || '/assets/images/animals/placeholder.jpg';
+            const status = animal.status || 'Available';
+            const description = animal.description || animal.My_Story || '';
+            const shortDescription = description.length > 150 ? description.substring(0, 150) + '...' : description;
+
+            return (
+              <div class="cs-item" data-category={`${animal.species || 'dog'} ${status.toLowerCase()} ${animal.special_needs ? 'special-needs' : ''}`}>
+                <picture class="cs-picture">
+                  <img
+                    loading="lazy"
+                    decoding="async"
+                    src={imageUrl}
+                    alt={animal.name || animal.Dog_Name}
+                  />
+                  <div class={`cs-status-badge cs-status-${status.toLowerCase()}`}>
+                    {status}
+                  </div>
+                </picture>
+
+                <div class="cs-item-content">
+                  <h3 class="cs-item-title">{animal.name || animal.Dog_Name}</h3>
+                  <div class="cs-item-details">
+                    <span class="cs-detail">{animal.breed || animal.Breed || 'Mixed'}</span>
+                    <span class="cs-detail">{animal.age || 'Unknown age'}</span>
+                    <span class="cs-detail">{animal.gender || animal.Gender || 'Unknown'}</span>
+                    <span class="cs-detail">{animal.size || animal.Estimated_Size_When_Grown || 'Unknown size'}</span>
+                  </div>
+
+                  <p class="cs-item-text">{shortDescription}</p>
+
+                  <div class="cs-compatibility">
+                    <h4>Good with:</h4>
+                    <div class="cs-compatibility-tags">
+                      {animal.good_with_kids && <span class="cs-tag">Kids</span>}
+                      {animal.good_with_cats && <span class="cs-tag">Cats</span>}
+                      {animal.good_with_dogs && <span class="cs-tag">Dogs</span>}
+                      {(!animal.good_with_kids && !animal.good_with_cats && !animal.good_with_dogs) && <span class="cs-tag">Ask us!</span>}
+                    </div>
+                  </div>
+
+                  <div class="cs-button-group">
+                    <a href={`/animal-details/${animal.id}`} class="cs-button-solid">Learn More</a>
+                    <a href="/applications" class="cs-button-transparent">Apply to Adopt</a>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
       
       <div class="cs-more-info">
         <h2>Don't See Your Perfect Match?</h2>
@@ -132,31 +201,31 @@ import CTA from "@components/CTA.astro";
   /* Animal Grid */
   #animal-grid {
     padding: var(--sectionPadding);
-    
+
     .cs-card-group {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
       gap: 2rem;
       margin-bottom: 4rem;
     }
-    
+
     .cs-item {
       background: white;
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       overflow: hidden;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
-      
+
       &:hover {
         transform: translateY(-5px);
         box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
       }
     }
-    
+
     .cs-picture {
       position: relative;
       display: block;
-      
+
       img {
         width: 100%;
         height: 250px;
@@ -191,6 +260,9 @@ import CTA from "@components/CTA.astro";
     
     .cs-item-content {
       padding: 1.5rem;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
     }
     
     .cs-item-title {
@@ -250,6 +322,8 @@ import CTA from "@components/CTA.astro";
       display: flex;
       gap: 1rem;
       flex-wrap: wrap;
+      margin-top: auto;
+      padding-top: 1rem;
     }
     
     .cs-button-solid,
@@ -346,116 +420,4 @@ import CTA from "@components/CTA.astro";
   }
 </style>
 
-<script>
-  // Load animals from API
-  document.addEventListener('DOMContentLoaded', async function() {
-    const loadingState = document.getElementById('loading-state');
-    const errorState = document.getElementById('error-state');
-    const animalsGrid = document.getElementById('animals-grid');
 
-    try {
-      const response = await fetch('/api/admin/animals?orgId=9');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const animals = await response.json();
-      console.log('✅ Fetched animals:', animals.length);
-
-      // Hide loading state
-      loadingState.style.display = 'none';
-
-      if (animals.length === 0) {
-        errorState.innerHTML = '<p>No animals are currently available for adoption. Please check back soon!</p>';
-        errorState.style.display = 'block';
-        return;
-      }
-
-      // Generate animal cards
-      const animalCards = animals.map(animal => {
-        const imageUrl = animal.image_url || animal.main_image?.url || '/assets/images/animals/placeholder.jpg';
-        const status = animal.status || 'Available';
-        const description = animal.description || animal.My_Story || '';
-        const shortDescription = description.length > 150 ? description.substring(0, 150) + '...' : description;
-
-        return `
-          <div class="cs-item" data-category="${animal.species || 'dog'} ${status.toLowerCase()} ${animal.special_needs ? 'special-needs' : ''}">
-            <picture class="cs-picture">
-              <img
-                loading="lazy"
-                decoding="async"
-                src="${imageUrl}"
-                alt="${animal.name || animal.Dog_Name}"
-                width="400"
-                height="300"
-              />
-              <div class="cs-status-badge cs-status-${status.toLowerCase()}">
-                ${status}
-              </div>
-            </picture>
-
-            <div class="cs-item-content">
-              <h3 class="cs-item-title">${animal.name || animal.Dog_Name}</h3>
-              <div class="cs-item-details">
-                <span class="cs-detail">${animal.breed || animal.Breed || 'Mixed'}</span>
-                <span class="cs-detail">${animal.age || 'Unknown age'}</span>
-                <span class="cs-detail">${animal.gender || animal.Gender || 'Unknown'}</span>
-                <span class="cs-detail">${animal.size || animal.Estimated_Size_When_Grown || 'Unknown size'}</span>
-              </div>
-
-              <p class="cs-item-text">${shortDescription}</p>
-
-              <div class="cs-button-group">
-                <a href="/animal-details/${animal.id}" class="cs-button-solid">Learn More</a>
-                <a href="/applications" class="cs-button-transparent">Apply to Adopt</a>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      animalsGrid.innerHTML = animalCards;
-      animalsGrid.style.display = 'grid';
-
-      // Initialize filter functionality after animals are loaded
-      initializeFilters();
-
-    } catch (error) {
-      console.error('❌ Error fetching animals:', error);
-      loadingState.style.display = 'none';
-      errorState.style.display = 'block';
-    }
-  });
-
-  // Filter functionality
-  function initializeFilters() {
-    const filterButtons = document.querySelectorAll('.cs-filter-button');
-    const animalItems = document.querySelectorAll('.cs-item');
-
-    filterButtons.forEach(button => {
-      button.addEventListener('click', function() {
-        // Remove active class from all buttons
-        filterButtons.forEach(btn => btn.classList.remove('active'));
-        // Add active class to clicked button
-        this.classList.add('active');
-
-        const filter = this.getAttribute('data-filter');
-
-        // Filter animals
-        animalItems.forEach(item => {
-          const htmlItem = item as HTMLElement;
-          if (filter === 'all') {
-            htmlItem.style.display = 'block';
-          } else {
-            const categories = htmlItem.getAttribute('data-category');
-            if (categories && categories.includes(filter)) {
-              htmlItem.style.display = 'block';
-            } else {
-              htmlItem.style.display = 'none';
-            }
-          }
-        });
-      });
-    });
-  }
-</script>
