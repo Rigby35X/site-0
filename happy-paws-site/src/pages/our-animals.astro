@@ -302,32 +302,60 @@ try {
       flex: 1;
       min-width: 120px;
       text-align: center;
-      padding: 0.75rem 1rem;
-      border-radius: 6px;
-      font-weight: 600;
+      /* Override to match homepage hero button */
+      height: (50/16rem) !important;
+      padding: 0 (30/16rem) !important;
+      line-height: (50/16em) !important;
+      font-size: (16/16rem) !important;
+      font-weight: bold !important;
+      text-transform: uppercase !important;
+      border-radius: 0 !important; /* Remove border-radius to match global style */
       text-decoration: none;
       transition: all 0.3s ease;
     }
     
     .cs-button-solid {
-      background: var(--primary);
-      color: white;
-      border: 2px solid var(--primary);
-      
+      /* Use global button styling - remove local overrides */
+      background: var(--primary) !important;
+      color: #000 !important; /* Match global style initial color */
+      border: none !important; /* Remove border to match global style */
+      position: relative !important;
+      z-index: 1 !important;
+
       &:hover {
-        background: var(--primaryDark);
-        border-color: var(--primaryDark);
+        color: #fff !important; /* Match global hover color */
+      }
+
+      /* Ensure the global ::before pseudo-element works */
+      &:before {
+        content: "";
+        width: 0;
+        height: 100%;
+        background-color: #000;
+        opacity: 1;
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        transition: width 0.3s;
+      }
+
+      &:hover:before {
+        width: 100%;
       }
     }
     
     .cs-button-transparent {
-      background: transparent;
-      color: var(--primary);
-      border: 2px solid var(--primary);
-      
+      background: transparent !important;
+      color: var(--primary) !important;
+      border: 2px solid var(--primary) !important;
+      /* Keep border-radius for transparent button to differentiate */
+      border-radius: 6px !important;
+
       &:hover {
-        background: var(--primary);
-        color: white;
+        background: var(--primary) !important;
+        color: white !important;
       }
     }
     
