@@ -5,22 +5,47 @@ import { getCurrentYear } from "@js/utils"
 
 const currentYear = getCurrentYear()
 
-// Use static client.json as initial fallback, will be updated client-side with website content
-const content = {
-  footer: {
-    organization_name: client.name || "Mission Bay Puppy Rescue",
-    address_line_one: client.address?.lineOne || "123 Main Street",
-    address_line_two: client.address?.lineTwo || "Suite 200",
-    address_city: client.address?.city || "San Diego",
-    address_state: client.address?.state || "CA",
-    address_zip: client.address?.zip || "92109",
-    phone: client.phoneFormatted || "(619) 555-1234",
-    phone_tel: client.phoneForTel || "6195551234",
-    email: client.email || "info@missionbaypuppyrescue.org",
-    ein: (client as any).ein || "87-2984609",
-    copyright: `© ${currentYear} ${client.name || "Mission Bay Puppy Rescue"}. All rights reserved.`
+let websiteContent: any = {};
+try {
+  const response = await fetch(`${Astro.url.origin}/api/website-content?orgId=9`);
+  if (response.ok) {
+    websiteContent = await response.json();
+    console.log('✅ Fetched website content for homepage:', Object.keys(websiteContent));
+  } else {
+    console.error('❌ Failed to fetch website content:', response.status);
   }
+} catch (error) {
+  console.error('❌ Error fetching website content:', error);
+}
+
+// Fallback content if API fails
+const defaultFooterContent = {
+  organization_name: "Mission Bay Puppy Rescue",
+  address_line_one: "123 Main Street",
+  address_line_two: "Suite 200",
+  address_city: "San Diego",
+  address_state: "CA",
+  address_zip: "92109",
+  phone: "555-555-5555",
+  email: "info@mbpr.org",
+  copyright: `© ${currentYear} Mission Bay Puppy Rescue. All rights reserved.`,
+  ein: "87-2984609"
 };
+
+// Use dynamic content with fallbacks (same pattern as homepage)
+const content = {
+  footer: websiteContent.footer || defaultFooterContent
+};
+
+console.log('🦶 Footer content structure:', content.footer);
+console.log('🔍 Raw websiteContent for footer:', {
+  footer: websiteContent.footer,
+  footer_organization_name: websiteContent.footer_organization_name,
+  footer_phone: websiteContent.footer_phone,
+  footer_email: websiteContent.footer_email,
+  footer_copyright: websiteContent.footer_copyright,
+  footer_ein: websiteContent.footer_ein
+});
 ---
 
 <style>

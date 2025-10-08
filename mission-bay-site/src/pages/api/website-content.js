@@ -51,8 +51,27 @@ export async function GET({ request }) {
             // Organize content by section_key for easier access
             const organizedContent = {};
             content.forEach(section => {
-                if (section.page_slug === pageSlug && section.is_visible) {
-                    organizedContent[section.section_key] = section;
+                // Include content for the requested page OR global content (footer, header, etc.)
+                if ((section.page_slug === pageSlug || section.page_slug === 'global') && section.is_visible) {
+                    // For footer, structure the content to match what admin expects
+                    if (section.section_key === 'footer') {
+                        organizedContent[section.section_key] = {
+                            content: {
+                                footer_organization_name: section.footer_organization_name,
+                                footer_address_line_one: section.footer_address_line_one,
+                                footer_address_line_two: section.footer_address_line_two,
+                                footer_address_city: section.footer_address_city,
+                                footer_address_state: section.footer_address_state,
+                                footer_address_zip: section.footer_address_zip,
+                                footer_phone: section.footer_phone,
+                                footer_email: section.footer_email,
+                                footer_copyright: section.footer_copyright,
+                                footer_ein: section.footer_ein
+                            }
+                        };
+                    } else {
+                        organizedContent[section.section_key] = section;
+                    }
                 }
             });
             
@@ -93,6 +112,17 @@ export async function GET({ request }) {
                     body_text: "Browse our available dogs, submit an application, or learn how you can help support our mission.",
                     button_text: "Start Your Adoption Journey",
                     button_link: "/our-animals"
+                },
+                footer: {
+                    organization_name: "Mission Bay Puppy Rescue",
+                    address_line_one: "123 Main Street",
+                    address_line_two: "Suite 200",
+                    address_city: "San Diego",
+                    address_state: "CA",
+                    address_zip: "92109",
+                    phone: "555-555-5555",
+                    email: "info@mbpr.org",
+                    ein: "87-2984609"
                 }
             };
             
@@ -133,25 +163,28 @@ export async function PUT({ request }) {
             console.log('🔍 Finding record ID for section:', sectionKey);
             const allContent = await makeXanoRequest(`/website_content/${orgId}?id=1`);
 
+            // For global content (footer), look for global page_slug; for other sections, look for specific page
             const recordToUpdate = allContent.find(record =>
                 record.section_key === sectionKey &&
                 record.org_id == orgId &&
-                record.page_slug === 'homepage'
+                (record.page_slug === 'global' || record.page_slug === 'homepage')
             );
 
             if (!recordToUpdate) {
                 console.log(`📝 No existing record found for section '${sectionKey}', creating new record`);
 
-                // Create new record
+                // Create new record - footer should be global, others are page-specific
                 const newRecord = {
                     org_id: parseInt(orgId),
                     section_key: sectionKey,
-                    page_slug: 'homepage',
+                    page_slug: sectionKey === 'footer' ? 'global' : 'homepage',
                     is_visible: true,
                     content: content
                 };
 
-                const createdRecord = await makeXanoRequest('/website_content', {
+                console.log('🚀 Creating new record with data:', JSON.stringify(newRecord, null, 2));
+
+                const createdRecord = await makeXanoRequest(`/website_content/${orgId}`, {
                     method: 'POST',
                     body: JSON.stringify(newRecord)
                 });
