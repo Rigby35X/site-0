@@ -48,35 +48,7 @@ console.log('🔍 Raw websiteContent for footer:', {
 });
 ---
 
-<style>
-  .social-media {
-    display: none; /* Hidden by default, shown when social links are available */
-  }
 
-  .social-media li {
-    margin-bottom: 8px;
-  }
-
-  .social-media a {
-    display: flex;
-    align-items: center;
-    color: white;
-    text-decoration: none;
-    font-size: 14px;
-    transition: opacity 0.3s ease;
-  }
-
-  .social-media a:hover {
-    opacity: 0.8;
-  }
-
-  .social-media svg {
-    width: 20px;
-    height: 20px;
-    margin-right: 8px;
-    fill: currentColor;
-  }
-</style>
 
 <!-- ============================================ --><!--                   Footer                     --><!-- ============================================ -->
 <footer id="footer">
@@ -117,7 +89,8 @@ console.log('🔍 Raw websiteContent for footer:', {
             </a>
           </li>
         </ul>
-        <ul>
+        <!-- Services column hidden per user request -->
+        <!-- <ul>
           <li>
             <h2>Services</h2>
           </li>
@@ -125,7 +98,7 @@ console.log('🔍 Raw websiteContent for footer:', {
           <li>Service2</li>
           <li>Service4</li>
           <li>Service5</li>
-        </ul>
+        </ul> -->
         <ul>
           <li>
             <h2>Contact</h2>
@@ -147,7 +120,7 @@ console.log('🔍 Raw websiteContent for footer:', {
             </a>
           </li>
           <li>
-            <a href={`mailto:${content.footer.email}`} id="footer-email">{content.footer.email}</a>
+            <a href={`mailto:${content.footer.email}`} id="footer-email">Contact Us</a>
           </li>
           <li>
             <span id="ein-display">EIN: {content.footer.ein}</span>
@@ -165,7 +138,7 @@ console.log('🔍 Raw websiteContent for footer:', {
 
   <div class="credit">
     <span>Designed and Hand Coded by</span>
-    <a href="/" target="_blank" rel="noopener">Your Company Name</a>
+    <a href="https://barkhaus.io/" target="_blank" rel="noopener">Barkhaus</a>
     <span class="copyright">{content.footer.copyright}</span>
   </div>
 </footer>
@@ -244,7 +217,7 @@ console.log('🔍 Raw websiteContent for footer:', {
     const emailElement = document.getElementById('footer-email');
     if (emailElement && footerData.footer_email) {
       emailElement.href = `mailto:${footerData.footer_email}`;
-      emailElement.textContent = footerData.footer_email;
+      emailElement.textContent = 'Contact Us';
     }
 
     // Update EIN
@@ -299,6 +272,8 @@ console.log('🔍 Raw websiteContent for footer:', {
         socialContainer.innerHTML = '';
         if (header) {
           const headerLi = document.createElement('li');
+          headerLi.style.listStyle = 'none';
+          headerLi.style.marginBottom = '0';
           headerLi.appendChild(header);
           socialContainer.appendChild(headerLi);
         }
@@ -332,6 +307,7 @@ console.log('🔍 Raw websiteContent for footer:', {
   function addSocialIcon(container, platform, url) {
     const li = document.createElement('li');
     li.style.marginBottom = '8px';
+    li.style.listStyle = 'none'; // Remove bullet points
 
     const link = document.createElement('a');
     link.href = url;
@@ -387,6 +363,39 @@ console.log('🔍 Raw websiteContent for footer:', {
 </script>
 
 <style lang="less">
+  /* Social Media Styles */
+  .social-media {
+    display: none; /* Hidden by default, shown when social links are available */
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      margin-bottom: 8px;
+      list-style: none;
+    }
+
+    a {
+      display: flex;
+      align-items: center;
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      transition: opacity 0.3s ease;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
+      fill: currentColor;
+    }
+  }
+
   /* Mobile */
 @media only screen and (min-width: 0em) {
   #footer {
@@ -455,6 +464,44 @@ console.log('🔍 Raw websiteContent for footer:', {
             }
           }
 
+          li {
+            font-size: (18/16rem);
+            list-style: none;
+            margin-bottom: (12/16rem);
+            color: #fff;
+            opacity: 0.9;
+
+            a {
+              line-height: 21/18em;
+              text-decoration: none;
+              color: #fff;
+              transition: color 0.3s;
+              &:hover {
+                color: var(--primary);
+              }
+            }
+          }
+          h2 {
+            font-size: (18/16rem);
+            font-weight: bold;
+            line-height: 21/18em;
+            text-transform: uppercase;
+            margin-bottom: (37/16rem);
+            color: #fff;
+            position: relative;
+
+            &:before {
+              content: "";
+              width: (97/16rem);
+              height: (2/16rem);
+              background: var(--primary);
+              opacity: 1;
+              display: block;
+              position: absolute;
+              bottom: (-16/16rem);
+              left: 0;
+            }
+          }
           li {
             font-size: (18/16rem);
             list-style: none;
