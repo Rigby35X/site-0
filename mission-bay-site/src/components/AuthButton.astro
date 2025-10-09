@@ -1,0 +1,83 @@
+---
+// Auth Button Component for Login/Logout
+---
+
+<div class="auth-container">
+  <!-- Loading state -->
+  <div data-auth="loading" class="auth-loading">
+    <span>Loading...</span>
+  </div>
+
+  <!-- Login link (shown when not authenticated) -->
+  <a
+    href="/auth/login"
+    data-auth="login"
+    class="auth-btn auth-btn-login"
+    style="display: none;"
+  >
+    Login
+  </a>
+
+  <!-- User info and logout (shown when authenticated) -->
+  <div class="auth-user-section" style="display: none;">
+    <span data-auth="user-info" class="auth-user-info"></span>
+    <a
+      href="/auth/logout"
+      data-auth="logout"
+      class="auth-btn auth-btn-logout"
+    >
+      Logout
+    </a>
+  </div>
+</div>
+
+<style>
+  .auth-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .auth-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .auth-btn-login {
+    background-color: var(--primary, #059669);
+    color: white;
+  }
+
+  .auth-btn-login:hover {
+    background-color: var(--primaryLight, #047857);
+  }
+
+  .auth-btn-logout {
+    background-color: #6b7280;
+    color: white;
+  }
+
+  .auth-btn-logout:hover {
+    background-color: #4b5563;
+  }
+
+  .auth-user-section {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .auth-user-info {
+    color: var(--bodyTextColor, #333);
+    font-size: 0.875rem;
+  }
+
+  .auth-loading {
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+</style>

@@ -1,0 +1,234 @@
+---
+// Profile Component - Client-side version (similar to useUser() hook)
+---
+
+<div class="profile-container">
+  <!-- Loading state -->
+  <div data-profile="loading" class="profile-loading">
+    <p>Loading profile...</p>
+  </div>
+
+  <!-- Profile content (shown when user is authenticated) -->
+  <div data-profile="content" class="profile-content" style="display: none;">
+    <div class="profile-header">
+      <img 
+        data-profile="picture" 
+        class="profile-picture" 
+        alt="Profile"
+        style="display: none;"
+      />
+      <div class="profile-info">
+        <h2 data-profile="name" class="profile-name"></h2>
+        <p data-profile="email" class="profile-email"></p>
+      </div>
+    </div>
+    
+    <div class="profile-details">
+      <h3>Profile Details</h3>
+      <pre data-profile="json" class="profile-json"></pre>
+    </div>
+  </div>
+
+  <!-- Not authenticated state -->
+  <div data-profile="unauthenticated" class="profile-unauthenticated" style="display: none;">
+    <p>Please <a href="/auth/login">log in</a> to view your profile.</p>
+  </div>
+</div>
+
+<style>
+  .profile-container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .profile-loading {
+    text-align: center;
+    padding: 2rem;
+    color: #6b7280;
+  }
+
+  .profile-content {
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--primary, #059669), var(--primaryLight, #047857));
+    color: white;
+  }
+
+  .profile-picture {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid white;
+    object-fit: cover;
+  }
+
+  .profile-info {
+    flex: 1;
+  }
+
+  .profile-name {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .profile-email {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 1rem;
+  }
+
+  .profile-details {
+    padding: 2rem;
+  }
+
+  .profile-details h3 {
+    margin: 0 0 1rem 0;
+    color: #1f2937;
+  }
+
+  .profile-json {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    padding: 1rem;
+    font-size: 0.875rem;
+    color: #374151;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .profile-unauthenticated {
+    text-align: center;
+    padding: 2rem;
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: 0.375rem;
+    color: #92400e;
+  }
+
+  .profile-unauthenticated a {
+    color: var(--primary, #059669);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .profile-unauthenticated a:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<script>
+  // Profile component functionality (similar to useUser() hook)
+  class ProfileComponent {
+    constructor() {
+      this.user = null;
+      this.isLoading = true;
+    }
+
+    async init() {
+      try {
+        await this.loadUser();
+      } catch (error) {
+        console.error('Profile initialization error:', error);
+      } finally {
+        this.isLoading = false;
+        this.updateUI();
+      }
+    }
+
+    async loadUser() {
+      try {
+        const response = await fetch('/api/auth/me');
+        const data = await response.json();
+        
+        if (data.user) {
+          this.user = data.user;
+        } else {
+          this.user = null;
+        }
+      } catch (error) {
+        console.error('Load user error:', error);
+        this.user = null;
+      }
+    }
+
+    updateUI() {
+      const loadingEl = document.querySelector('[data-profile="loading"]');
+      const contentEl = document.querySelector('[data-profile="content"]');
+      const unauthenticatedEl = document.querySelector('[data-profile="unauthenticated"]');
+
+      // Hide loading
+      if (loadingEl) loadingEl.style.display = 'none';
+
+      if (this.user) {
+        // Show profile content
+        if (contentEl) contentEl.style.display = 'block';
+        if (unauthenticatedEl) unauthenticatedEl.style.display = 'none';
+
+        // Update profile information
+        this.updateProfileInfo();
+      } else {
+        // Show unauthenticated state
+        if (contentEl) contentEl.style.display = 'none';
+        if (unauthenticatedEl) unauthenticatedEl.style.display = 'block';
+      }
+    }
+
+    updateProfileInfo() {
+      if (!this.user) return;
+
+      // Update profile picture
+      const pictureEl = document.querySelector('[data-profile="picture"]');
+      if (pictureEl && this.user.picture) {
+        pictureEl.src = this.user.picture;
+        pictureEl.style.display = 'block';
+      }
+
+      // Update name
+      const nameEl = document.querySelector('[data-profile="name"]');
+      if (nameEl) {
+        nameEl.textContent = this.user.name || 'No name provided';
+      }
+
+      // Update email
+      const emailEl = document.querySelector('[data-profile="email"]');
+      if (emailEl) {
+        emailEl.textContent = this.user.email || 'No email provided';
+      }
+
+      // Update JSON details
+      const jsonEl = document.querySelector('[data-profile="json"]');
+      if (jsonEl) {
+        jsonEl.textContent = JSON.stringify(this.user, null, 2);
+      }
+    }
+
+    getUser() {
+      return this.user;
+    }
+
+    isUserLoading() {
+      return this.isLoading;
+    }
+  }
+
+  // Initialize profile component when page loads
+  document.addEventListener('astro:page-load', () => {
+    const profileComponent = new ProfileComponent();
+    profileComponent.init();
+
+    // Make it globally available for other scripts
+    window.profileComponent = profileComponent;
+  });
+</script>

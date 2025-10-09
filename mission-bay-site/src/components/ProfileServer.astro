@@ -1,0 +1,215 @@
+---
+// Server-side Profile Component (similar to getSession() in Server Component)
+import { auth0 } from '../lib/auth0.js';
+
+let user = null;
+let error = null;
+
+try {
+  // Get session on the server side
+  const session = await auth0.getSession(Astro.request);
+  user = session?.user || null;
+} catch (err) {
+  console.error('Server-side auth error:', err);
+  error = err.message;
+}
+---
+
+<div class="profile-server-container">
+  {error && (
+    <div class="profile-error">
+      <p>Error loading profile: {error}</p>
+    </div>
+  )}
+
+  {!error && !user && (
+    <div class="profile-unauthenticated">
+      <p>Please <a href="/auth/login">log in</a> to view your profile.</p>
+    </div>
+  )}
+
+  {!error && user && (
+    <div class="profile-content">
+      <div class="profile-header">
+        {user.picture && (
+          <img 
+            src={user.picture} 
+            alt={user.name || 'Profile'} 
+            class="profile-picture"
+          />
+        )}
+        <div class="profile-info">
+          <h2 class="profile-name">{user.name || 'No name provided'}</h2>
+          <p class="profile-email">{user.email || 'No email provided'}</p>
+        </div>
+      </div>
+      
+      <div class="profile-details">
+        <h3>Server-Side Profile Details</h3>
+        <div class="profile-grid">
+          <div class="profile-item">
+            <strong>User ID:</strong>
+            <span>{user.sub || 'N/A'}</span>
+          </div>
+          <div class="profile-item">
+            <strong>Nickname:</strong>
+            <span>{user.nickname || 'N/A'}</span>
+          </div>
+          <div class="profile-item">
+            <strong>Last Updated:</strong>
+            <span>{user.updated_at ? new Date(user.updated_at).toLocaleDateString() : 'N/A'}</span>
+          </div>
+          <div class="profile-item">
+            <strong>Email Verified:</strong>
+            <span>{user.email_verified ? 'Yes' : 'No'}</span>
+          </div>
+        </div>
+        
+        <details class="profile-json-details">
+          <summary>View Full Profile JSON</summary>
+          <pre class="profile-json">{JSON.stringify(user, null, 2)}</pre>
+        </details>
+      </div>
+    </div>
+  )}
+</div>
+
+<style>
+  .profile-server-container {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .profile-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 0.375rem;
+    padding: 1rem;
+    color: #dc2626;
+    text-align: center;
+  }
+
+  .profile-unauthenticated {
+    text-align: center;
+    padding: 2rem;
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: 0.375rem;
+    color: #92400e;
+  }
+
+  .profile-unauthenticated a {
+    color: var(--primary, #059669);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .profile-unauthenticated a:hover {
+    text-decoration: underline;
+  }
+
+  .profile-content {
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, var(--primary, #059669), var(--primaryLight, #047857));
+    color: white;
+  }
+
+  .profile-picture {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid white;
+    object-fit: cover;
+  }
+
+  .profile-info {
+    flex: 1;
+  }
+
+  .profile-name {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .profile-email {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 1rem;
+  }
+
+  .profile-details {
+    padding: 2rem;
+  }
+
+  .profile-details h3 {
+    margin: 0 0 1.5rem 0;
+    color: #1f2937;
+  }
+
+  .profile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .profile-item {
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 0.375rem;
+    border: 1px solid #e5e7eb;
+  }
+
+  .profile-item strong {
+    display: block;
+    color: #374151;
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+  }
+
+  .profile-item span {
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+
+  .profile-json-details {
+    margin-top: 1.5rem;
+  }
+
+  .profile-json-details summary {
+    cursor: pointer;
+    padding: 0.75rem;
+    background: #f3f4f6;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    color: #374151;
+  }
+
+  .profile-json-details summary:hover {
+    background: #e5e7eb;
+  }
+
+  .profile-json {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #374151;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+</style>

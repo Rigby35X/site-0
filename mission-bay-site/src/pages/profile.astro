@@ -1,0 +1,239 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import AuthButton from "@components/AuthButton.astro";
+import Profile from "@components/Profile.astro";
+import ProfileServer from "@components/ProfileServer.astro";
+---
+
+<BaseLayout
+  title="Profile - Mission Bay Puppy Rescue"
+  description="User profile page showing authentication information"
+>
+  <section id="profile" class="cs-page-section">
+    <div class="cs-container">
+      <div class="cs-content">
+        <div class="page-header">
+          <h1 class="cs-title">👤 User Profile</h1>
+          <AuthButton />
+        </div>
+
+        <div class="profile-sections">
+          <!-- Server-Side Profile (rendered at build/request time) -->
+          <div class="profile-section">
+            <h2>🖥️ Server-Side Profile</h2>
+            <p class="section-description">
+              This profile information is fetched on the server during page rendering, 
+              similar to Next.js Server Components using <code>getSession()</code>.
+            </p>
+            <ProfileServer />
+          </div>
+
+          <!-- Client-Side Profile (rendered in browser) -->
+          <div class="profile-section">
+            <h2>🌐 Client-Side Profile</h2>
+            <p class="section-description">
+              This profile information is fetched in the browser after page load, 
+              similar to Next.js Client Components using <code>useUser()</code> hook.
+            </p>
+            <Profile />
+          </div>
+        </div>
+
+        <!-- Logout Instructions -->
+        <div class="logout-section">
+          <h2>🚪 Logout Instructions</h2>
+          <p>You can log out using any of these methods:</p>
+          <div class="logout-methods">
+            <div class="logout-method">
+              <h3>Direct Link</h3>
+              <p>Use a simple anchor tag:</p>
+              <code>&lt;a href="/auth/logout"&gt;Logout&lt;/a&gt;</code>
+              <br><br>
+              <a href="/auth/logout" class="logout-link">Try it: Logout</a>
+            </div>
+            
+            <div class="logout-method">
+              <h3>Auth Button Component</h3>
+              <p>Use the AuthButton component (shown at the top of this page)</p>
+              <code>&lt;AuthButton /&gt;</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation-section">
+          <h2>🧭 Navigation</h2>
+          <div class="nav-links">
+            <a href="/auth-test" class="nav-link">🧪 Auth Test Page</a>
+            <a href="/dashboard" class="nav-link">🔒 Protected Dashboard</a>
+            <a href="/" class="nav-link">🏠 Homepage</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cs-page-section {
+    padding: 4rem 0;
+    background-color: #f9fafb;
+    min-height: 100vh;
+  }
+
+  .cs-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .cs-content {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .cs-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--primary, #059669);
+    margin: 0;
+  }
+
+  .profile-sections {
+    display: grid;
+    gap: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  .profile-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .profile-section h2 {
+    margin: 0 0 1rem 0;
+    color: #1f2937;
+    font-size: 1.5rem;
+  }
+
+  .section-description {
+    margin: 0 0 2rem 0;
+    color: #6b7280;
+    line-height: 1.6;
+  }
+
+  .section-description code {
+    background: #f3f4f6;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    color: #374151;
+  }
+
+  .logout-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+  }
+
+  .logout-section h2 {
+    margin: 0 0 1rem 0;
+    color: #1f2937;
+  }
+
+  .logout-methods {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 1.5rem;
+  }
+
+  .logout-method {
+    padding: 1.5rem;
+    background: #f9fafb;
+    border-radius: 0.375rem;
+    border: 1px solid #e5e7eb;
+  }
+
+  .logout-method h3 {
+    margin: 0 0 0.75rem 0;
+    color: #374151;
+  }
+
+  .logout-method p {
+    margin: 0 0 0.75rem 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+
+  .logout-method code {
+    display: block;
+    background: #1f2937;
+    color: #f9fafb;
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
+
+  .logout-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #dc2626;
+    color: white;
+    text-decoration: none;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+  }
+
+  .logout-link:hover {
+    background: #b91c1c;
+  }
+
+  .navigation-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .navigation-section h2 {
+    margin: 0 0 1rem 0;
+    color: #1f2937;
+  }
+
+  .nav-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .nav-link {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: var(--primary, #059669);
+    color: white;
+    text-decoration: none;
+    border-radius: 0.375rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+  }
+
+  .nav-link:hover {
+    background: var(--primaryLight, #047857);
+  }
+</style>

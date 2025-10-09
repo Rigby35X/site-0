@@ -1,0 +1,239 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import AuthButton from "@components/AuthButton.astro";
+---
+
+<BaseLayout
+  title="Dashboard - Mission Bay Puppy Rescue"
+  description="Protected dashboard page for authenticated users"
+>
+  <section id="dashboard" class="cs-page-section">
+    <div class="cs-container">
+      <div class="cs-content">
+        <h1 class="cs-title">🔒 Protected Dashboard</h1>
+        
+        <div class="dashboard-header">
+          <p class="welcome-message">
+            Welcome to your protected dashboard! This page is only accessible to authenticated users.
+          </p>
+          <AuthButton />
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="dashboard-card">
+            <h3>🐕 My Adoptions</h3>
+            <p>View and manage your adoption applications</p>
+            <div class="card-stats">
+              <span class="stat-number">3</span>
+              <span class="stat-label">Active Applications</span>
+            </div>
+          </div>
+
+          <div class="dashboard-card">
+            <h3>❤️ Favorites</h3>
+            <p>Animals you've marked as favorites</p>
+            <div class="card-stats">
+              <span class="stat-number">7</span>
+              <span class="stat-label">Saved Animals</span>
+            </div>
+          </div>
+
+          <div class="dashboard-card">
+            <h3>📅 Appointments</h3>
+            <p>Upcoming visits and meetings</p>
+            <div class="card-stats">
+              <span class="stat-number">2</span>
+              <span class="stat-label">Scheduled</span>
+            </div>
+          </div>
+
+          <div class="dashboard-card">
+            <h3>💝 Donations</h3>
+            <p>Your contribution history</p>
+            <div class="card-stats">
+              <span class="stat-number">$250</span>
+              <span class="stat-label">Total Donated</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="user-profile">
+          <h2>👤 Profile Information</h2>
+          <div id="user-profile-content" class="profile-content">
+            <!-- User profile will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cs-page-section {
+    padding: 4rem 0;
+    background-color: #f9fafb;
+    min-height: 100vh;
+  }
+
+  .cs-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .cs-content {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .cs-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--primary, #059669);
+  }
+
+  .dashboard-header {
+    background: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .welcome-message {
+    font-size: 1.125rem;
+    color: #4b5563;
+    margin: 0;
+  }
+
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .dashboard-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+  }
+
+  .dashboard-card h3 {
+    margin: 0 0 0.5rem 0;
+    color: #1f2937;
+    font-size: 1.25rem;
+  }
+
+  .dashboard-card p {
+    margin: 0 0 1rem 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+
+  .card-stats {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary, #059669);
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+
+  .user-profile {
+    background: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .user-profile h2 {
+    margin: 0 0 1rem 0;
+    color: #1f2937;
+  }
+
+  .profile-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+
+  .profile-item {
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 0.25rem;
+  }
+
+  .profile-item strong {
+    display: block;
+    color: #374151;
+    margin-bottom: 0.25rem;
+  }
+
+  .profile-item span {
+    color: #6b7280;
+  }
+</style>
+
+<script>
+  // Load user profile information
+  document.addEventListener('astro:page-load', () => {
+    // Function to load and display user profile
+    async function loadUserProfile() {
+      try {
+        const response = await fetch('/api/auth/me');
+        const data = await response.json();
+        
+        if (data.user) {
+          const profileContent = document.getElementById('user-profile-content');
+          if (profileContent) {
+            profileContent.innerHTML = `
+              <div class="profile-item">
+                <strong>Name:</strong>
+                <span>${data.user.name || 'Not provided'}</span>
+              </div>
+              <div class="profile-item">
+                <strong>Email:</strong>
+                <span>${data.user.email || 'Not provided'}</span>
+              </div>
+              <div class="profile-item">
+                <strong>Member Since:</strong>
+                <span>${data.user.updated_at ? new Date(data.user.updated_at).toLocaleDateString() : 'Unknown'}</span>
+              </div>
+              <div class="profile-item">
+                <strong>User ID:</strong>
+                <span>${data.user.sub || 'Not available'}</span>
+              </div>
+            `;
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load user profile:', error);
+        const profileContent = document.getElementById('user-profile-content');
+        if (profileContent) {
+          profileContent.innerHTML = '<p>Failed to load profile information.</p>';
+        }
+      }
+    }
+
+    // Load profile on page load
+    loadUserProfile();
+  });
+</script>

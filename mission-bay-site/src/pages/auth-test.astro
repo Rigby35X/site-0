@@ -1,0 +1,215 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import AuthButton from "@components/AuthButton.astro";
+---
+
+<BaseLayout
+  title="Auth0 Test - Mission Bay Puppy Rescue"
+  description="Test page for Auth0 authentication integration"
+>
+  <section id="auth-test" class="cs-page-section">
+    <div class="cs-container">
+      <div class="cs-content">
+        <h1 class="cs-title">Auth0 Authentication Test</h1>
+        
+        <div class="auth-demo">
+          <h2>Authentication Status</h2>
+          <AuthButton />
+          
+          <div class="auth-info">
+            <h3>Protected Content</h3>
+            <div data-auth="protected" style="display: none;" class="protected-content">
+              <p>🎉 You are logged in! This content is only visible to authenticated users.</p>
+              <div class="user-details">
+                <h4>User Information:</h4>
+                <div id="user-details-content">
+                  <!-- User details will be populated by JavaScript -->
+                </div>
+              </div>
+            </div>
+            
+            <div data-auth="public" class="public-content">
+              <p>👋 Please sign in to see protected content.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="auth-instructions">
+          <h3>How to Test Auth0 Integration</h3>
+          <ol>
+            <li>Click "Sign In" to authenticate with Auth0</li>
+            <li>You'll be redirected to the Auth0 login page</li>
+            <li>After successful login, you'll return here</li>
+            <li>Protected content will become visible</li>
+            <li>Click "Sign Out" to logout</li>
+          </ol>
+
+          <h4>Auto-Configured Routes</h4>
+          <div class="route-links">
+            <a href="/auth/login" class="route-link">🔐 /auth/login</a>
+            <a href="/auth/logout" class="route-link">🚪 /auth/logout</a>
+            <a href="/auth/profile" class="route-link">👤 /auth/profile (API)</a>
+            <a href="/profile" class="route-link">👤 /profile (Page)</a>
+            <a href="/dashboard" class="route-link">🔒 /dashboard (Protected)</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cs-page-section {
+    padding: 4rem 0;
+    background-color: #f9fafb;
+  }
+
+  .cs-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .cs-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .cs-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--primary, #059669);
+  }
+
+  .auth-demo {
+    background: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+  }
+
+  .auth-demo h2 {
+    margin-bottom: 1rem;
+    color: #1f2937;
+  }
+
+  .auth-info {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .auth-info h3 {
+    margin-bottom: 1rem;
+    color: #1f2937;
+  }
+
+  .protected-content {
+    background: #d1fae5;
+    padding: 1.5rem;
+    border-radius: 0.375rem;
+    border: 1px solid #10b981;
+  }
+
+  .public-content {
+    background: #fef3c7;
+    padding: 1.5rem;
+    border-radius: 0.375rem;
+    border: 1px solid #f59e0b;
+  }
+
+  .user-details {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 0.25rem;
+  }
+
+  .user-details h4 {
+    margin-bottom: 0.5rem;
+    color: #1f2937;
+  }
+
+  .auth-instructions {
+    background: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .auth-instructions h3 {
+    margin-bottom: 1rem;
+    color: #1f2937;
+  }
+
+  .auth-instructions ol {
+    padding-left: 1.5rem;
+  }
+
+  .auth-instructions li {
+    margin-bottom: 0.5rem;
+    color: #4b5563;
+  }
+
+  .auth-instructions h4 {
+    margin: 2rem 0 1rem 0;
+    color: #1f2937;
+  }
+
+  .route-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .route-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: var(--primary, #059669);
+    color: white;
+    text-decoration: none;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    transition: background-color 0.2s ease;
+  }
+
+  .route-link:hover {
+    background: var(--primaryLight, #047857);
+  }
+</style>
+
+<script>
+  // Enhanced auth functionality for the test page
+  document.addEventListener('astro:page-load', () => {
+    // Function to update user details
+    function updateUserDetails() {
+      // Import the auth client
+      import('/src/js/auth.js').then(({ default: auth0Client }) => {
+        const user = auth0Client.getUser();
+        const userDetailsContent = document.getElementById('user-details-content');
+        
+        if (user && userDetailsContent) {
+          userDetailsContent.innerHTML = `
+            <p><strong>Name:</strong> ${user.name || 'N/A'}</p>
+            <p><strong>Email:</strong> ${user.email || 'N/A'}</p>
+            <p><strong>Picture:</strong> ${user.picture ? `<img src="${user.picture}" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%;">` : 'N/A'}</p>
+            <p><strong>Last Updated:</strong> ${user.updated_at || 'N/A'}</p>
+          `;
+        }
+      });
+    }
+
+    // Update user details when auth state changes
+    setTimeout(updateUserDetails, 1000);
+    
+    // Also update on auth button clicks
+    document.addEventListener('click', (e) => {
+      if (e.target.matches('[data-auth="login"]') || e.target.matches('[data-auth="logout"]')) {
+        setTimeout(updateUserDetails, 2000);
+      }
+    });
+  });
+</script>
