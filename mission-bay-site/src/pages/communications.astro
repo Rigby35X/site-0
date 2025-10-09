@@ -1,0 +1,366 @@
+---
+import BaseLayout from "@layouts/BaseLayout.astro";
+import AuthButton from "@components/AuthButton.astro";
+import MailchimpActions from "@components/MailchimpActions.astro";
+---
+
+<BaseLayout
+  title="Communications - Mission Bay Puppy Rescue"
+  description="Manage your email marketing and communications integrations"
+>
+  <section id="communications" class="cs-page-section">
+    <div class="cs-container">
+      <div class="cs-content">
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="header-content">
+            <h1 class="cs-title">📧 Communications</h1>
+            <p class="page-description">
+              Manage your email marketing campaigns, newsletters, and communication integrations.
+            </p>
+          </div>
+          <AuthButton />
+        </div>
+
+        <!-- Integration Tabs -->
+        <div class="integration-tabs">
+          <div class="tabs-header">
+            <button class="tab-button active" data-tab="mailchimp">
+              📧 Mailchimp
+            </button>
+            <button class="tab-button" data-tab="coming-soon">
+              🔜 More Integrations
+            </button>
+          </div>
+
+          <!-- Mailchimp Tab -->
+          <div id="tab-mailchimp" class="tab-content active">
+            <div class="integration-section">
+              <div class="integration-header">
+                <h2>📧 Mailchimp Integration</h2>
+                <p>Connect your Mailchimp account to manage email campaigns, subscriber lists, and automated workflows.</p>
+              </div>
+              
+              <MailchimpActions />
+            </div>
+          </div>
+
+          <!-- Coming Soon Tab -->
+          <div id="tab-coming-soon" class="tab-content">
+            <div class="coming-soon-section">
+              <h2>🚀 More Integrations Coming Soon</h2>
+              <p>We're working on adding more communication integrations to help you reach your audience effectively.</p>
+              
+              <div class="upcoming-integrations">
+                <div class="upcoming-card">
+                  <div class="upcoming-icon">📬</div>
+                  <h3>Constant Contact</h3>
+                  <p>Email marketing and automation platform</p>
+                  <span class="status-badge">Coming Soon</span>
+                </div>
+                
+                <div class="upcoming-card">
+                  <div class="upcoming-icon">📱</div>
+                  <h3>Twilio SMS</h3>
+                  <p>SMS messaging and notifications</p>
+                  <span class="status-badge">Coming Soon</span>
+                </div>
+                
+                <div class="upcoming-card">
+                  <div class="upcoming-icon">📢</div>
+                  <h3>Social Media</h3>
+                  <p>Facebook, Instagram, and Twitter posting</p>
+                  <span class="status-badge">Coming Soon</span>
+                </div>
+                
+                <div class="upcoming-card">
+                  <div class="upcoming-icon">📊</div>
+                  <h3>Analytics</h3>
+                  <p>Google Analytics and campaign tracking</p>
+                  <span class="status-badge">Coming Soon</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Help Section -->
+        <div class="help-section">
+          <h2>❓ Need Help?</h2>
+          <div class="help-cards">
+            <div class="help-card">
+              <h3>🔗 Setting Up Integrations</h3>
+              <p>Learn how to connect your accounts and configure integrations for your organization.</p>
+              <a href="#" class="help-link">View Guide</a>
+            </div>
+            
+            <div class="help-card">
+              <h3>📋 Best Practices</h3>
+              <p>Tips and strategies for effective email marketing and donor communication.</p>
+              <a href="#" class="help-link">Read More</a>
+            </div>
+            
+            <div class="help-card">
+              <h3>🛠️ Troubleshooting</h3>
+              <p>Common issues and solutions for integration problems.</p>
+              <a href="#" class="help-link">Get Help</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cs-page-section {
+    padding: 4rem 0;
+    background-color: #f9fafb;
+    min-height: 100vh;
+  }
+
+  .cs-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .cs-content {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  .header-content {
+    flex: 1;
+  }
+
+  .cs-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--primary, #059669);
+    margin: 0 0 1rem 0;
+  }
+
+  .page-description {
+    font-size: 1.125rem;
+    color: #6b7280;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .integration-tabs {
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 3rem;
+  }
+
+  .tabs-header {
+    display: flex;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f9fafb;
+  }
+
+  .tab-button {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-weight: 500;
+    color: #6b7280;
+    transition: all 0.2s ease;
+    border-bottom: 3px solid transparent;
+  }
+
+  .tab-button.active {
+    color: var(--primary, #059669);
+    background: white;
+    border-bottom-color: var(--primary, #059669);
+  }
+
+  .tab-button:hover:not(.active) {
+    color: #374151;
+    background: #f3f4f6;
+  }
+
+  .tab-content {
+    display: none;
+    padding: 2rem;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  .integration-section {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .integration-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .integration-header h2 {
+    margin: 0 0 1rem 0;
+    color: #1f2937;
+  }
+
+  .integration-header p {
+    margin: 0;
+    color: #6b7280;
+    line-height: 1.6;
+  }
+
+  .coming-soon-section {
+    text-align: center;
+  }
+
+  .coming-soon-section h2 {
+    margin: 0 0 1rem 0;
+    color: #1f2937;
+  }
+
+  .coming-soon-section > p {
+    margin: 0 0 3rem 0;
+    color: #6b7280;
+    font-size: 1.125rem;
+  }
+
+  .upcoming-integrations {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .upcoming-card {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    transition: transform 0.2s ease;
+  }
+
+  .upcoming-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .upcoming-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .upcoming-card h3 {
+    margin: 0 0 0.5rem 0;
+    color: #1f2937;
+    font-size: 1.125rem;
+  }
+
+  .upcoming-card p {
+    margin: 0 0 1rem 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+
+  .status-badge {
+    display: inline-block;
+    background: #fbbf24;
+    color: #92400e;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .help-section {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+
+  .help-section h2 {
+    margin: 0 0 2rem 0;
+    color: #1f2937;
+    text-align: center;
+  }
+
+  .help-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .help-card {
+    padding: 1.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    background: #f9fafb;
+  }
+
+  .help-card h3 {
+    margin: 0 0 0.75rem 0;
+    color: #1f2937;
+    font-size: 1rem;
+  }
+
+  .help-card p {
+    margin: 0 0 1rem 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .help-link {
+    color: var(--primary, #059669);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.875rem;
+  }
+
+  .help-link:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<script>
+  // Tab switching functionality
+  document.addEventListener('astro:page-load', () => {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const targetTab = button.dataset.tab;
+
+        // Update button states
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        // Update content visibility
+        tabContents.forEach(content => {
+          content.classList.remove('active');
+          if (content.id === `tab-${targetTab}`) {
+            content.classList.add('active');
+          }
+        });
+      });
+    });
+  });
+</script>
