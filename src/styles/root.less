@@ -84,7 +84,20 @@
 			background-color: var(--primaryLight);
 			transform: translateY(-2px);
 			box-shadow: 0 14px 30px rgba(15, 23, 42, 0.22);
- }
+		}
+	}
+
+	.cs-button-transparent {
+		background-color: transparent;
+		color: var(--primary);
+		border: 2px solid var(--primary);
+		box-shadow: none;
+
+		&:hover {
+			background-color: rgba(255, 255, 255, 0.1);
+			color: var(--primaryLight);
+		}
+	}
 }
 
 /* Scroll To Top Button */
@@ -124,18 +137,6 @@
 	outline: 2px solid var(--primary);
 	outline-offset: 2px;
 }
-
-	.cs-button-transparent {
-		background-color: transparent;
-		color: var(--primary);
-		border: 2px solid var(--primary);
-		box-shadow: none;
-
-		&:hover {
-			background-color: rgba(255, 255, 255, 0.1);
-			color: var(--primaryLight);
-		}
-	}
 }
 
 /* Fonts and general styles */
