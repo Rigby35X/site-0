@@ -1,11 +1,20 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
 import CTA from "@components/CTA.astro";
+
+const tokens = {
+  site: {
+    name: "{{site.name}}",
+  },
+  organization: {
+    name: "{{organization.name}}",
+  },
+};
 ---
 
 <BaseLayout
-  title="{{site.name}} - Donate"
-  description="Support {{organization.name}} with a donation. Your contribution directly helps animals in need get medical care, food, shelter, and love."
+  title={`${tokens.site.name} - Donate`}
+  description={`Support ${tokens.organization.name} with a donation. Your contribution directly helps animals in need get medical care, food, shelter, and love.`}
 >
   <!-- ============================================ -->
   <!--                 Page Header                  -->

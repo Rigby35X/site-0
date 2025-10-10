@@ -7,6 +7,15 @@ import Footer from "@components/Footer.astro";
 import "@styles/root.less";
 import "@styles/dark.less";
 
+const tokens = {
+  seo: {
+    keywords: "{{seo.keywords}}",
+    author: "{{seo.author}}",
+    robots: "{{seo.robots}}",
+    canonical: "{{seo.canonical}}",
+  },
+};
+
 // Define a type for images from the content collection
 type ContentImage = {
   src: string;
@@ -38,10 +47,10 @@ const { description, title, preloadedImage } = Astro.props as Props;
             <meta http-equiv="X-UA-Compatible" content="IE=edge">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <meta name="description" content={description}>
-            <meta name="keywords" content="{{seo.keywords}}">
-            <meta name="author" content="{{seo.author}}">
-            <meta name="robots" content="{{seo.robots}}">
-            <link rel="canonical" href={`{{seo.canonical}}${Astro.url.pathname}`}>
+            <meta name="keywords" content={tokens.seo.keywords}>
+            <meta name="author" content={tokens.seo.author}>
+            <meta name="robots" content={tokens.seo.robots}>
+            <link rel="canonical" href={`${tokens.seo.canonical}${Astro.url.pathname}`}>
 
             <!-- If present, preloads the image passed as a prop -->
             {preloadedImage && <link rel="preload" href={preloadedImage.src} as="image" />}

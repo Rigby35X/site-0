@@ -2,6 +2,22 @@
 import BaseLayout from "@layouts/BaseLayout.astro";
 import CTA from "@components/CTA.astro";
 
+const tokens = {
+  site: {
+    name: "{{site.name}}",
+  },
+  organization: {
+    name: "{{organization.name}}",
+    address: {
+      lineOne: "{{organization.address.lineOne}}",
+      city: "{{organization.address.city}}",
+      state: "{{organization.address.state}}",
+    },
+  },
+};
+
+const addressString = `${tokens.organization.address.lineOne}, ${tokens.organization.address.city}, ${tokens.organization.address.state}`;
+
 // Sample events data - in a real implementation, this would come from a CMS or database
 const upcomingEvents = [
   {
@@ -9,8 +25,8 @@ const upcomingEvents = [
     title: "Super Adoption Saturday",
     date: "2024-03-15",
     time: "10:00 AM - 4:00 PM",
-    location: "{{organization.name}} Facility",
-    address: "{{organization.address.lineOne}}, {{organization.address.city}}, {{organization.address.state}}",
+    location: `${tokens.organization.name} Facility`,
+    address: addressString,
     description: "Join us for our biggest adoption event of the month! Meet dozens of amazing animals looking for their forever homes. Adoption fees reduced by 50%.",
     image: "/assets/images/events/adoption-day.jpg",
     type: "adoption",
@@ -33,8 +49,8 @@ const upcomingEvents = [
     title: "New Volunteer Orientation",
     date: "2024-03-22",
     time: "2:00 PM - 4:00 PM",
-    location: "{{organization.name}} Training Room",
-    address: "{{organization.address.lineOne}}, {{organization.address.city}}, {{organization.address.state}}",
+    location: `${tokens.organization.name} Training Room`,
+    address: addressString,
     description: "Learn about volunteer opportunities and get started helping animals in need. Training provided for all volunteer positions.",
     image: "/assets/images/events/volunteer-orientation.jpg",
     type: "volunteer",
@@ -45,8 +61,8 @@ const upcomingEvents = [
     title: "Professional Pet Photos with Santa",
     date: "2024-12-14",
     time: "11:00 AM - 3:00 PM",
-    location: "{{organization.name}} Facility",
-    address: "{{organization.address.lineOne}}, {{organization.address.city}}, {{organization.address.state}}",
+    location: `${tokens.organization.name} Facility`,
+    address: addressString,
     description: "Bring your pets for professional holiday photos with Santa! $20 donation includes digital photos. All proceeds benefit our animals.",
     image: "/assets/images/events/pet-photos.jpg",
     type: "fundraiser",
@@ -75,8 +91,8 @@ const pastEvents = [
 ---
 
 <BaseLayout
-  title="{{site.name}} - Events"
-  description="Join {{organization.name}} for upcoming adoption events, fundraisers, and volunteer opportunities. Help us save more animal lives."
+  title={`${tokens.site.name} - Events`}
+  description={`Join ${tokens.organization.name} for upcoming adoption events, fundraisers, and volunteer opportunities. Help us save more animal lives.`}
 >
   <!-- ============================================ -->
   <!--                 Page Header                  -->

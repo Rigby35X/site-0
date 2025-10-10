@@ -2,10 +2,19 @@
 import BaseLayout from "@layouts/BaseLayout.astro";
 import CTA from "@components/CTA.astro";
 
+const tokens = {
+  site: {
+    name: "{{site.name}}",
+  },
+  organization: {
+    id: "{{organization.id}}",
+  },
+};
+
 // Fetch animals from API using organization ID from template configuration
 let animals = [];
 try {
-  const response = await fetch(`${Astro.url.origin}/api/admin/animals?orgId={{organization.id}}`);
+  const response = await fetch(`${Astro.url.origin}/api/admin/animals?orgId=${tokens.organization.id}`);
   if (response.ok) {
     animals = await response.json();
     console.log('✅ Fetched animals for our-animals page:', animals.length);
@@ -18,7 +27,7 @@ try {
 ---
 
 <BaseLayout
-  title="{{site.name}} - Our Animals Available for Adoption"
+  title={`${tokens.site.name} - Our Animals Available for Adoption`}
   description="Meet our wonderful animals looking for their forever homes. Browse available dogs, cats, and other pets ready for adoption."
 >
   <!-- ============================================ -->

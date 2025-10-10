@@ -2,6 +2,17 @@
 import navData from "@data/navData.json";
 import { Icon } from 'astro-icon/components';
 import DarkModeToggle from "@components/DarkModeToggle.astro";
+
+const tokens = {
+  branding: {
+    logo: {
+      main: "{{branding.logo.main}}",
+      alt: "{{branding.logo.alt}}",
+      width: "{{branding.logo.width}}",
+      height: "{{branding.logo.height}}",
+    },
+  },
+};
 ---
 
 <!-- ============================================ --><!--                 Navigation                   --><!-- ============================================ -->
@@ -10,10 +21,10 @@ import DarkModeToggle from "@components/DarkModeToggle.astro";
     <!--Nav Logo-->
     <a href="/" class="cs-logo" aria-label="back to home">
       <img
-        src="{{branding.logo.main}}"
-        alt="{{branding.logo.alt}}"
-        width="{{branding.logo.width}}"
-        height="{{branding.logo.height}}"
+        src={tokens.branding.logo.main}
+        alt={tokens.branding.logo.alt}
+        width={tokens.branding.logo.width}
+        height={tokens.branding.logo.height}
         aria-hidden="true"
         decoding="async"
       />
@@ -97,9 +108,9 @@ import DarkModeToggle from "@components/DarkModeToggle.astro";
 
 <style lang="less">
 
-/*-- -------------------------- -->
-<---     Mobile Navigation      -->
-<--- -------------------------- -*/
+/*-- --------------------------
+    Mobile Navigation
+-------------------------- --*/
 
 /* Mobile - 1023px */
 @media only screen and (max-width: 63.9375rem) {
@@ -405,9 +416,9 @@ import DarkModeToggle from "@components/DarkModeToggle.astro";
   }
 }
 
-/*-- -------------------------- -->
-<---     Navigation Dropdown    -->
-<--- -------------------------- -*/
+/*-- --------------------------
+    Navigation Dropdown
+-------------------------- --*/
 
 /* Mobile - 1023px */
 @media only screen and (max-width: 63.9375rem) {
@@ -670,9 +681,9 @@ import DarkModeToggle from "@components/DarkModeToggle.astro";
   }
 }
 
-/*-- -------------------------- -->
-<---     Desktop Navigation     -->
-<--- -------------------------- -*/
+/*-- --------------------------
+    Desktop Navigation
+-------------------------- --*/
 
 /* Small Desktop - 1024px */
 @media only screen and (min-width: 64rem) {

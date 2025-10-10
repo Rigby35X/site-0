@@ -1,20 +1,20 @@
 /* CODESTITCH STYLES, RESET, HEADER/NAVIGATION AND FOOTER */
 
-/*-- -------------------------- -->
-<---        Core Styles         -->
-<--- -------------------------- -*/
+/*-- --------------------------
+    Core Styles
+-------------------------- --*/
 
 /* CodeStitch Root and Helpers */
 @media only screen and (min-width: 0em) {
 	// Website colors
 	:root {
-		--primary: {{branding.colors.primary}};
-		--primaryLight: {{branding.colors.primaryLight}};
-		--secondary: {{branding.colors.secondary}};
-		--secondaryLight: {{branding.colors.secondary}};
-		--headerColor: {{branding.colors.headerColor}};
-		--bodyTextColor: {{branding.colors.bodyTextColor}};
-		--bodyTextColorWhite: {{branding.colors.bodyTextColorWhite}};
+		--primary: ~"{{branding.colors.primary}}";
+		--primaryLight: ~"{{branding.colors.primaryLight}}";
+		--secondary: ~"{{branding.colors.secondary}}";
+		--secondaryLight: ~"{{branding.colors.secondary}}";
+		--headerColor: ~"{{branding.colors.headerColor}}";
+		--bodyTextColor: ~"{{branding.colors.bodyTextColor}}";
+		--bodyTextColorWhite: ~"{{branding.colors.bodyTextColorWhite}}";
 
 		/* 13px - 16px */
 		--topperFontSize: clamp(0.8125rem, 1.6vw, 1rem);
@@ -222,9 +222,9 @@
 	}
 }
 
-/*-- -------------------------- -->
-<---      Dark Mode Toggle      -->
-<--- -------------------------- -*/
+/*-- --------------------------
+    Dark Mode Toggle
+-------------------------- --*/
 
 /* Mobile - 360px */
 @media only screen and (min-width: 0rem) {

@@ -2,141 +2,139 @@
 import BaseLayout from "@layouts/BaseLayout.astro";
 import CTA from "@components/CTA.astro";
 
-// Generate static paths for all animals
+const SITE_NAME = "Happy Paws Dog Rescue";
+
+interface Animal {
+  id: string | number;
+  name: string;
+  breed: string;
+  age: string;
+  gender: string;
+  size: string;
+  weight?: string;
+  status?: string;
+  description?: string;
+  description_long?: string;
+  image_url?: string;
+  images?: string[];
+  main_image?: { url: string };
+  additional_image_1?: { url: string };
+  additional_image_2?: { url: string };
+  additional_image_3?: { url: string };
+  additional_image_4?: { url: string };
+  spayed_neutered?: boolean;
+  vaccinated?: boolean;
+  microchip?: boolean;
+  special_needs?: boolean;
+  medical_notes?: string;
+  good_with_kids?: boolean;
+  good_with_cats?: boolean;
+  good_with_dogs?: boolean;
+  energy_level?: string;
+  house_trained?: boolean;
+}
+
 export async function getStaticPaths() {
+  const fallbackIds = ['luna', 'max'];
+
   try {
     const response = await fetch(`http://localhost:4321/api/admin/animals?orgId=3`);
     if (response.ok) {
       const animals = await response.json();
-      return animals.map(animal => ({
+      return animals.map((animal: Animal) => ({
         params: { id: animal.id.toString() }
       }));
     }
   } catch (error) {
-    console.error('Error fetching animals for static paths:', error);
+    console.error('Error fetching animals for static paths, using fallback:', error);
   }
 
-  // Fallback to empty array if API fails
-  return [];
+  return fallbackIds.map(id => ({
+    params: { id: id.toString() }
+  }));
 }
 
-// Get the animal ID from the URL
 const { id } = Astro.params;
 
-// Fetch animal data from API
-let animal = null;
+let animal: Animal | null = null;
 try {
   const response = await fetch(`${Astro.url.origin}/api/admin/animals?orgId=3`);
   if (response.ok) {
     const animals = await response.json();
-    animal = animals.find(a => a.id.toString() === id);
+    animal = animals.find((a: Animal) => a.id.toString() === id);
   }
 } catch (error) {
   console.error('Error fetching animal details:', error);
 }
 
-// If animal not found, redirect to 404
-if (!animal) {
-  return Astro.redirect('/404');
-}
-
-// Fallback animal data if API fails
-const fallbackAnimals = {
+const fallbackAnimals: Record<string, Animal> = {
   "luna": {
     id: "luna",
     name: "Luna",
-    type: "Dog",
     breed: "Golden Retriever Mix",
     age: "3 years",
     gender: "Female",
     size: "Large",
-    weight: "65 lbs",
     status: "Available",
-    arrivalDate: "2024-01-15",
-    images: [
-      "/assets/images/animals/luna-1.jpg",
-      "/assets/images/animals/luna-2.jpg",
-      "/assets/images/animals/luna-3.jpg"
-    ],
     description: "Luna is a sweet and gentle girl who loves playing fetch and cuddling on the couch. She's been with us for a few months and has shown incredible resilience and love despite her difficult past.",
-    personality: [
-      "Gentle and calm",
-      "Loves to play fetch",
-      "Great with children",
-      "Enjoys car rides",
-      "House trained"
-    ],
-    medicalInfo: {
-      spayedNeutered: true,
-      vaccinated: true,
-      microchipped: true,
-      specialNeeds: false,
-      medications: "None",
-      vetNotes: "Healthy and ready for adoption"
-    },
-    compatibility: {
-      goodWithKids: true,
-      goodWithCats: true,
-      goodWithDogs: true,
-      energyLevel: "Medium",
-      exerciseNeeds: "Daily walks and playtime"
-    },
-    story: "Luna came to us when her elderly owner could no longer care for her. Despite the big change in her life, she has remained sweet and loving. She's looking for a family who will appreciate her gentle nature and give her the love she deserves."
+    image_url: "/assets/images/animals/luna-1.jpg",
+    spayed_neutered: true,
+    vaccinated: true,
+    microchip: true,
+    special_needs: false,
+    medical_notes: "Healthy and ready for adoption",
+    good_with_kids: true,
+    good_with_cats: true,
+    good_with_dogs: true,
+    energy_level: "Medium",
+    house_trained: true
   },
   "max": {
     id: "max",
     name: "Max",
-    type: "Cat",
     breed: "Domestic Shorthair",
     age: "2 years",
     gender: "Male",
     size: "Medium",
-    weight: "12 lbs",
     status: "Available",
-    arrivalDate: "2024-02-20",
-    images: [
-      "/assets/images/animals/max-1.jpg",
-      "/assets/images/animals/max-2.jpg",
-      "/assets/images/animals/max-3.jpg"
-    ],
     description: "Max is a playful tabby who loves toys and sunny windowsills. He's a curious cat who enjoys exploring and would do well in a home with plenty of enrichment.",
-    personality: [
-      "Playful and energetic",
-      "Loves interactive toys",
-      "Enjoys climbing",
-      "Affectionate with humans",
-      "Litter box trained"
-    ],
-    medicalInfo: {
-      spayedNeutered: true,
-      vaccinated: true,
-      microchipped: true,
-      specialNeeds: false,
-      medications: "None",
-      vetNotes: "Healthy young cat"
-    },
-    compatibility: {
-      goodWithKids: true,
-      goodWithCats: true,
-      goodWithDogs: false,
-      energyLevel: "High",
-      exerciseNeeds: "Interactive play sessions"
-    },
-    story: "Max was found as a stray kitten and has blossomed into a confident, loving cat. He's ready to find his forever family and bring joy and entertainment to their home."
+    image_url: "/assets/images/animals/max-1.jpg",
+    spayed_neutered: true,
+    vaccinated: true,
+    microchip: true,
+    special_needs: false,
+    medical_notes: "Healthy young cat",
+    good_with_kids: true,
+    good_with_cats: true,
+    good_with_dogs: false,
+    energy_level: "High",
+    house_trained: true
   }
 };
 
-// Get the specific animal or return 404
-const animal = animals[id as keyof typeof animals];
+if (!animal) {
+  animal = fallbackAnimals[id];
+}
 
 if (!animal) {
   return Astro.redirect('/404');
 }
+
+const safeAnimal = animal as Animal;
+const galleryImages = safeAnimal.images && safeAnimal.images.length > 0
+  ? safeAnimal.images
+  : [
+      safeAnimal.image_url,
+      safeAnimal.additional_image_1?.url,
+      safeAnimal.additional_image_2?.url,
+      safeAnimal.additional_image_3?.url,
+      safeAnimal.additional_image_4?.url,
+    ].filter(Boolean) as string[];
 ---
 
 <BaseLayout
-  title={`Happy Paws Dog Rescue - Meet ${animal.name}`}
-  description={`Learn more about ${animal.name}, a ${animal.age} ${animal.breed} looking for a loving home. ${animal.description}`}
+  title={`${SITE_NAME} - Meet ${safeAnimal.name}`}
+  description={`Learn more about ${safeAnimal.name}, a ${safeAnimal.age} ${safeAnimal.breed} looking for a loving home. ${safeAnimal.description}`}
 >
   <!-- ============================================ -->
   <!--              Animal Details Header           -->
@@ -148,548 +146,98 @@ if (!animal) {
         <div class="cs-image-gallery">
           <div class="cs-main-image">
             <img
-              src={animal.images[0]}
-              alt={animal.name}
+              src={safeAnimal.image_url || galleryImages[0] || '/assets/images/animals/placeholder.jpg'}
+              alt={safeAnimal.name}
               width="600"
               height="400"
               loading="eager"
             />
           </div>
-          <div class="cs-thumbnail-gallery">
-            {animal.images.map((image, index) => (
-              <img
-                src={image}
-                alt={`${animal.name} photo ${index + 1}`}
-                width="100"
-                height="100"
-                class={index === 0 ? "active" : ""}
-                data-main-src={image}
-              />
-            ))}
-          </div>
+          {galleryImages.length > 1 && (
+            <div class="cs-thumbnail-gallery">
+              {galleryImages.map((image, index) => (
+                <img
+                  src={image}
+                  alt={`${safeAnimal.name} photo ${index + 1}`}
+                  width="100"
+                  height="100"
+                  class={index === 0 ? "active" : ""}
+                  data-main-src={image}
+                />
+              ))}
+            </div>
+          )}
         </div>
         
         <div class="cs-info">
-          <div class="cs-status-badge cs-status-{animal.status.toLowerCase()}">
-            {animal.status}
+          <div class={`cs-status-badge cs-status-${(safeAnimal.status || 'available').toLowerCase()}`}>
+            {safeAnimal.status || 'Available'}
           </div>
-          <h1 class="cs-title">{animal.name}</h1>
+          <h1 class="cs-title">{safeAnimal.name}</h1>
           <div class="cs-basic-info">
-            <div class="cs-info-item">
-              <strong>Breed:</strong> {animal.breed}
-            </div>
-            <div class="cs-info-item">
-              <strong>Age:</strong> {animal.age}
-            </div>
-            <div class="cs-info-item">
-              <strong>Gender:</strong> {animal.gender}
-            </div>
-            <div class="cs-info-item">
-              <strong>Size:</strong> {animal.size}
-            </div>
-            <div class="cs-info-item">
-              <strong>Weight:</strong> {animal.weight}
-            </div>
+            {safeAnimal.breed && (
+              <div class="cs-info-item">
+                <strong>Breed:</strong> {safeAnimal.breed}
+              </div>
+            )}
+            {safeAnimal.age && (
+              <div class="cs-info-item">
+                <strong>Age:</strong> {safeAnimal.age}
+              </div>
+            )}
+            {safeAnimal.gender && (
+              <div class="cs-info-item">
+                <strong>Gender:</strong> {safeAnimal.gender}
+              </div>
+            )}
+            {safeAnimal.size && (
+              <div class="cs-info-item">
+                <strong>Size:</strong> {safeAnimal.size}
+              </div>
+            )}
+            {safeAnimal.weight && (
+              <div class="cs-info-item">
+                <strong>Weight:</strong> {safeAnimal.weight}
+              </div>
+            )}
           </div>
           
-          <p class="cs-description">{animal.description}</p>
+          {safeAnimal.description && <p class="cs-description">{safeAnimal.description}</p>}
           
           <div class="cs-action-buttons">
-            <a href="/applications" class="cs-button-solid">Apply to Adopt {animal.name}</a>
-            <a href="/contact" class="cs-button-transparent">Ask About {animal.name}</a>
+            <a href="/applications" class="cs-button-solid">Apply to Adopt {safeAnimal.name}</a>
+            <a href="/contact" class="cs-button-transparent">Ask About {safeAnimal.name}</a>
           </div>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ============================================ -->
-  <!--              Detailed Information            -->
-  <!-- ============================================ -->
-  
-  <section id="animal-details">
-    <div class="cs-container">
-      <div class="cs-details-grid">
-        <!-- Personality -->
-        <div class="cs-detail-card">
-          <h2>Personality</h2>
-          <ul class="cs-personality-list">
-            {animal.personality.map((trait) => (
-              <li>{trait}</li>
-            ))}
-          </ul>
-        </div>
-        
-        <!-- Medical Information -->
-        <div class="cs-detail-card">
-          <h2>Medical Information</h2>
-          <div class="cs-medical-info">
-            <div class="cs-medical-item">
-              <span class="cs-label">Spayed/Neutered:</span>
-              <span class={`cs-value ${animal.medicalInfo.spayedNeutered ? 'cs-yes' : 'cs-no'}`}>
-                {animal.medicalInfo.spayedNeutered ? 'Yes' : 'No'}
-              </span>
+      <div class="cs-animal-details-grid">
+        <div class="cs-animal-details">
+          <h2>About {safeAnimal.name}</h2>
+          <div class="cs-detail-grid">
+            <div class="cs-detail-item">
+              <span class="cs-detail-label">Energy Level</span>
+              <span class="cs-detail-value">{safeAnimal.energy_level || 'Moderate'}</span>
             </div>
-            <div class="cs-medical-item">
-              <span class="cs-label">Vaccinated:</span>
-              <span class={`cs-value ${animal.medicalInfo.vaccinated ? 'cs-yes' : 'cs-no'}`}>
-                {animal.medicalInfo.vaccinated ? 'Yes' : 'No'}
-              </span>
+            <div class="cs-detail-item">
+              <span class="cs-detail-label">House Trained</span>
+              <span class="cs-detail-value">{safeAnimal.house_trained ? 'Yes' : 'In Progress'}</span>
             </div>
-            <div class="cs-medical-item">
-              <span class="cs-label">Microchipped:</span>
-              <span class={`cs-value ${animal.medicalInfo.microchipped ? 'cs-yes' : 'cs-no'}`}>
-                {animal.medicalInfo.microchipped ? 'Yes' : 'No'}
-              </span>
+            <div class="cs-detail-item">
+              <span class="cs-detail-label">Good with Kids</span>
+              <span class="cs-detail-value">{safeAnimal.good_with_kids ? 'Yes' : 'Not Yet Tested'}</span>
             </div>
-            <div class="cs-medical-item">
-              <span class="cs-label">Special Needs:</span>
-              <span class={`cs-value ${animal.medicalInfo.specialNeeds ? 'cs-yes' : 'cs-no'}`}>
-                {animal.medicalInfo.specialNeeds ? 'Yes' : 'No'}
-              </span>
+            <div class="cs-detail-item">
+              <span class="cs-detail-label">Good with Dogs</span>
+              <span class="cs-detail-value">{safeAnimal.good_with_dogs ? 'Yes' : 'Not Yet Tested'}</span>
             </div>
-            <div class="cs-medical-item">
-              <span class="cs-label">Medications:</span>
-              <span class="cs-value">{animal.medicalInfo.medications}</span>
+            <div class="cs-detail-item">
+              <span class="cs-detail-label">Good with Cats</span>
+              <span class="cs-detail-value">{safeAnimal.good_with_cats ? 'Yes' : 'Not Yet Tested'}</span>
             </div>
-            <div class="cs-medical-item">
-              <span class="cs-label">Vet Notes:</span>
-              <span class="cs-value">{animal.medicalInfo.vetNotes}</span>
+            <div class="cs-detail-item">
+              <span class="cs-detail-label">Special Needs</span>
+              <span class="cs-detail-value">{safeAnimal.special_needs ? 'Yes' : 'No'}</span>
             </div>
           </div>
         </div>
-        
-        <!-- Compatibility -->
-        <div class="cs-detail-card">
-          <h2>Compatibility</h2>
-          <div class="cs-compatibility-grid">
-            <div class="cs-compatibility-item">
-              <span class="cs-label">Good with Kids:</span>
-              <span class={`cs-value ${animal.compatibility.goodWithKids ? 'cs-yes' : 'cs-no'}`}>
-                {animal.compatibility.goodWithKids ? 'Yes' : 'No'}
-              </span>
-            </div>
-            <div class="cs-compatibility-item">
-              <span class="cs-label">Good with Cats:</span>
-              <span class={`cs-value ${animal.compatibility.goodWithCats ? 'cs-yes' : 'cs-no'}`}>
-                {animal.compatibility.goodWithCats ? 'Yes' : 'No'}
-              </span>
-            </div>
-            <div class="cs-compatibility-item">
-              <span class="cs-label">Good with Dogs:</span>
-              <span class={`cs-value ${animal.compatibility.goodWithDogs ? 'cs-yes' : 'cs-no'}`}>
-                {animal.compatibility.goodWithDogs ? 'Yes' : 'No'}
-              </span>
-            </div>
-            <div class="cs-compatibility-item">
-              <span class="cs-label">Energy Level:</span>
-              <span class="cs-value">{animal.compatibility.energyLevel}</span>
-            </div>
-            <div class="cs-compatibility-item">
-              <span class="cs-label">Exercise Needs:</span>
-              <span class="cs-value">{animal.compatibility.exerciseNeeds}</span>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Story -->
-        <div class="cs-detail-card cs-story-card">
-          <h2>{animal.name}'s Story</h2>
-          <p class="cs-story-text">{animal.story}</p>
-          <div class="cs-arrival-info">
-            <strong>Arrived at our rescue:</strong> {new Date(animal.arrivalDate).toLocaleDateString()}
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============================================ -->
-  <!--              Adoption Process                -->
-  <!-- ============================================ -->
-  
-  <section id="adoption-process">
-    <div class="cs-container">
-      <h2 class="cs-section-title">Ready to Adopt {animal.name}?</h2>
-      <div class="cs-process-steps">
-        <div class="cs-step">
-          <div class="cs-step-number">1</div>
-          <h3>Submit Application</h3>
-          <p>Fill out our adoption application to help us understand your lifestyle and preferences.</p>
-        </div>
-        <div class="cs-step">
-          <div class="cs-step-number">2</div>
-          <h3>Meet & Greet</h3>
-          <p>Schedule a visit to meet {animal.name} and see if you're a perfect match.</p>
-        </div>
-        <div class="cs-step">
-          <div class="cs-step-number">3</div>
-          <h3>Home Check</h3>
-          <p>We'll arrange a brief home visit to ensure a safe environment for {animal.name}.</p>
-        </div>
-        <div class="cs-step">
-          <div class="cs-step-number">4</div>
-          <h3>Finalize Adoption</h3>
-          <p>Complete the adoption paperwork and welcome {animal.name} to their new home!</p>
-        </div>
-      </div>
-      
-      <div class="cs-adoption-cta">
-        <a href="/applications" class="cs-button-solid">Start Adoption Process</a>
-        <a href="/our-animals" class="cs-button-transparent">View Other Animals</a>
-      </div>
-    </div>
-  </section>
-
-  <CTA />
-</BaseLayout>
-
-<style lang="less">
-  /* Animal Header */
-  #animal-header {
-    padding: var(--sectionPadding);
-
-    .cs-container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .cs-content {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 3rem;
-      align-items: start;
-    }
-
-    .cs-image-gallery {
-      .cs-main-image {
-        margin-bottom: 1rem;
-        border-radius: 12px;
-        overflow: hidden;
-
-        img {
-          width: 100%;
-          height: 400px;
-          object-fit: cover;
-        }
-      }
-
-      .cs-thumbnail-gallery {
-        display: flex;
-        gap: 0.5rem;
-
-        img {
-          width: 80px;
-          height: 80px;
-          object-fit: cover;
-          border-radius: 8px;
-          cursor: pointer;
-          opacity: 0.7;
-          transition: opacity 0.3s ease;
-
-          &.active,
-          &:hover {
-            opacity: 1;
-          }
-        }
-      }
-    }
-
-    .cs-info {
-      .cs-status-badge {
-        display: inline-block;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-weight: 600;
-        font-size: 0.875rem;
-        margin-bottom: 1rem;
-
-        &.cs-status-available {
-          background: #27ae60;
-          color: white;
-        }
-      }
-
-      .cs-title {
-        font-size: 2.5rem;
-        font-weight: 700;
-        margin-bottom: 1.5rem;
-        color: var(--headerColor);
-      }
-
-      .cs-basic-info {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 0.75rem;
-        margin-bottom: 1.5rem;
-        padding: 1.5rem;
-        background: var(--accent);
-        border-radius: 12px;
-      }
-
-      .cs-info-item {
-        strong {
-          color: var(--headerColor);
-        }
-      }
-
-      .cs-description {
-        font-size: 1.125rem;
-        line-height: 1.6;
-        margin-bottom: 2rem;
-        color: var(--bodyTextColor);
-      }
-
-      .cs-action-buttons {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-      }
-    }
-  }
-
-  /* Animal Details */
-  #animal-details {
-    padding: var(--sectionPadding);
-    background: #f8f9fa;
-
-    .cs-details-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    .cs-detail-card {
-      background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-
-      h2 {
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin-bottom: 1.5rem;
-        color: var(--headerColor);
-        border-bottom: 2px solid var(--primary);
-        padding-bottom: 0.5rem;
-      }
-    }
-
-    .cs-story-card {
-      grid-column: 1 / -1;
-
-      .cs-story-text {
-        font-size: 1.125rem;
-        line-height: 1.6;
-        margin-bottom: 1.5rem;
-      }
-
-      .cs-arrival-info {
-        padding: 1rem;
-        background: var(--accent);
-        border-radius: 8px;
-        font-size: 0.875rem;
-      }
-    }
-
-    .cs-personality-list {
-      list-style: none;
-      padding: 0;
-
-      li {
-        padding: 0.75rem;
-        margin-bottom: 0.5rem;
-        background: var(--accent);
-        border-radius: 8px;
-        border-left: 4px solid var(--primary);
-      }
-    }
-
-    .cs-medical-info,
-    .cs-compatibility-grid {
-      .cs-medical-item,
-      .cs-compatibility-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.75rem 0;
-        border-bottom: 1px solid #eee;
-
-        &:last-child {
-          border-bottom: none;
-        }
-      }
-
-      .cs-label {
-        font-weight: 600;
-        color: var(--headerColor);
-      }
-
-      .cs-value {
-        &.cs-yes {
-          color: #27ae60;
-          font-weight: 600;
-        }
-
-        &.cs-no {
-          color: #e74c3c;
-          font-weight: 600;
-        }
-      }
-    }
-  }
-
-  /* Adoption Process */
-  #adoption-process {
-    padding: var(--sectionPadding);
-    text-align: center;
-
-    .cs-section-title {
-      font-size: 2.5rem;
-      margin-bottom: 3rem;
-      color: var(--headerColor);
-    }
-
-    .cs-process-steps {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-      margin-bottom: 3rem;
-      max-width: 1000px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .cs-step {
-      padding: 2rem;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-
-      .cs-step-number {
-        width: 60px;
-        height: 60px;
-        background: var(--primary);
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin: 0 auto 1rem;
-      }
-
-      h3 {
-        font-size: 1.25rem;
-        margin-bottom: 1rem;
-        color: var(--headerColor);
-      }
-
-      p {
-        line-height: 1.6;
-        color: var(--bodyTextColor);
-      }
-    }
-
-    .cs-adoption-cta {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-  }
-
-  /* Buttons */
-  .cs-button-solid,
-  .cs-button-transparent {
-    padding: 1rem 2rem;
-    border-radius: 6px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    display: inline-block;
-    text-align: center;
-    min-width: 180px;
-  }
-
-  .cs-button-solid {
-    background: var(--primary);
-    color: white;
-    border: 2px solid var(--primary);
-
-    &:hover {
-      background: var(--primaryDark);
-      border-color: var(--primaryDark);
-    }
-  }
-
-  .cs-button-transparent {
-    background: transparent;
-    color: var(--primary);
-    border: 2px solid var(--primary);
-
-    &:hover {
-      background: var(--primary);
-      color: white;
-    }
-  }
-
-  /* Mobile Responsive */
-  @media only screen and (max-width: 768px) {
-    #animal-header .cs-content {
-      grid-template-columns: 1fr;
-      gap: 2rem;
-    }
-
-    .cs-info .cs-title {
-      font-size: 2rem;
-    }
-
-    .cs-basic-info {
-      grid-template-columns: 1fr;
-    }
-
-    .cs-action-buttons {
-      flex-direction: column;
-    }
-
-    .cs-details-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .cs-process-steps {
-      grid-template-columns: 1fr;
-    }
-
-    .cs-adoption-cta {
-      flex-direction: column;
-      align-items: center;
-    }
-  }
-</style>
-
-<script>
-  // Image gallery functionality
-  document.addEventListener('DOMContentLoaded', function() {
-    const thumbnails = document.querySelectorAll('.cs-thumbnail-gallery img');
-    const mainImage = document.querySelector('.cs-main-image img') as HTMLImageElement;
-
-    thumbnails.forEach(thumbnail => {
-      thumbnail.addEventListener('click', function() {
-        // Remove active class from all thumbnails
-        thumbnails.forEach(thumb => thumb.classList.remove('active'));
-        // Add active class to clicked thumbnail
-        this.classList.add('active');
-
-        // Update main image
-        const newSrc = this.getAttribute('data-main-src');
-        if (newSrc && mainImage) {
-          mainImage.src = newSrc;
-        }
-      });
-    });
-  });
-</script>

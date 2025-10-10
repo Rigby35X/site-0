@@ -5,14 +5,29 @@ import Landing from "@components/Landing.astro";
 import FAQ from "@components/FAQ.astro";
 
 // Optimize our landing image and pass it as props to the BaseLayout (for preloading) and Landing (for rendering)
-import landingImage from "@assets/images/landing.jpg" // <-- THE PATH TO THE ASSET YOU WANT TO PRELOAD - The asset must live in src
+import landingImage from "@assets/images/landing.jpg"; // <-- THE PATH TO THE ASSET YOU WANT TO PRELOAD - The asset must live in src
 import { getImage } from "astro:assets";
-const optimizedImage = await getImage({src: landingImage, format: 'avif'})
+const optimizedImage = await getImage({src: landingImage, format: 'avif'});
+
+const tokens = {
+  hero: {
+    title: "{{pages.about.hero.title}}",
+    description: "{{pages.about.hero.description}}",
+    subtitle: "{{pages.about.hero.subtitle}}",
+  },
+  story: {
+    title: "{{pages.about.story.title}}",
+    content: "{{pages.about.story.content}}",
+  },
+  mission: {
+    content: "{{pages.about.mission.content}}",
+  },
+};
 ---
 
 <BaseLayout
-  title="{{pages.about.hero.title}}"
-  description="{{pages.about.hero.description}}"
+  title={tokens.hero.title}
+  description={tokens.hero.description}
   preloadedImage = {optimizedImage}
 >
   <!-- ============================================ -->
@@ -20,7 +35,7 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'})
   <!-- ============================================ -->
 
   <Landing
-    title="{{pages.about.hero.title}}"
+    title={tokens.hero.title}
     image={optimizedImage}
   />
 
@@ -73,13 +88,13 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'})
       </div>
       <!-- Right Content Section-->
       <div class="cs-right">
-        <span class="cs-topper">{{pages.about.story.title}}</span>
-        <h2 class="cs-title">{{pages.about.hero.subtitle}}</h2>
+        <span class="cs-topper">{tokens.story.title}</span>
+        <h2 class="cs-title">{tokens.hero.subtitle}</h2>
         <p class="cs-text">
-          {{pages.about.story.content}}
+          {tokens.story.content}
         </p>
         <p class="cs-text">
-          {{pages.about.mission.content}}
+          {tokens.mission.content}
         </p>
         <div class="cs-flex-group">
           <p class="cs-flex-p">
@@ -109,9 +124,9 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'})
 <style lang="less">
   /* PAGE-SPECIFIC STYLES FOR THE ABOUT PAGE */
 
-  /*-- -------------------------- -->
-<---       Side By Side         -->
-<--- -------------------------- -*/
+  /*-- --------------------------
+    Side By Side
+  -------------------------- --*/
 
   /* Mobile - 360px */
   @media only screen and (min-width: 0em) {

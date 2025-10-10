@@ -4,14 +4,21 @@ import client from "@data/client.json";
 import Landing from "@components/Landing.astro";
 
 // Optimize our landing image and pass it as props to the BaseLayout (for preloading) and Landing (for rendering)
-import landingImage from "@assets/images/landing.jpg" // <-- THE PATH TO THE ASSET YOU WANT TO PRELOAD - The asset must live in src
+import landingImage from "@assets/images/landing.jpg"; // <-- THE PATH TO THE ASSET YOU WANT TO PRELOAD - The asset must live in src
 import { getImage } from "astro:assets";
-const optimizedImage = await getImage({src: landingImage, format: 'avif'})
+const optimizedImage = await getImage({src: landingImage, format: 'avif'});
+
+const tokens = {
+  hero: {
+    title: "{{pages.contact.hero.title}}",
+    description: "{{pages.contact.hero.description}}",
+  },
+};
 ---
 
 <BaseLayout
-  title="{{pages.contact.hero.title}}"
-  description="{{pages.contact.hero.description}}"
+  title={tokens.hero.title}
+  description={tokens.hero.description}
   preloadedImage = {optimizedImage}
 >
   <!-- ============================================ -->
@@ -19,7 +26,7 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'})
   <!-- ============================================ -->
 
   <Landing
-    title="{{pages.contact.hero.title}}"
+    title={tokens.hero.title}
     image={optimizedImage}
   />
 
@@ -135,9 +142,9 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'})
 <style lang="less">
   /* PAGE-SPECIFIC STYLES FOR THE CONTACT PAGE */
 
-  /*-- -------------------------- -->
-<---          Contact           -->
-<--- -------------------------- -*/
+  /*-- --------------------------
+    Contact
+  -------------------------- --*/
 
   /* Mobile - 360px */
   @media only screen and (min-width: 0em) {
