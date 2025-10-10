@@ -27,14 +27,28 @@ const defaultFooterContent = {
   address_state: "CA",
   address_zip: "92109",
   phone: "555-555-5555",
+  phone_tel: "5555555555",
   email: "info@mbpr.org",
   copyright: `© ${currentYear} Mission Bay Puppy Rescue. All rights reserved.`,
   ein: "87-2984609"
 };
 
 // Use dynamic content with fallbacks (same pattern as homepage)
+const footerSource = websiteContent.footer?.content || websiteContent.footer || {};
 const content = {
-  footer: websiteContent.footer || defaultFooterContent
+  footer: {
+    organization_name: footerSource.footer_organization_name || footerSource.organization_name || defaultFooterContent.organization_name,
+    address_line_one: footerSource.footer_address_line_one || footerSource.address_line_one || defaultFooterContent.address_line_one,
+    address_line_two: footerSource.footer_address_line_two || footerSource.address_line_two || defaultFooterContent.address_line_two,
+    address_city: footerSource.footer_address_city || footerSource.address_city || defaultFooterContent.address_city,
+    address_state: footerSource.footer_address_state || footerSource.address_state || defaultFooterContent.address_state,
+    address_zip: footerSource.footer_address_zip || footerSource.address_zip || defaultFooterContent.address_zip,
+    phone: footerSource.footer_phone || footerSource.phone || defaultFooterContent.phone,
+    phone_tel: (footerSource.footer_phone || footerSource.phone || defaultFooterContent.phone || '').replace(/[^\d]/g, '') || defaultFooterContent.phone_tel,
+    email: footerSource.footer_email || footerSource.email || defaultFooterContent.email,
+    ein: footerSource.footer_ein || footerSource.ein || defaultFooterContent.ein,
+    copyright: footerSource.footer_copyright || footerSource.copyright || defaultFooterContent.copyright
+  }
 };
 
 console.log('🦶 Footer content structure:', content.footer);
