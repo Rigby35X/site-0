@@ -127,6 +127,8 @@ const content = {
     socialMedia: footerSource.socialMedia || defaultFooterContent.socialMedia
   }
 }
+
+const showSuccessStories = false;
 ---
 
 <BaseLayout
@@ -391,13 +393,14 @@ const content = {
   <!--                   Gallery                    -->
   <!-- ============================================ -->
 
-  <section id="gallery">
-    <div class="cs-container">
-      <span class="cs-topper">{content.success_stories.subheadline}</span>
-      <h2 class="cs-title">
-        {content.success_stories.headline}
-      </h2>
-      <div class="cs-image-group">
+  {showSuccessStories && (
+    <section id="gallery">
+      <div class="cs-container">
+        <span class="cs-topper">{content.success_stories.subheadline}</span>
+        <h2 class="cs-title">
+          {content.success_stories.headline}
+        </h2>
+        <div class="cs-image-group">
         <!-- Row 1-->
         <div class="cs-row cs-row-1">
           <!-- To add more images, copy and paste this row's picture tags here in order from cs-picture-1 to cs-picture-3 and they will maintain the same layout-->
@@ -581,10 +584,11 @@ const content = {
             />
           </picture>
         </div>
+        </div>
+        <a href={content.success_stories.button_link} class="cs-button-solid">{content.success_stories.button_text}</a>
       </div>
-      <a href={content.success_stories.button_link} class="cs-button-solid">{content.success_stories.button_text}</a>
-    </div>
-  </section>
+    </section>
+  )}
 
     <!-- ============================================ -->
   <!--                    FAQ                       -->
@@ -889,64 +893,18 @@ const content = {
       }
 
       .cs-button-solid {
-        font-size: (16/16rem);
-        font-weight: bold;
-        line-height: clamp(2.875em, 5.5vw, 3.5em);
-        text-align: center;
-        text-transform: uppercase;
-        text-decoration: none;
-        width: auto;
-        height: clamp(2.875em, 5.5vw, 3.5em);
-        padding: 0 (30/16rem);
         margin-bottom: calc(16 / 16 * 1rem);
-
-        color: white !important;
-        background-color: var(--primary);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        z-index: 1;
-        transition: all 0.3s ease;
-        border: 2px solid var(--primary);
-        border-radius: 6px;
-
-        &:hover {
-          color: white !important;
-          background-color: var(--primaryLight);
-          border-color: var(--primaryLight);
-        }
       }
 
       .cs-button-transparent {
-        font-size: (16/16rem);
-        font-weight: bold;
-        line-height: clamp(2.875em, 5.5vw, 3.5em);
-        text-align: center;
-        text-transform: uppercase;
-        text-decoration: none;
-        width: auto;
-        height: clamp(2.875em, 5.5vw, 3.5em);
         margin: 0 (8/16rem);
-        padding: 0 (30/16rem);
-        box-sizing: border-box;
-
         color: #fff;
-        background-color: transparent;
-        border: 2px solid var(--bodyTextColorWhite);
-        border-radius: 6px;
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        gap: (8/16rem);
-        position: relative;
-        z-index: 1;
-        transition: all 0.3s ease;
+        border-color: var(--bodyTextColorWhite);
 
         &:hover {
           color: var(--primary);
-          border-color: var(--bodyTextColorWhite);
           background-color: var(--bodyTextColorWhite);
+          border-color: var(--bodyTextColorWhite);
         }
 
         .cs-img {
@@ -989,34 +947,8 @@ const content = {
       }
 
       .cs-button-solid {
-        font-size: (16/16rem);
-        font-weight: bold;
-        line-height: clamp(2.875em, 5.5vw, 3.5em);
-        text-align: center;
-        text-transform: uppercase;
-        text-decoration: none;
-        width: auto;
-        height: clamp(2.875em, 5.5vw, 3.5em);
-        padding: 0 (30/16rem);
         margin-right: (20/16rem);
         margin-bottom: 0;
-
-        color: white !important;
-        background-color: var(--primary);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        z-index: 1;
-        transition: all 0.3s ease;
-        border: 2px solid var(--primary);
-        border-radius: 6px;
-
-        &:hover {
-          color: white !important;
-          background-color: var(--primaryLight);
-          border-color: var(--primaryLight);
-        }
       }
     }
   }
@@ -1353,33 +1285,7 @@ const content = {
       }
 
       .cs-button-solid {
-        font-size: (16/16rem);
-        font-weight: bold;
-        line-height: clamp(2.875em, 5.5vw, 3.5em);
-        text-align: center;
-        text-transform: uppercase;
-        text-decoration: none;
-        width: auto;
-        height: clamp(2.875em, 5.5vw, 3.5em);
-        padding: 0 (30/16rem);
         margin-top: (32/16rem);
-
-        color: white !important;
-        background-color: var(--primary);
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        z-index: 1;
-        transition: all 0.3s ease;
-        border: 2px solid var(--primary);
-        border-radius: 6px;
-
-        &:hover {
-          color: white !important;
-          background-color: var(--primaryLight);
-          border-color: var(--primaryLight);
-        }
       }
     }
   }

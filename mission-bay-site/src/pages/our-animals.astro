@@ -437,39 +437,10 @@ const availableAnimals = animals.filter((animal) => (animal.status || '').toLowe
       margin-top: auto;
       padding-top: 1rem;
     }
-    
-    .cs-button-solid,
-    .cs-button-transparent {
-      flex: 1;
-      min-width: 120px;
-      text-align: center;
-      padding: 0.75rem 1rem;
-      border-radius: 6px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.3s ease;
-    }
-    
-    .cs-button-solid {
-      background: var(--primary);
-      color: white;
-      border: 2px solid var(--primary);
-      
-      &:hover {
-        background: var(--primaryDark);
-        border-color: var(--primaryDark);
-      }
-    }
-    
-    .cs-button-transparent {
-      background: transparent;
-      color: var(--primary);
-      border: 2px solid var(--primary);
-      
-      &:hover {
-        background: var(--primary);
-        color: white;
-      }
+
+    .cs-button-group .cs-button-solid,
+    .cs-button-group .cs-button-transparent {
+      flex: 1 1 (200/16rem);
     }
     
     .cs-more-info {

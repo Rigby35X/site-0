@@ -612,39 +612,9 @@ const safeAnimal = animal as Animal;
     }
   }
 
-  /* Buttons */
-  .cs-button-solid,
-  .cs-button-transparent {
-    padding: 1rem 2rem;
-    border-radius: 6px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.3s ease;
-    display: inline-block;
-    text-align: center;
-    min-width: 180px;
-  }
-
-  .cs-button-solid {
-    background: var(--primary);
-    color: white;
-    border: 2px solid var(--primary);
-
-    &:hover {
-      background: var(--primaryDark);
-      border-color: var(--primaryDark);
-    }
-  }
-
-  .cs-button-transparent {
-    background: transparent;
-    color: var(--primary);
-    border: 2px solid var(--primary);
-
-    &:hover {
-      background: var(--primary);
-      color: white;
-    }
+  .cs-adoption-cta .cs-button-solid,
+  .cs-adoption-cta .cs-button-transparent {
+    min-width: (200/16rem);
   }
 
   /* Mobile Responsive */
