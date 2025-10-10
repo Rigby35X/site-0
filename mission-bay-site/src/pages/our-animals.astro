@@ -19,6 +19,8 @@ try {
   console.error('❌ Server-side fetch failed:', e);
   error = e.message;
 }
+
+const adoptedAnimals = animals.filter((animal) => (animal.status || '').toLowerCase() === 'adopted');
 ---
 
 <BaseLayout
@@ -126,7 +128,37 @@ try {
           })}
         </div>
       )}
-      
+
+      {adoptedAnimals.length > 0 && (
+        <section id="adopted-gallery">
+          <div class="cs-gallery-header">
+            <h2>Recently Adopted</h2>
+            <p>Celebrating the pets who have found their forever families.</p>
+          </div>
+          <div class="cs-gallery-scroll">
+            {adoptedAnimals.map((animal) => {
+              const imageUrl = animal.image_url || animal.main_image?.url || '/assets/images/animals/placeholder.jpg';
+
+              return (
+                <figure class="cs-gallery-item">
+                  <img
+                    src={imageUrl}
+                    alt={animal.name || 'Adopted pet'}
+                    loading="lazy"
+                  />
+                  <figcaption>
+                    <span class="cs-gallery-name">{animal.name || 'Adopted Friend'}</span>
+                    {(animal.breed || animal.Breed) && (
+                      <span class="cs-gallery-breed">{animal.breed || animal.Breed}</span>
+                    )}
+                  </figcaption>
+                </figure>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
       <div class="cs-more-info">
         <h2>Don't See Your Perfect Match?</h2>
         <p>
@@ -194,6 +226,85 @@ try {
       &.active {
         background: var(--primary);
         color: white;
+      }
+    }
+  }
+
+  /* Adopted Gallery */
+  #adopted-gallery {
+    margin: 4rem 0;
+
+    .cs-gallery-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+
+      h2 {
+        font-size: clamp(2rem, 4vw, 3rem);
+        color: var(--headerColor);
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        color: #6b7280;
+        font-size: 1rem;
+      }
+    }
+
+    .cs-gallery-scroll {
+      display: flex;
+      gap: 1.5rem;
+      padding: 0.5rem 0;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary) rgba(0, 0, 0, 0.1);
+
+      &::-webkit-scrollbar {
+        height: 8px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 999px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: var(--primary);
+        border-radius: 999px;
+      }
+    }
+
+    .cs-gallery-item {
+      flex: 0 0 220px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+      scroll-snap-align: start;
+      display: flex;
+      flex-direction: column;
+
+      img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+
+      figcaption {
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .cs-gallery-name {
+        font-weight: 700;
+        color: var(--headerColor);
+      }
+
+      .cs-gallery-breed {
+        font-size: 0.9rem;
+        color: #6b7280;
       }
     }
   }
@@ -419,5 +530,4 @@ try {
     color: var(--errorColor, #dc2626);
   }
 </style>
-
 
