@@ -2,14 +2,8 @@
 import BaseLayout from "@layouts/BaseLayout.astro";
 import CTA from "@components/CTA.astro";
 
-const tokens = {
-  site: {
-    name: "{{site.name}}",
-  },
-  organization: {
-    id: "{{organization.id}}",
-  },
-};
+const SITE_NAME = "{{site.name}}";
+const ORGANIZATION_ID = "{{organization.id}}";
 
 // Define the animal interface
 interface Animal {
@@ -46,7 +40,7 @@ export async function getStaticPaths() {
   const fallbackIds = ['luna', 'max'];
 
   try {
-    const response = await fetch(`http://localhost:4321/api/admin/animals?orgId=${tokens.organization.id}`);
+    const response = await fetch(`http://localhost:4321/api/admin/animals?orgId=${ORGANIZATION_ID}`);
     if (response.ok) {
       const animals = await response.json();
       return animals.map((animal: Animal) => ({
@@ -66,7 +60,7 @@ const { id } = Astro.params;
 
 let animal: Animal | null = null;
 try {
-  const response = await fetch(`${Astro.url.origin}/api/admin/animals?orgId=${tokens.organization.id}`);
+  const response = await fetch(`${Astro.url.origin}/api/admin/animals?orgId=${ORGANIZATION_ID}`);
   if (response.ok) {
     const animals = await response.json();
     animal = animals.find((a: Animal) => a.id.toString() === id);
@@ -134,7 +128,7 @@ const safeAnimal = animal as Animal;
 ---
 
 <BaseLayout
-  title={`${tokens.site.name} - Meet ${safeAnimal.name}`}
+  title={`${SITE_NAME} - Meet ${safeAnimal.name}`}
   description={`Learn more about ${safeAnimal.name}, a ${safeAnimal.age} ${safeAnimal.breed} looking for a loving home. ${safeAnimal.description}`}
 >
   <!-- ============================================ -->
