@@ -3475,6 +3475,11 @@
             }
         };
 
+        // Provide a safe stub for global access before initialization
+        if (typeof window !== 'undefined' && typeof window.displayAnimalsInTab !== 'function') {
+            window.displayAnimalsInTab = () => {};
+        }
+
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
             // Global variables for view state
