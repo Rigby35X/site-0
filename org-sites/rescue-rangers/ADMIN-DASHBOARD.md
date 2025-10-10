@@ -60,8 +60,8 @@ The dashboard uses your existing Xano configuration from `.env`:
 
 ```env
 # Xano API URLs
-VITE_XANO_ANIMALS_URL=https://x8ki-letl-twmt.n7.xano.io/api:Od874PbA
-VITE_XANO_ORGANIZATIONS_URL=https://x8ki-letl-twmt.n7.xano.io/api:siXQEdjz
+VITE_XANO_ANIMALS_URL=https://xz6u-fpaz-praf.n7e.xano.io/api:Od874PbA
+VITE_XANO_ORGANIZATIONS_URL=https://xz6u-fpaz-praf.n7e.xano.io/api:siXQEdjz
 
 # API Tokens
 VITE_XANO_ANIMALS_TOKEN=165XkoniNXylFdNKgO_aCvmAIcQ

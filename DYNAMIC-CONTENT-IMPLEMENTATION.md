@@ -3,7 +3,7 @@
 ## 🎯 **Phase 1: Create Xano Tables**
 
 ### **Step 1: Access Xano Dashboard**
-1. Go to your Xano workspace: `https://x8ki-letl-twmt.n7.xano.io`
+1. Go to your Xano workspace: `https://xz6u-fpaz-praf.n7e.xano.io`
 2. Navigate to **Database** section
 3. Create the following tables:
 

@@ -6,9 +6,9 @@
  */
 
 // Xano configuration from environment variables
-const XANO_BASE_URL = import.meta.env.PUBLIC_XANO_BASE_URL || import.meta.env.VITE_XANO_BASE_URL || 'https://x8ki-letl-twmt.n7.xano.io/api:wPrzs4Mr';
-const XANO_ANIMALS_URL = import.meta.env.VITE_XANO_ANIMALS_URL || 'https://x8ki-letl-twmt.n7.xano.io/api:Od874PbA';
-const XANO_ORGANIZATIONS_URL = import.meta.env.VITE_XANO_ORGANIZATIONS_URL || 'https://x8ki-letl-twmt.n7.xano.io/api:siXQEdjz';
+const XANO_BASE_URL = import.meta.env.PUBLIC_XANO_BASE_URL || import.meta.env.VITE_XANO_BASE_URL || 'https://xz6u-fpaz-praf.n7e.xano.io/api:wPrzs4Mr';
+const XANO_ANIMALS_URL = import.meta.env.VITE_XANO_ANIMALS_URL || 'https://xz6u-fpaz-praf.n7e.xano.io/api:Od874PbA';
+const XANO_ORGANIZATIONS_URL = import.meta.env.VITE_XANO_ORGANIZATIONS_URL || 'https://xz6u-fpaz-praf.n7e.xano.io/api:siXQEdjz';
 
 // API Tokens
 const XANO_ANIMALS_TOKEN = import.meta.env.VITE_XANO_ANIMALS_TOKEN || '165XkoniNXylFdNKgO_aCvmAIcQ';

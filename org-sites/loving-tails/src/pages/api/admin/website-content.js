@@ -5,7 +5,7 @@
 
 // Xano Configuration
 const XANO_CONFIG = {
-    contentUrl: import.meta.env.VITE_XANO_SITE_CONTENT_URL || 'https://x8ki-letl-twmt.n7.xano.io/api:GMSb9gZv',
+    contentUrl: import.meta.env.VITE_XANO_SITE_CONTENT_URL || 'https://xz6u-fpaz-praf.n7e.xano.io/api:GMSb9gZv',
     token: import.meta.env.VITE_XANO_SITE_CONTENT_TOKEN || 'YOUR_CONTENT_TOKEN_HERE'
 };
 

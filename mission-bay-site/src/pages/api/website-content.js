@@ -8,7 +8,7 @@ export const prerender = false;
 
 // Xano Configuration
 const XANO_CONFIG = {
-    contentUrl: import.meta.env.VITE_XANO_CONTENT_URL || 'https://x8ki-letl-twmt.n7.xano.io/api:MU8UozDK',
+    contentUrl: import.meta.env.VITE_XANO_CONTENT_URL || 'https://xz6u-fpaz-praf.n7e.xano.io/api:MU8UozDK',
     token: import.meta.env.VITE_XANO_CONTENT_TOKEN || '165XkoniNXylFdNKgO_aCvmAIcQ'
 };
 
@@ -213,7 +213,7 @@ export async function PUT({ request }) {
 
             // Make the PATCH request to update the record
             // Use the correct Xano endpoint with website_content_id parameter
-            const xanoUpdateUrl = `https://x8ki-letl-twmt.n7.xano.io/api:MU8UozDK/website_content/${recordToUpdate.id}`;
+            const xanoUpdateUrl = `https://xz6u-fpaz-praf.n7e.xano.io/api:MU8UozDK/website_content/${recordToUpdate.id}`;
             console.log('🌐 Making PATCH request to:', xanoUpdateUrl);
             console.log('📝 Record ID being updated:', recordToUpdate.id);
 

@@ -201,14 +201,14 @@ VITE_PRIMARY_COLOR="${org.colors.primary}"
 VITE_SECONDARY_COLOR="${org.colors.secondary}"
 
 # Xano API Configuration (shared)
-PUBLIC_XANO_BASE_URL=https://x8ki-letl-twmt.n7.xano.io/api:wPrzs4Mr
-VITE_XANO_BASE_URL=https://x8ki-letl-twmt.n7.xano.io/api:wPrzs4Mr
-VITE_XANO_AUTH_URL=https://x8ki-letl-twmt.n7.xano.io/api:XqEb_TVK
-VITE_XANO_ORGANIZATIONS_URL=https://x8ki-letl-twmt.n7.xano.io/api:siXQEdjz
-VITE_XANO_ANIMALS_URL=https://x8ki-letl-twmt.n7.xano.io/api:Od874PbA
-VITE_XANO_PAGES_URL=https://x8ki-letl-twmt.n7.xano.io/api:mlssTgVM
-VITE_XANO_TEMPLATES_URL=https://x8ki-letl-twmt.n7.xano.io/api:cz-ZpYmR
-VITE_XANO_LIVE_SITE_URL=https://x8ki-letl-twmt.n7.xano.io/api:nS8IsiFR
+PUBLIC_XANO_BASE_URL=https://xz6u-fpaz-praf.n7e.xano.io/api:wPrzs4Mr
+VITE_XANO_BASE_URL=https://xz6u-fpaz-praf.n7e.xano.io/api:wPrzs4Mr
+VITE_XANO_AUTH_URL=https://xz6u-fpaz-praf.n7e.xano.io/api:XqEb_TVK
+VITE_XANO_ORGANIZATIONS_URL=https://xz6u-fpaz-praf.n7e.xano.io/api:siXQEdjz
+VITE_XANO_ANIMALS_URL=https://xz6u-fpaz-praf.n7e.xano.io/api:Od874PbA
+VITE_XANO_PAGES_URL=https://xz6u-fpaz-praf.n7e.xano.io/api:mlssTgVM
+VITE_XANO_TEMPLATES_URL=https://xz6u-fpaz-praf.n7e.xano.io/api:cz-ZpYmR
+VITE_XANO_LIVE_SITE_URL=https://xz6u-fpaz-praf.n7e.xano.io/api:nS8IsiFR
 
 # API Tokens (shared)
 VITE_XANO_AUTH_TOKEN=mGDOpzrGb2PvfCn4tOJB7drqYvs
