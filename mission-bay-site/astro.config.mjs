@@ -1,7 +1,7 @@
 import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 import icon from "astro-icon";
-import vercel from '@astrojs/vercel/serverless';
+import vercel from '@astrojs/vercel';
 
 export default defineConfig({
   site: "https://site-0-5ayxjbg5q-rigby35xs-projects.vercel.app",
@@ -15,8 +15,5 @@ export default defineConfig({
   ],
   output: 'server',
   adapter: vercel(),
-  // Enable middleware
-  experimental: {
-    middleware: true
-  }
+
 });

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test JWT Authentication</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
+        <h1 class="text-2xl font-bold mb-6">🔐 Test JWT Authentication</h1>
+        
+        <div id="status" class="mb-6 p-4 rounded-lg bg-gray-50">
+            <p>Ready to test JWT token generation and Paragon authentication...</p>
+        </div>
+        
+        <div class="space-y-4 mb-6">
+            <button onclick="generateJWT()" class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
+                🎫 Generate JWT Token
+            </button>
+            
+            <button onclick="testParagonAuth()" class="w-full bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
+                🚀 Test Paragon Authentication
+            </button>
+            
+            <button onclick="fullTest()" class="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">
+                ⚡ Full Test (JWT + Paragon)
+            </button>
+        </div>
+        
+        <div class="bg-gray-900 text-green-400 rounded-lg p-4 font-mono text-sm max-h-64 overflow-y-auto">
+            <div id="logs">Ready...</div>
+        </div>
+    </div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const logsDiv = document.getElementById('logs');
+        let jwtToken = null;
+        let paragonInstance = null;
+        
+        function log(message) {
+            console.log(message);
+            const timestamp = new Date().toLocaleTimeString();
+            logsDiv.innerHTML += `<div>${timestamp}: ${message}</div>`;
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const colors = {
+                info: 'bg-blue-50 text-blue-800',
+                success: 'bg-green-50 text-green-800',
+                error: 'bg-red-50 text-red-800'
+            };
+            statusDiv.className = `mb-6 p-4 rounded-lg ${colors[type]}`;
+            statusDiv.innerHTML = `<p>${message}</p>`;
+        }
+        
+        async function generateJWT() {
+            try {
+                log('=== Generating JWT Token ===');
+                updateStatus('Generating JWT token...', 'info');
+                
+                const response = await fetch('/api/admin/mailchimp-token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        orgId: '9',
+                        accessCode: 'rangers789'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    jwtToken = data.userToken;
+                    log('SUCCESS: JWT token generated');
+                    log('Token type: ' + data.metadata.token_type);
+                    log('Expires in: ' + data.metadata.expires_in + ' seconds');
+                    log('Token preview: ' + jwtToken.substring(0, 50) + '...');
+                    
+                    // Decode and display JWT payload
+                    try {
+                        const parts = jwtToken.split('.');
+                        const payload = JSON.parse(atob(parts[1]));
+                        log('JWT Payload: ' + JSON.stringify(payload, null, 2));
+                    } catch (e) {
+                        log('Could not decode JWT payload: ' + e.message);
+                    }
+                    
+                    updateStatus('✅ JWT token generated successfully!', 'success');
+                } else {
+                    log('ERROR: ' + data.message);
+                    updateStatus('❌ JWT generation failed', 'error');
+                }
+                
+            } catch (error) {
+                log('ERROR: ' + error.message);
+                updateStatus('❌ JWT generation failed', 'error');
+            }
+        }
+        
+        async function testParagonAuth() {
+            try {
+                log('=== Testing Paragon Authentication ===');
+                updateStatus('Testing Paragon authentication...', 'info');
+                
+                if (!jwtToken) {
+                    log('No JWT token available, generating one...');
+                    await generateJWT();
+                }
+                
+                if (!jwtToken) {
+                    throw new Error('Failed to generate JWT token');
+                }
+                
+                // Load Paragon SDK
+                if (!paragonInstance) {
+                    log('Loading Paragon SDK...');
+                    const module = await import('https://cdn.skypack.dev/@useparagon/connect');
+                    paragonInstance = module.paragon;
+                    log('Paragon SDK loaded successfully');
+                }
+                
+                // Test authentication
+                log('Attempting authentication with JWT token...');
+                const projectId = '4c35906a-b8f0-4fbf-9b85-733a876cd9a5';
+                
+                await paragonInstance.authenticate(projectId, jwtToken);
+                
+                log('SUCCESS: Paragon authentication completed!');
+                
+                // Get user info
+                const user = paragonInstance.getUser();
+                log('User info: ' + JSON.stringify(user, null, 2));
+                
+                updateStatus('✅ Paragon authentication successful!', 'success');
+                
+            } catch (error) {
+                log('ERROR: ' + error.message);
+                updateStatus('❌ Paragon authentication failed: ' + error.message, 'error');
+            }
+        }
+        
+        async function fullTest() {
+            try {
+                log('=== FULL TEST SEQUENCE ===');
+                updateStatus('Running full test sequence...', 'info');
+                
+                await generateJWT();
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                await testParagonAuth();
+                
+                log('=== FULL TEST COMPLETED ===');
+                updateStatus('✅ Full test sequence completed!', 'success');
+                
+            } catch (error) {
+                log('FULL TEST ERROR: ' + error.message);
+                updateStatus('❌ Full test failed', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

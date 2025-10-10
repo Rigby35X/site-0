@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Paragon Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
+        <h1 class="text-2xl font-bold mb-6">🧪 Simple Paragon Test</h1>
+        
+        <div id="status" class="mb-6 p-4 rounded-lg bg-gray-50">
+            <p>Testing different Paragon loading methods...</p>
+        </div>
+        
+        <div class="space-y-4 mb-6">
+            <button onclick="testMethod1()" class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
+                Method 1: Dynamic Import
+            </button>
+            
+            <button onclick="testMethod2()" class="w-full bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
+                Method 2: Script Tag (UMD)
+            </button>
+            
+            <button onclick="testMethod3()" class="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">
+                Method 3: ES Module
+            </button>
+            
+            <button onclick="testAuth()" class="w-full bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700">
+                Test Authentication
+            </button>
+        </div>
+        
+        <div class="bg-gray-900 text-green-400 rounded-lg p-4 font-mono text-sm max-h-64 overflow-y-auto">
+            <div id="logs">Ready...</div>
+        </div>
+    </div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const logsDiv = document.getElementById('logs');
+        let paragonInstance = null;
+        
+        function log(message) {
+            console.log(message);
+            const timestamp = new Date().toLocaleTimeString();
+            logsDiv.innerHTML += `<div>${timestamp}: ${message}</div>`;
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const colors = {
+                info: 'bg-blue-50 text-blue-800',
+                success: 'bg-green-50 text-green-800',
+                error: 'bg-red-50 text-red-800'
+            };
+            statusDiv.className = `mb-6 p-4 rounded-lg ${colors[type]}`;
+            statusDiv.innerHTML = `<p>${message}</p>`;
+        }
+        
+        // Method 1: Dynamic Import
+        async function testMethod1() {
+            try {
+                log('=== Method 1: Dynamic Import ===');
+                updateStatus('Testing dynamic import...', 'info');
+                
+                const module = await import('https://cdn.skypack.dev/@useparagon/connect');
+                log('Module imported: ' + typeof module);
+                log('Module keys: ' + Object.keys(module));
+                
+                if (module.paragon) {
+                    paragonInstance = module.paragon;
+                    log('SUCCESS: Found paragon in module');
+                    updateStatus('✅ Dynamic import successful!', 'success');
+                } else if (module.default) {
+                    paragonInstance = module.default;
+                    log('SUCCESS: Found default export');
+                    updateStatus('✅ Dynamic import successful!', 'success');
+                } else {
+                    log('ERROR: No paragon object found in module');
+                    updateStatus('❌ No paragon object in module', 'error');
+                }
+                
+            } catch (error) {
+                log('ERROR: ' + error.message);
+                updateStatus('❌ Dynamic import failed', 'error');
+            }
+        }
+        
+        // Method 2: Script Tag (UMD)
+        async function testMethod2() {
+            try {
+                log('=== Method 2: Script Tag (UMD) ===');
+                updateStatus('Testing UMD script tag...', 'info');
+                
+                // Remove existing scripts
+                const existing = document.querySelectorAll('script[src*="@useparagon/connect"]');
+                existing.forEach(s => s.remove());
+                
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/@useparagon/connect@latest/dist/index.umd.js';
+                
+                script.onload = () => {
+                    log('UMD script loaded');
+                    
+                    setTimeout(() => {
+                        log('Checking window object...');
+                        log('window.Paragon: ' + typeof window.Paragon);
+                        log('window.paragon: ' + typeof window.paragon);
+                        
+                        // Check all window properties
+                        const allProps = Object.keys(window);
+                        const paragonProps = allProps.filter(key => 
+                            key.toLowerCase().includes('paragon') || 
+                            (window[key] && typeof window[key] === 'object' && window[key].authenticate)
+                        );
+                        log('Potential Paragon objects: ' + JSON.stringify(paragonProps));
+                        
+                        if (window.Paragon) {
+                            paragonInstance = window.Paragon;
+                            log('SUCCESS: Found window.Paragon');
+                            updateStatus('✅ UMD script successful!', 'success');
+                        } else if (window.paragon) {
+                            paragonInstance = window.paragon;
+                            log('SUCCESS: Found window.paragon');
+                            updateStatus('✅ UMD script successful!', 'success');
+                        } else {
+                            log('ERROR: No Paragon object found on window');
+                            updateStatus('❌ No Paragon object on window', 'error');
+                        }
+                    }, 2000);
+                };
+                
+                script.onerror = () => {
+                    log('ERROR: Failed to load UMD script');
+                    updateStatus('❌ UMD script failed to load', 'error');
+                };
+                
+                document.head.appendChild(script);
+                
+            } catch (error) {
+                log('ERROR: ' + error.message);
+                updateStatus('❌ UMD method failed', 'error');
+            }
+        }
+        
+        // Method 3: ES Module
+        async function testMethod3() {
+            try {
+                log('=== Method 3: ES Module ===');
+                updateStatus('Testing ES module...', 'info');
+                
+                const script = document.createElement('script');
+                script.type = 'module';
+                script.innerHTML = `
+                    import { paragon } from 'https://cdn.skypack.dev/@useparagon/connect';
+                    window.paragonFromESM = paragon;
+                    console.log('ES Module loaded, paragon:', paragon);
+                `;
+                
+                document.head.appendChild(script);
+                
+                setTimeout(() => {
+                    if (window.paragonFromESM) {
+                        paragonInstance = window.paragonFromESM;
+                        log('SUCCESS: Found paragon from ES module');
+                        updateStatus('✅ ES module successful!', 'success');
+                    } else {
+                        log('ERROR: No paragon from ES module');
+                        updateStatus('❌ ES module failed', 'error');
+                    }
+                }, 3000);
+                
+            } catch (error) {
+                log('ERROR: ' + error.message);
+                updateStatus('❌ ES module failed', 'error');
+            }
+        }
+        
+        // Test Authentication
+        async function testAuth() {
+            try {
+                log('=== Testing Authentication ===');
+                
+                if (!paragonInstance) {
+                    log('ERROR: No Paragon instance available');
+                    updateStatus('❌ No Paragon instance', 'error');
+                    return;
+                }
+                
+                log('Paragon instance: ' + typeof paragonInstance);
+                log('Has authenticate method: ' + (typeof paragonInstance.authenticate === 'function'));
+                
+                if (typeof paragonInstance.authenticate === 'function') {
+                    const projectId = '4c35906a-b8f0-4fbf-9b85-733a876cd9a5';
+                    const userToken = `org-test-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                    
+                    log('Attempting authentication...');
+                    await paragonInstance.authenticate(projectId, userToken);
+                    
+                    log('SUCCESS: Authentication completed');
+                    updateStatus('✅ Authentication successful!', 'success');
+                } else {
+                    log('ERROR: No authenticate method found');
+                    updateStatus('❌ No authenticate method', 'error');
+                }
+                
+            } catch (error) {
+                log('ERROR: ' + error.message);
+                updateStatus('❌ Authentication failed', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

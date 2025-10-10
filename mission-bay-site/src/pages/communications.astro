@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
 import AuthButton from "@components/AuthButton.astro";
+import MailchimpConnector from "@components/MailchimpConnector.astro";
 import MailchimpActions from "@components/MailchimpActions.astro";
 ---
 
@@ -40,8 +41,18 @@ import MailchimpActions from "@components/MailchimpActions.astro";
                 <h2>📧 Mailchimp Integration</h2>
                 <p>Connect your Mailchimp account to manage email campaigns, subscriber lists, and automated workflows.</p>
               </div>
-              
-              <MailchimpActions />
+
+              <!-- Step 1: Connect Mailchimp Account -->
+              <div class="integration-step">
+                <h3>Step 1: Connect Your Account</h3>
+                <MailchimpConnector />
+              </div>
+
+              <!-- Step 2: Manage Campaigns and Lists -->
+              <div class="integration-step">
+                <h3>Step 2: Manage Your Campaigns</h3>
+                <MailchimpActions />
+              </div>
             </div>
           </div>
 
@@ -222,6 +233,18 @@ import MailchimpActions from "@components/MailchimpActions.astro";
     margin: 0;
     color: #6b7280;
     line-height: 1.6;
+  }
+
+  .integration-step {
+    margin-bottom: 3rem;
+  }
+
+  .integration-step h3 {
+    margin: 0 0 1.5rem 0;
+    color: #1f2937;
+    font-size: 1.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #e5e7eb;
   }
 
   .coming-soon-section {

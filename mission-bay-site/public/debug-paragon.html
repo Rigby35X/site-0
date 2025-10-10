@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Paragon CDN Loading</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
+        <h1 class="text-3xl font-bold mb-6">🔍 Debug Paragon CDN Loading</h1>
+        
+        <div id="status" class="mb-6 p-4 rounded-lg bg-gray-50">
+            <p>Ready to debug Paragon CDN loading...</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <button onclick="testCDN1()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700">
+                Test JSDelivr CDN
+            </button>
+            
+            <button onclick="testCDN2()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700">
+                Test Unpkg CDN
+            </button>
+            
+            <button onclick="inspectWindow()" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700">
+                Inspect Window Object
+            </button>
+            
+            <button onclick="clearLogs()" class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700">
+                Clear Logs
+            </button>
+        </div>
+        
+        <div class="bg-gray-900 text-green-400 rounded-lg p-4 font-mono text-sm max-h-96 overflow-y-auto">
+            <div id="logs">
+                <div>🔍 Debug logs will appear here...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const logsDiv = document.getElementById('logs');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const colors = {
+                info: 'text-green-400',
+                error: 'text-red-400',
+                success: 'text-blue-400',
+                warning: 'text-yellow-400'
+            };
+            
+            console.log(message);
+            const logEntry = document.createElement('div');
+            logEntry.className = colors[type] || 'text-green-400';
+            logEntry.textContent = `${timestamp}: ${message}`;
+            logsDiv.appendChild(logEntry);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const colors = {
+                info: 'bg-blue-50 text-blue-800 border-blue-200',
+                success: 'bg-green-50 text-green-800 border-green-200',
+                error: 'bg-red-50 text-red-800 border-red-200',
+                warning: 'bg-yellow-50 text-yellow-800 border-yellow-200'
+            };
+            
+            statusDiv.className = `mb-6 p-4 rounded-lg border ${colors[type]}`;
+            statusDiv.innerHTML = `<p>${message}</p>`;
+        }
+        
+        function inspectWindow() {
+            log('=== WINDOW OBJECT INSPECTION ===');
+            
+            // Check for Paragon-related properties
+            const paragonProps = Object.keys(window).filter(key => 
+                key.toLowerCase().includes('paragon')
+            );
+            log('Paragon-related properties: ' + JSON.stringify(paragonProps));
+            
+            // Check for connect-related properties
+            const connectProps = Object.keys(window).filter(key => 
+                key.toLowerCase().includes('connect')
+            );
+            log('Connect-related properties: ' + JSON.stringify(connectProps));
+            
+            // Check specific properties
+            log('typeof window.Paragon: ' + typeof window.Paragon);
+            log('typeof window.paragon: ' + typeof window.paragon);
+            log('typeof window.ParagonConnect: ' + typeof window.ParagonConnect);
+            log('typeof window.connect: ' + typeof window.connect);
+            
+            // Check for any objects that might be the Paragon SDK
+            const possibleSDKs = Object.keys(window).filter(key => {
+                const obj = window[key];
+                return obj && typeof obj === 'object' && 
+                       (obj.authenticate || obj.connect || obj.getUser);
+            });
+            log('Objects with SDK-like methods: ' + JSON.stringify(possibleSDKs));
+            
+            updateStatus('Window inspection complete - check logs', 'success');
+        }
+        
+        function testCDN1() {
+            testCDNLoad('https://cdn.jsdelivr.net/npm/@useparagon/connect@latest/dist/index.umd.js', 'JSDelivr');
+        }
+        
+        function testCDN2() {
+            testCDNLoad('https://unpkg.com/@useparagon/connect@latest/dist/index.umd.js', 'Unpkg');
+        }
+        
+        function testCDNLoad(url, name) {
+            updateStatus(`Loading ${name} CDN...`, 'info');
+            log(`=== Testing ${name} CDN ===`);
+            log(`URL: ${url}`);
+            
+            // Remove any existing scripts first
+            const existingScripts = document.querySelectorAll('script[src*="@useparagon/connect"]');
+            existingScripts.forEach(script => {
+                log('Removing existing script: ' + script.src);
+                script.remove();
+            });
+            
+            const script = document.createElement('script');
+            script.src = url;
+            script.async = true;
+            
+            script.onload = () => {
+                log(`${name} script loaded successfully`);
+                
+                // Wait and check multiple times
+                let attempts = 0;
+                const checkInterval = setInterval(() => {
+                    attempts++;
+                    log(`Checking for Paragon object, attempt ${attempts}/10`);
+                    
+                    inspectWindow();
+                    
+                    if (typeof window.Paragon !== 'undefined') {
+                        log(`SUCCESS: Found window.Paragon from ${name}`, 'success');
+                        clearInterval(checkInterval);
+                        updateStatus(`✅ ${name} CDN loaded successfully!`, 'success');
+                    } else if (typeof window.paragon !== 'undefined') {
+                        log(`SUCCESS: Found window.paragon from ${name}`, 'success');
+                        clearInterval(checkInterval);
+                        updateStatus(`✅ ${name} CDN loaded successfully!`, 'success');
+                    } else if (attempts >= 10) {
+                        log(`FAILED: No Paragon object found after 10 attempts from ${name}`, 'error');
+                        clearInterval(checkInterval);
+                        updateStatus(`❌ ${name} CDN failed to expose Paragon object`, 'error');
+                    }
+                }, 500);
+            };
+            
+            script.onerror = () => {
+                log(`ERROR: Failed to load ${name} script`, 'error');
+                updateStatus(`❌ ${name} CDN failed to load`, 'error');
+            };
+            
+            document.head.appendChild(script);
+            log(`${name} script tag added to head`);
+        }
+        
+        function clearLogs() {
+            logsDiv.innerHTML = '<div>🔍 Debug logs cleared...</div>';
+            updateStatus('Ready to debug Paragon CDN loading...', 'info');
+        }
+        
+        // Auto-inspect on page load
+        window.addEventListener('load', () => {
+            log('Page loaded, performing initial inspection...');
+            inspectWindow();
+        });
+    </script>
+</body>
+</html>

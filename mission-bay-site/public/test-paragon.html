@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Paragon SDK Loading</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-6">
+        <h1 class="text-2xl font-bold mb-6">Paragon SDK Test</h1>
+        
+        <div id="status" class="mb-6 p-4 rounded-lg bg-gray-50">
+            <p>Testing Paragon SDK loading...</p>
+        </div>
+        
+        <div class="space-y-4">
+            <button onclick="testParagonLoading()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                Test Paragon Loading
+            </button>
+            
+            <button onclick="testAuthentication()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                Test Authentication
+            </button>
+        </div>
+        
+        <div id="logs" class="mt-6 p-4 bg-gray-900 text-green-400 rounded-lg font-mono text-sm max-h-96 overflow-y-auto">
+            <div>Console logs will appear here...</div>
+        </div>
+    </div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const logsDiv = document.getElementById('logs');
+        
+        function log(message) {
+            console.log(message);
+            const logEntry = document.createElement('div');
+            logEntry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            logsDiv.appendChild(logEntry);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const colors = {
+                info: 'bg-blue-50 text-blue-800',
+                success: 'bg-green-50 text-green-800',
+                error: 'bg-red-50 text-red-800',
+                warning: 'bg-yellow-50 text-yellow-800'
+            };
+            
+            statusDiv.className = `mb-6 p-4 rounded-lg ${colors[type]}`;
+            statusDiv.innerHTML = `<p>${message}</p>`;
+        }
+        
+        // Function to dynamically load Paragon SDK
+        async function loadParagonSDK() {
+            try {
+                log('Starting Paragon SDK load via dynamic import...');
+
+                // Try dynamic import first
+                const paragonModule = await import('/node_modules/@useparagon/connect/dist/index.js');
+                const paragon = paragonModule.paragon || paragonModule.default;
+
+                if (paragon) {
+                    log('Paragon SDK loaded via npm import');
+                    window.paragon = paragon;
+                    return paragon;
+                }
+
+                throw new Error('Paragon object not found in module');
+
+            } catch (importError) {
+                log('Import failed, trying CDN fallback...');
+                log('Import error: ' + importError.message);
+
+                // Fallback to CDN
+                return new Promise((resolve, reject) => {
+                    // Check if already loaded
+                    if (typeof window.Paragon !== 'undefined') {
+                        log('Paragon SDK already loaded from CDN');
+                        window.paragon = window.Paragon;
+                        resolve(window.paragon);
+                        return;
+                    }
+
+                    // Create script element
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/@useparagon/connect@latest/dist/index.umd.js';
+                    script.async = true;
+
+                    script.onload = () => {
+                        log('Paragon SDK script loaded from CDN');
+                        // Wait a bit for the SDK to initialize
+                        setTimeout(() => {
+                            if (typeof window.Paragon !== 'undefined') {
+                                log('Paragon SDK available on window object');
+                                window.paragon = window.Paragon;
+                                resolve(window.paragon);
+                            } else {
+                                log('ERROR: Paragon SDK loaded but not available on window object');
+                                reject(new Error('Paragon SDK loaded but not available on window object'));
+                            }
+                        }, 500);
+                    };
+
+                    script.onerror = () => {
+                        log('ERROR: Failed to load Paragon SDK from CDN');
+                        reject(new Error('Failed to load Paragon SDK from CDN'));
+                    };
+
+                    // Add to document head
+                    document.head.appendChild(script);
+                    log('Paragon SDK script tag added to head');
+
+                    // Timeout after 10 seconds
+                    setTimeout(() => {
+                        log('ERROR: Paragon SDK loading timeout');
+                        reject(new Error('Paragon SDK loading timeout'));
+                    }, 10000);
+                });
+            }
+        }
+        
+        async function testParagonLoading() {
+            try {
+                updateStatus('Loading Paragon SDK...', 'info');
+                log('=== Testing Paragon SDK Loading ===');
+                
+                await loadParagonSDK();
+                
+                updateStatus('✅ Paragon SDK loaded successfully!', 'success');
+                log('SUCCESS: Paragon SDK loaded and available');
+                log('Paragon object:', window.Paragon);
+                
+            } catch (error) {
+                updateStatus(`❌ Failed to load Paragon SDK: ${error.message}`, 'error');
+                log('ERROR:', error.message);
+            }
+        }
+        
+        async function testAuthentication() {
+            try {
+                updateStatus('Testing Paragon authentication...', 'info');
+                log('=== Testing Paragon Authentication ===');
+
+                const paragon = window.paragon || window.Paragon;
+                if (!paragon) {
+                    throw new Error('Paragon SDK not loaded. Run "Test Paragon Loading" first.');
+                }
+
+                const projectId = '38b1f170-0c43-4eae-9a04-ab85325d99f7';
+                const userToken = `org-test-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
+                log(`Project ID: ${projectId}`);
+                log(`User Token: ${userToken}`);
+                log(`Using paragon object:`, paragon);
+
+                await paragon.authenticate(projectId, userToken);
+
+                updateStatus('✅ Paragon authentication successful!', 'success');
+                log('SUCCESS: Paragon authenticated');
+
+            } catch (error) {
+                updateStatus(`❌ Authentication failed: ${error.message}`, 'error');
+                log('ERROR:', error.message);
+                log('Error stack:', error.stack);
+            }
+        }
+        
+        // Auto-test on page load
+        window.addEventListener('load', () => {
+            log('Page loaded, starting auto-test...');
+            testParagonLoading();
+        });
+    </script>
+</body>
+</html>

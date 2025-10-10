@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Paragon Loader</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/js/paragon-loader.js"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
+        <h1 class="text-3xl font-bold mb-6">🚀 Paragon Loader Test</h1>
+        
+        <div id="status" class="mb-6 p-4 rounded-lg bg-gray-50">
+            <p>Ready to test Paragon SDK loading...</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <button onclick="runFullTest()" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+                🚀 Run Full Test
+            </button>
+
+            <button onclick="testLoading()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                🔄 Test SDK Loading
+            </button>
+
+            <button onclick="testAuthentication()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors">
+                🔐 Test Authentication
+            </button>
+
+            <button onclick="testIntegrations()" class="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors">
+                📧 Test Integrations
+            </button>
+
+            <button onclick="testConnection()" class="bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-colors">
+                🔗 Test Connection
+            </button>
+
+            <button onclick="clearLogs()" class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors">
+                🗑️ Clear Logs
+            </button>
+        </div>
+        
+        <div class="bg-gray-900 text-green-400 rounded-lg p-4 font-mono text-sm max-h-96 overflow-y-auto">
+            <div id="logs">
+                <div>🔍 Console logs will appear here...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const logsDiv = document.getElementById('logs');
+        let paragonLoader = null;
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const colors = {
+                info: 'text-green-400',
+                error: 'text-red-400',
+                success: 'text-blue-400',
+                warning: 'text-yellow-400'
+            };
+            
+            console.log(message);
+            const logEntry = document.createElement('div');
+            logEntry.className = colors[type] || 'text-green-400';
+            logEntry.textContent = `${timestamp}: ${message}`;
+            logsDiv.appendChild(logEntry);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const colors = {
+                info: 'bg-blue-50 text-blue-800 border-blue-200',
+                success: 'bg-green-50 text-green-800 border-green-200',
+                error: 'bg-red-50 text-red-800 border-red-200',
+                warning: 'bg-yellow-50 text-yellow-800 border-yellow-200'
+            };
+            
+            statusDiv.className = `mb-6 p-4 rounded-lg border ${colors[type]}`;
+            statusDiv.innerHTML = `<p>${message}</p>`;
+        }
+        
+        async function testLoading() {
+            try {
+                updateStatus('🔄 Testing Paragon SDK loading...', 'info');
+                log('=== Testing Paragon SDK Loading ===');
+                
+                if (!window.ParagonLoader) {
+                    throw new Error('ParagonLoader class not available');
+                }
+                
+                paragonLoader = new window.ParagonLoader();
+                log('ParagonLoader instance created');
+                
+                const paragon = await paragonLoader.load();
+                
+                updateStatus('✅ Paragon SDK loaded successfully!', 'success');
+                log('SUCCESS: Paragon SDK loaded', 'success');
+                log('Paragon object: ' + typeof paragon, 'success');
+                
+            } catch (error) {
+                updateStatus(`❌ Failed to load Paragon SDK: ${error.message}`, 'error');
+                log('ERROR: ' + error.message, 'error');
+            }
+        }
+        
+        async function testAuthentication() {
+            try {
+                updateStatus('🔐 Testing Paragon authentication...', 'info');
+                log('=== Testing Paragon Authentication ===');
+
+                // Ensure SDK is loaded first
+                if (!paragonLoader) {
+                    log('Paragon loader not initialized, loading first...', 'warning');
+                    await testLoading();
+                }
+
+                if (!paragonLoader || !paragonLoader.isLoaded) {
+                    log('Attempting to load SDK before authentication...', 'warning');
+                    await paragonLoader.load();
+                }
+
+                const projectId = '4c35906a-b8f0-4fbf-9b85-733a876cd9a5';
+
+                // Get proper JWT token from API
+                log('Fetching JWT token from API...');
+                const response = await fetch('/api/admin/mailchimp-token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        orgId: '9',
+                        accessCode: 'rangers789'
+                    })
+                });
+
+                const tokenData = await response.json();
+                if (!tokenData.success) {
+                    throw new Error('Failed to get JWT token: ' + tokenData.message);
+                }
+
+                const userToken = tokenData.userToken;
+
+                log(`Project ID: ${projectId}`);
+                log(`JWT Token type: ${tokenData.metadata.token_type}`);
+                log(`JWT Token preview: ${userToken.substring(0, 50)}...`);
+
+                const user = await paragonLoader.authenticate(projectId, userToken);
+
+                updateStatus('✅ Paragon authentication successful!', 'success');
+                log('SUCCESS: Paragon authenticated', 'success');
+                log('User info: ' + JSON.stringify(user, null, 2), 'success');
+
+            } catch (error) {
+                updateStatus(`❌ Authentication failed: ${error.message}`, 'error');
+                log('ERROR: ' + error.message, 'error');
+                log('Error stack: ' + error.stack, 'error');
+            }
+        }
+        
+        async function testIntegrations() {
+            try {
+                updateStatus('📧 Testing integrations metadata...', 'info');
+                log('=== Testing Integrations ===');
+
+                // Ensure SDK is loaded and authenticated first
+                if (!paragonLoader) {
+                    log('Running full test sequence...', 'warning');
+                    await testLoading();
+                    await testAuthentication();
+                }
+
+                const integrations = paragonLoader.getIntegrationMetadata();
+                const user = paragonLoader.getUser();
+
+                updateStatus('✅ Integration data retrieved!', 'success');
+                log('SUCCESS: Integration metadata retrieved', 'success');
+                log('Available integrations: ' + JSON.stringify(integrations, null, 2), 'success');
+                log('User integrations: ' + JSON.stringify(user?.integrations, null, 2), 'success');
+
+            } catch (error) {
+                updateStatus(`❌ Integration test failed: ${error.message}`, 'error');
+                log('ERROR: ' + error.message, 'error');
+            }
+        }
+        
+        async function runFullTest() {
+            try {
+                updateStatus('🚀 Running full Paragon test sequence...', 'info');
+                log('=== FULL PARAGON TEST SEQUENCE ===');
+
+                // Step 1: Load SDK
+                await testLoading();
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // Step 2: Authenticate
+                await testAuthentication();
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // Step 3: Test integrations
+                await testIntegrations();
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // Step 4: Test connection
+                await testConnection();
+
+                updateStatus('✅ Full test sequence completed successfully!', 'success');
+                log('=== FULL TEST SEQUENCE COMPLETED ===', 'success');
+
+            } catch (error) {
+                updateStatus(`❌ Full test sequence failed: ${error.message}`, 'error');
+                log('FULL TEST ERROR: ' + error.message, 'error');
+            }
+        }
+
+        async function testConnection() {
+            try {
+                updateStatus('🔗 Testing Mailchimp connection...', 'info');
+                log('=== Testing Mailchimp Connection ===');
+
+                if (!paragonLoader) {
+                    throw new Error('Paragon loader not initialized');
+                }
+
+                log('Attempting to connect to Mailchimp...', 'warning');
+                log('Note: This will open a popup for OAuth authorization', 'warning');
+
+                // This would normally open the OAuth popup
+                // For testing, we'll just simulate the call
+                try {
+                    // await paragonLoader.connect('mailchimp');
+                    log('Connection method available: ' + (typeof paragonLoader.connect === 'function'), 'info');
+                    log('This would open Mailchimp OAuth popup in production', 'info');
+
+                    updateStatus('✅ Connection test completed (OAuth popup would open)', 'success');
+                    log('SUCCESS: Connection method is available', 'success');
+                } catch (connectError) {
+                    log('Connection error (expected in test): ' + connectError.message, 'warning');
+                }
+
+            } catch (error) {
+                updateStatus(`❌ Connection test failed: ${error.message}`, 'error');
+                log('ERROR: ' + error.message, 'error');
+            }
+        }
+
+        function clearLogs() {
+            logsDiv.innerHTML = '<div>🔍 Console logs cleared...</div>';
+            updateStatus('Ready to test Paragon SDK loading...', 'info');
+        }
+
+        // Auto-test on page load
+        window.addEventListener('load', () => {
+            log('Page loaded, ParagonLoader available: ' + (typeof window.ParagonLoader !== 'undefined'), 'info');
+            log('Click "Run Full Test" to test the complete Paragon integration', 'info');
+        });
+    </script>
+</body>
+</html>

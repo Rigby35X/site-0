@@ -17,11 +17,13 @@
   "dependencies": {
     "@astrojs/sitemap": "^3.6.0",
     "@astrojs/vercel": "^8.2.8",
-    "@auth0/nextjs-auth0": "^4.10.0",
     "@useparagon/connect": "^2.1.1",
     "astro": "^5.14.1",
     "astro-icon": "^1.1.5",
+    "auth0": "^4.32.0",
     "autoprefixer": "^10.4.21",
+    "jose": "^6.1.0",
+    "jsonwebtoken": "^9.0.2",
     "less": "^4.4.1"
   },
   "description": "Dedicated to rescuing and rehoming puppies and dogs in the San Diego area",

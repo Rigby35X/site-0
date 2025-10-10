@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth0 + Paragon Integration Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .success { border-color: #4CAF50; background-color: #f0f8f0; }
+        .error { border-color: #f44336; background-color: #fdf0f0; }
+        .warning { border-color: #ff9800; background-color: #fff8f0; }
+        .info { border-color: #2196F3; background-color: #f0f8ff; }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background-color: #45a049; }
+        .auth-button { background-color: #2196F3; }
+        .auth-button:hover { background-color: #1976D2; }
+        .token-display {
+            word-break: break-all;
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .log {
+            background-color: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Auth0 + Paragon Integration Test</h1>
+        <p>This test uses Auth0 ID tokens directly with Paragon (no custom JWT signing needed).</p>
+
+        <div class="test-section info">
+            <h3>Integration Configuration</h3>
+            <p><strong>Project ID:</strong> f8dcc8f0-7214-4bd6-8e84-99a82f7f6e6b</p>
+            <p><strong>Auth Provider:</strong> Auth0 (dev-mgyaisokgc1vbt30.us.auth0.com)</p>
+            <p><strong>Authentication:</strong> Auth0 ID Token</p>
+        </div>
+
+        <div class="test-section">
+            <h3>Step 1: Auth0 Authentication</h3>
+            <button class="auth-button" onclick="loginWithAuth0()">🔑 Login with Auth0</button>
+            <button class="auth-button" onclick="checkAuthStatus()">📋 Check Auth Status</button>
+            <button class="auth-button" onclick="logoutFromAuth0()">🚪 Logout</button>
+            <div id="authResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Step 2: Get Auth0 ID Token</h3>
+            <button onclick="getAuth0Token()">🎫 Get ID Token</button>
+            <div id="tokenResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Step 3: Load Paragon SDK</h3>
+            <button onclick="loadParagonSDK()">📦 Load Paragon SDK</button>
+            <div id="sdkResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Step 4: Authenticate with Paragon</h3>
+            <button onclick="authenticateWithParagon()">🔐 Authenticate Paragon</button>
+            <div id="paragonResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Step 5: Connect to Mailchimp</h3>
+            <button onclick="connectToMailchimp()">📧 Connect Mailchimp</button>
+            <div id="mailchimpResult"></div>
+        </div>
+
+        <div class="log" id="logOutput"></div>
+    </div>
+
+    <script>
+        let userToken = null;
+        let paragon = null;
+        let currentUser = null;
+        const projectId = 'f8dcc8f0-7214-4bd6-8e84-99a82f7f6e6b';
+
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logElement = document.getElementById('logOutput');
+            logElement.innerHTML += `${timestamp}: ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+            console.log(message);
+        }
+
+        function loginWithAuth0() {
+            log('🔑 Redirecting to Auth0 login...');
+            window.location.href = '/api/auth/login';
+        }
+
+        function logoutFromAuth0() {
+            log('🚪 Logging out from Auth0...');
+            window.location.href = '/api/auth/logout';
+        }
+
+        async function checkAuthStatus() {
+            log('📋 Checking Auth0 authentication status...');
+            try {
+                const response = await fetch('/api/auth/me');
+                if (response.ok) {
+                    const user = await response.json();
+                    currentUser = user;
+                    document.getElementById('authResult').innerHTML = `
+                        <div class="success">
+                            <p>✅ Authenticated with Auth0!</p>
+                            <p><strong>User:</strong> ${user.name || user.email}</p>
+                            <p><strong>Email:</strong> ${user.email}</p>
+                            <p><strong>Sub:</strong> ${user.sub}</p>
+                        </div>
+                    `;
+                    log('✅ User is authenticated with Auth0');
+                } else {
+                    throw new Error('User not authenticated');
+                }
+            } catch (error) {
+                document.getElementById('authResult').innerHTML = `
+                    <div class="error">
+                        <p>❌ Not authenticated with Auth0</p>
+                        <p>Please login first</p>
+                    </div>
+                `;
+                log(`❌ Auth check failed: ${error.message}`);
+            }
+        }
+
+        async function getAuth0Token() {
+            log('🎫 Getting Auth0 ID token...');
+            try {
+                const response = await fetch('/api/auth/paragon-token');
+                const data = await response.json();
+                
+                if (data.success) {
+                    userToken = data.userToken;
+                    currentUser = data.user;
+                    document.getElementById('tokenResult').innerHTML = `
+                        <div class="success">
+                            <p>✅ Auth0 ID token retrieved!</p>
+                            <p><strong>User:</strong> ${data.user.name || data.user.email}</p>
+                            <p><strong>Provider:</strong> ${data.metadata.auth_provider}</p>
+                            <p><strong>Token Type:</strong> ${data.metadata.token_type}</p>
+                            <div class="token-display">${userToken.substring(0, 100)}...</div>
+                        </div>
+                    `;
+                    log('✅ Auth0 ID token retrieved successfully');
+                } else {
+                    throw new Error(data.error || 'Failed to get token');
+                }
+            } catch (error) {
+                document.getElementById('tokenResult').innerHTML = `
+                    <div class="error">
+                        <p>❌ Failed to get Auth0 ID token</p>
+                        <p>Error: ${error.message}</p>
+                        <p>Please login with Auth0 first</p>
+                    </div>
+                `;
+                log(`❌ Token retrieval failed: ${error.message}`);
+            }
+        }
+
+        async function loadParagonSDK() {
+            log('📦 Loading Paragon SDK...');
+            try {
+                const module = await import('https://cdn.skypack.dev/@useparagon/connect');
+                paragon = module.paragon;
+                
+                document.getElementById('sdkResult').innerHTML = `
+                    <div class="success">
+                        <p>✅ Paragon SDK loaded successfully!</p>
+                        <p>SDK methods: ${Object.keys(paragon).join(', ')}</p>
+                    </div>
+                `;
+                log('✅ Paragon SDK loaded successfully');
+            } catch (error) {
+                document.getElementById('sdkResult').innerHTML = `
+                    <div class="error">
+                        <p>❌ Failed to load Paragon SDK</p>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+                log(`❌ SDK loading failed: ${error.message}`);
+            }
+        }
+
+        async function authenticateWithParagon() {
+            if (!userToken) {
+                log('❌ No Auth0 ID token available. Get token first.');
+                return;
+            }
+            
+            if (!paragon) {
+                log('❌ Paragon SDK not loaded. Load SDK first.');
+                return;
+            }
+
+            log('🔐 Authenticating with Paragon using Auth0 ID token...');
+            try {
+                await paragon.authenticate(projectId, userToken);
+                
+                document.getElementById('paragonResult').innerHTML = `
+                    <div class="success">
+                        <p>✅ Paragon authentication successful!</p>
+                        <p>Project ID: ${projectId}</p>
+                        <p>Authenticated with Auth0 ID token</p>
+                        <p>User: ${currentUser?.name || currentUser?.email}</p>
+                    </div>
+                `;
+                log('✅ Paragon authentication successful with Auth0!');
+            } catch (error) {
+                document.getElementById('paragonResult').innerHTML = `
+                    <div class="error">
+                        <p>❌ Paragon authentication failed</p>
+                        <p>Error: ${error.message}</p>
+                        <p>Make sure Paragon is configured for Auth0 integration</p>
+                    </div>
+                `;
+                log(`❌ Paragon authentication failed: ${error.message}`);
+            }
+        }
+
+        async function connectToMailchimp() {
+            if (!paragon) {
+                log('❌ Paragon SDK not loaded. Complete previous steps first.');
+                return;
+            }
+
+            log('📧 Connecting to Mailchimp via Paragon...');
+            try {
+                await paragon.connect('mailchimp');
+                
+                document.getElementById('mailchimpResult').innerHTML = `
+                    <div class="success">
+                        <p>✅ Mailchimp connection initiated!</p>
+                        <p>OAuth popup should have opened</p>
+                    </div>
+                `;
+                log('✅ Mailchimp connection initiated successfully');
+            } catch (error) {
+                document.getElementById('mailchimpResult').innerHTML = `
+                    <div class="error">
+                        <p>❌ Mailchimp connection failed</p>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+                log(`❌ Mailchimp connection failed: ${error.message}`);
+            }
+        }
+
+        // Initialize
+        log('🚀 Auth0 + Paragon Integration Test initialized');
+        log('Step 1: Login with Auth0');
+        log('Step 2: Get Auth0 ID token');
+        log('Step 3: Load Paragon SDK');
+        log('Step 4: Authenticate with Paragon');
+        log('Step 5: Connect to Mailchimp');
+
+        // Auto-check auth status on page load
+        checkAuthStatus();
+    </script>
+</body>
+</html>

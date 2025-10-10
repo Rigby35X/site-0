@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Integration Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-lg p-6">
+        <h1 class="text-3xl font-bold mb-6">🎯 Final Paragon Integration Test</h1>
+        
+        <div id="status" class="mb-6 p-4 rounded-lg bg-gray-50">
+            <p>Ready to test the complete Paragon + Mailchimp integration...</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <button onclick="testComplete()" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-4 rounded-lg hover:from-blue-700 hover:to-purple-700 font-medium">
+                🚀 Complete Integration Test
+            </button>
+            
+            <button onclick="testMailchimpConnect()" class="bg-green-600 text-white px-6 py-4 rounded-lg hover:bg-green-700 font-medium">
+                📧 Test Mailchimp Connection
+            </button>
+            
+            <button onclick="showIntegrations()" class="bg-purple-600 text-white px-6 py-4 rounded-lg hover:bg-purple-700 font-medium">
+                📋 Show Available Integrations
+            </button>
+            
+            <button onclick="clearLogs()" class="bg-gray-600 text-white px-6 py-4 rounded-lg hover:bg-gray-700 font-medium">
+                🗑️ Clear Logs
+            </button>
+        </div>
+        
+        <div class="bg-gray-900 text-green-400 rounded-lg p-4 font-mono text-sm max-h-96 overflow-y-auto">
+            <div id="logs">🎯 Final integration test ready...</div>
+        </div>
+    </div>
+
+    <script>
+        const statusDiv = document.getElementById('status');
+        const logsDiv = document.getElementById('logs');
+        let paragon = null;
+        let authenticatedUser = null;
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const colors = {
+                info: 'text-green-400',
+                error: 'text-red-400',
+                success: 'text-blue-400',
+                warning: 'text-yellow-400'
+            };
+            
+            console.log(message);
+            const logEntry = document.createElement('div');
+            logEntry.className = colors[type] || 'text-green-400';
+            logEntry.textContent = `${timestamp}: ${message}`;
+            logsDiv.appendChild(logEntry);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const colors = {
+                info: 'bg-blue-50 text-blue-800 border-blue-200',
+                success: 'bg-green-50 text-green-800 border-green-200',
+                error: 'bg-red-50 text-red-800 border-red-200',
+                warning: 'bg-yellow-50 text-yellow-800 border-yellow-200'
+            };
+            
+            statusDiv.className = `mb-6 p-4 rounded-lg border ${colors[type]}`;
+            statusDiv.innerHTML = `<p>${message}</p>`;
+        }
+        
+        async function testComplete() {
+            try {
+                log('=== COMPLETE INTEGRATION TEST ===', 'success');
+                updateStatus('🚀 Running complete integration test...', 'info');
+                
+                // Step 1: Load Paragon SDK
+                log('Step 1: Loading Paragon SDK...');
+                const module = await import('https://cdn.skypack.dev/@useparagon/connect');
+                paragon = module.paragon;
+                log('✅ Paragon SDK loaded successfully', 'success');
+                
+                // Step 2: Generate JWT token
+                log('Step 2: Generating JWT token...');
+                const response = await fetch('/api/admin/mailchimp-token', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        orgId: '9',
+                        accessCode: 'rangers789'
+                    })
+                });
+                
+                const tokenData = await response.json();
+                if (!tokenData.success) {
+                    throw new Error('Failed to generate JWT token: ' + tokenData.message);
+                }
+                
+                log('✅ JWT token generated successfully', 'success');
+                log('Token type: ' + tokenData.metadata.token_type, 'info');
+                
+                // Step 3: Authenticate with Paragon
+                log('Step 3: Authenticating with Paragon...');
+                const projectId = '4c35906a-b8f0-4fbf-9b85-733a876cd9a5';
+                
+                await paragon.authenticate(projectId, tokenData.userToken);
+                authenticatedUser = paragon.getUser();
+                
+                log('✅ Paragon authentication successful!', 'success');
+                log('User authenticated: ' + authenticatedUser.authenticated, 'success');
+                
+                // Step 4: Get integrations
+                log('Step 4: Fetching available integrations...');
+                const integrations = paragon.getIntegrationMetadata();
+                log('✅ Found ' + integrations.length + ' integrations', 'success');
+                
+                integrations.forEach(integration => {
+                    log(`  - ${integration.name} (${integration.type})`, 'info');
+                });
+                
+                // Step 5: Check Mailchimp status
+                log('Step 5: Checking Mailchimp connection status...');
+                const mailchimpStatus = authenticatedUser.integrations?.mailchimp?.enabled || false;
+                log('Mailchimp connected: ' + mailchimpStatus, mailchimpStatus ? 'success' : 'warning');
+                
+                updateStatus('✅ Complete integration test successful!', 'success');
+                log('=== INTEGRATION TEST COMPLETED SUCCESSFULLY ===', 'success');
+                
+            } catch (error) {
+                log('❌ Integration test failed: ' + error.message, 'error');
+                updateStatus('❌ Integration test failed: ' + error.message, 'error');
+            }
+        }
+        
+        async function testMailchimpConnect() {
+            try {
+                log('=== TESTING MAILCHIMP CONNECTION ===', 'success');
+                updateStatus('📧 Testing Mailchimp connection...', 'info');
+                
+                if (!paragon || !authenticatedUser) {
+                    log('Running complete test first...', 'warning');
+                    await testComplete();
+                }
+                
+                log('Attempting to connect to Mailchimp...');
+                log('This will open an OAuth popup window', 'warning');
+                
+                // This will open the actual Mailchimp OAuth popup
+                const result = await paragon.connect('mailchimp');
+                
+                log('✅ Mailchimp connection initiated!', 'success');
+                log('Connection result: ' + JSON.stringify(result), 'success');
+                
+                // Update user state
+                setTimeout(() => {
+                    authenticatedUser = paragon.getUser();
+                    const isConnected = authenticatedUser.integrations?.mailchimp?.enabled || false;
+                    log('Updated Mailchimp status: ' + isConnected, isConnected ? 'success' : 'warning');
+                }, 2000);
+                
+                updateStatus('✅ Mailchimp connection test completed!', 'success');
+                
+            } catch (error) {
+                log('❌ Mailchimp connection failed: ' + error.message, 'error');
+                updateStatus('❌ Mailchimp connection failed: ' + error.message, 'error');
+            }
+        }
+        
+        async function showIntegrations() {
+            try {
+                log('=== AVAILABLE INTEGRATIONS ===', 'success');
+                
+                if (!paragon) {
+                    log('Loading Paragon SDK first...', 'warning');
+                    await testComplete();
+                    return;
+                }
+                
+                const integrations = paragon.getIntegrationMetadata();
+                const user = paragon.getUser();
+                
+                log('Available integrations:', 'success');
+                integrations.forEach(integration => {
+                    const isConnected = user?.integrations?.[integration.type]?.enabled || false;
+                    const status = isConnected ? '✅ Connected' : '⚪ Not connected';
+                    log(`  ${integration.name}: ${status}`, isConnected ? 'success' : 'info');
+                });
+                
+                updateStatus('✅ Integration status displayed', 'success');
+                
+            } catch (error) {
+                log('❌ Failed to show integrations: ' + error.message, 'error');
+                updateStatus('❌ Failed to show integrations', 'error');
+            }
+        }
+        
+        function clearLogs() {
+            logsDiv.innerHTML = '🎯 Final integration test ready...';
+            updateStatus('Ready to test the complete Paragon + Mailchimp integration...', 'info');
+        }
+        
+        // Auto-run test on page load
+        window.addEventListener('load', () => {
+            log('Page loaded - ready for integration testing', 'info');
+        });
+    </script>
+</body>
+</html>

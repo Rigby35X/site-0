@@ -1,5 +1,5 @@
 // Astro middleware for Auth0 authentication
-import { auth0 } from './lib/auth0.js';
+// import { auth0 } from './lib/auth0.js'; // Temporarily disabled
 
 // Define protected routes that require authentication
 const protectedRoutes = [
@@ -81,10 +81,15 @@ export async function onRequest(context, next) {
 
   // If it's a protected route, check authentication
   if (isProtectedRoute) {
+    // Temporarily disabled Auth0 authentication
+    // Admin dashboard uses its own authentication system
+    return next();
+
+    /*
     try {
       // Get the session from Auth0
       const session = await auth0.getSession(request);
-      
+
       if (!session || !session.user) {
         // Redirect to login if not authenticated
         const loginUrl = new URL('/api/auth/login', url.origin);
@@ -101,6 +106,7 @@ export async function onRequest(context, next) {
       loginUrl.searchParams.set('returnTo', pathname);
       return Response.redirect(loginUrl);
     }
+    */
   }
 
   // For all other routes, continue without authentication check

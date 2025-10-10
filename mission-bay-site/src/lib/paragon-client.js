@@ -7,10 +7,21 @@ const PARAGON_CONFIG = {
   environment: import.meta.env.PUBLIC_PARAGON_ENVIRONMENT || "production", // or "sandbox"
 };
 
-// Create Paragon client instance with per-user token
+// Create Paragon client instance with user token (Auth0 or admin session)
 export function createParagonClient(userToken) {
+  const apiKey = import.meta.env.PUBLIC_PARAGON_API_KEY || import.meta.env.VITE_PARAGON_API_KEY;
+
+  if (!apiKey) {
+    throw new Error('Paragon API key not configured');
+  }
+
+  if (!userToken) {
+    throw new Error('User token is required to create Paragon client');
+  }
+
   return new Paragon({
-    userToken, // unique per logged-in Auth0 user
+    apiKey: apiKey,
+    userToken: userToken, // Auth0 token or admin session token
     environment: import.meta.env.PUBLIC_PARAGON_ENVIRONMENT || "production",
   });
 }
@@ -27,12 +38,12 @@ export const MAILCHIMP_CONFIG = {
 };
 
 /**
- * Initialize Paragon with user token for multi-tenant setup
- * @param {string} userToken - Unique Paragon user token after Mailchimp connection
+ * Initialize Paragon with Auth0 token for multi-tenant setup
+ * @param {string} auth0Token - Auth0 access token used as Paragon user token
  */
-export function initializeParagonWithUser(userToken) {
-  if (userToken) {
-    paragon.setUserToken(userToken);
+export function initializeParagonWithUser(auth0Token) {
+  if (auth0Token) {
+    paragon.setUserToken(auth0Token);
   }
 }
 
