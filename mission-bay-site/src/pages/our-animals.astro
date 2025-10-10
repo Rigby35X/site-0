@@ -21,6 +21,7 @@ try {
 }
 
 const adoptedAnimals = animals.filter((animal) => (animal.status || '').toLowerCase() === 'adopted');
+const availableAnimals = animals.filter((animal) => (animal.status || '').toLowerCase() === 'available' || !(animal.status));
 ---
 
 <BaseLayout
@@ -71,13 +72,13 @@ const adoptedAnimals = animals.filter((animal) => (animal.status || '').toLowerC
           <p>Sorry, we're having trouble loading our animals right now. Please try again later.</p>
           <p>Error: {error}</p>
         </div>
-      ) : animals.length === 0 ? (
+      ) : availableAnimals.length === 0 ? (
         <div class="cs-loading">
           <p>No animals are currently available for adoption. Please check back soon!</p>
         </div>
       ) : (
         <div class="cs-card-group">
-          {animals.map((animal) => {
+          {availableAnimals.map((animal) => {
             const imageUrl = animal.image_url || animal.main_image?.url || '/assets/images/animals/placeholder.jpg';
             const status = animal.status || 'Available';
             const description = animal.description || animal.My_Story || '';
@@ -530,4 +531,3 @@ const adoptedAnimals = animals.filter((animal) => (animal.status || '').toLowerC
     color: var(--errorColor, #dc2626);
   }
 </style>
-
