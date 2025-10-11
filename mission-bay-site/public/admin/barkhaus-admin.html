@@ -198,6 +198,117 @@
             border: 1px solid #e5e7eb;
             transition: box-shadow 0.2s;
         }
+
+        .dashboard-wrapper {
+            height: calc(100vh - 4rem);
+        }
+
+        .dashboard-sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .responsive-header {
+            gap: 1.25rem;
+        }
+
+        .header-actions {
+            gap: 1rem;
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-wrapper {
+                flex-direction: column;
+                height: auto;
+                min-height: 100vh;
+            }
+
+            .dashboard-sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e5e7eb;
+                position: sticky;
+                top: 4rem;
+                z-index: 30;
+                background: white;
+            }
+
+            .dashboard-sidebar nav {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 0.75rem;
+            }
+
+            .dashboard-sidebar .sidebar-tab {
+                justify-content: flex-start;
+            }
+
+            .dashboard-main-header .header-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .header-actions {
+                width: 100%;
+                flex-wrap: wrap;
+                gap: 0.75rem;
+            }
+
+            .header-actions span {
+                display: block;
+                width: 100%;
+                text-align: left;
+            }
+
+            .header-actions button,
+            .header-actions .btn-secondary,
+            .header-actions .btn-primary {
+                width: 100%;
+            }
+
+            .responsive-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .responsive-header > *:not(:first-child) {
+                width: 100%;
+            }
+
+            .responsive-header .flex {
+                width: 100%;
+                flex-wrap: wrap;
+                gap: 0.75rem;
+            }
+
+            .responsive-header button,
+            .responsive-header .btn-primary,
+            .responsive-header .btn-secondary,
+            .responsive-header .btn-outline {
+                width: 100%;
+            }
+
+            .dashboard-main main {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .dashboard-sidebar nav {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .dashboard-sidebar .sidebar-tab svg {
+                display: none;
+            }
+
+            .dashboard-sidebar .sidebar-tab {
+                justify-content: center;
+                text-align: center;
+            }
+        }
         .animal-card:hover {
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
@@ -487,11 +598,11 @@
         <!-- Header -->
         <header class="bg-white shadow-sm border-b">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-16">
+                <div class="flex justify-between items-center responsive-header header-bar h-16">
                     <div class="flex items-center">
                         <h1 class="text-2xl font-bebas uppercase text-gray-900">Happy Paws Admin</h1>
                     </div>
-                    <div class="flex items-center space-x-4">
+                    <div class="header-actions flex items-center">
                         <button onclick="viewWebsite()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
@@ -506,9 +617,9 @@
         </header>
 
         <!-- Main Layout with Sidebar -->
-        <div class="flex bg-gray-50" style="height: calc(100vh - 4rem);">
+        <div class="dashboard-wrapper flex bg-gray-50">
             <!-- Left Sidebar -->
-            <div class="w-64 bg-white shadow-lg border-r border-gray-200 overflow-y-auto">
+            <div class="dashboard-sidebar w-64 bg-white shadow-lg border-r border-gray-200 overflow-y-auto">
                 <div class="p-6">
                     <div class="flex items-center justify-center mb-8">
                         <img src="/assets/svgs/happy-paws.svg" alt="Happy Paws" class="h-12 w-auto">
@@ -575,11 +686,11 @@
             </div>
 
             <!-- Main Content Area -->
-            <div class="flex-1 flex flex-col">
+            <div class="dashboard-main flex-1 flex flex-col">
                 <!-- Top Header -->
-                <header class="bg-white shadow-sm border-b border-gray-200 flex-shrink-0">
+                <header class="dashboard-main-header bg-white shadow-sm border-b border-gray-200 flex-shrink-0">
                     <div class="px-6 py-4">
-                        <div class="flex justify-between items-center">
+                        <div class="flex justify-between items-center responsive-header">
                             <div>
                                 <h1 class="text-2xl font-bebas uppercase text-gray-900" id="pageTitle">Dashboard</h1>
                                 <p class="text-gray-600 text-sm" id="pageSubtitle">Welcome back! Here's what's happening at your rescue.</p>
@@ -660,7 +771,7 @@
             <!-- Recent Animals Preview -->
             <div class="bg-white rounded-lg shadow-sm border">
                 <div class="px-6 py-4 border-b border-gray-200">
-                    <div class="flex justify-between items-center">
+                    <div class="flex justify-between items-center responsive-header">
                         <h2 class="text-xl font-bebas uppercase text-gray-900">Recent Animals</h2>
                         <div class="flex items-center space-x-2">
                             <button id="addAnimalBtn" class="btn-primary">Add New Animal</button>
@@ -705,7 +816,7 @@
                 <!-- Header -->
                 <div class="bg-white rounded-lg shadow-sm border mb-6">
                     <div class="px-6 py-4 border-b border-gray-200">
-                        <div class="flex justify-between items-center">
+                        <div class="flex justify-between items-center responsive-header">
                             <div>
                                 <h2 class="text-xl font-bebas uppercase text-gray-900">Pet Management</h2>
                                 <p class="text-gray-600 text-sm">Manage all pets in your rescue organization</p>
@@ -2368,7 +2479,7 @@
     <!-- Add/Edit Animal Modal -->
     <div id="animalModal" class="modal">
         <div class="modal-content">
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex justify-between items-center responsive-header mb-6">
                 <h3 class="text-xl font-bebas uppercase text-gray-900" id="modalTitle">Add New Animal</h3>
                 <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600">
                     <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -5873,7 +5984,7 @@
             modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
             modal.innerHTML = `
                 <div class="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-                    <div class="flex justify-between items-center mb-6">
+                    <div class="flex justify-between items-center responsive-header mb-6">
                         <h3 class="text-xl font-bebas uppercase text-gray-900">Edit ${sectionTitles[sectionKey]}</h3>
                         <button onclick="closeContentModal()" class="text-gray-400 hover:text-gray-600">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
