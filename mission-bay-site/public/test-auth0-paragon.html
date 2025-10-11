@@ -84,7 +84,7 @@
 
         <div class="test-section">
             <h3>Step 2: Get Auth0 ID Token</h3>
-            <button onclick="getAuth0Token()">🎫 Get ID Token</button>
+            <button onclick="generateToken()">Generate JWT Token</button>
             <div id="tokenResult"></div>
         </div>
 
@@ -163,39 +163,34 @@
             }
         }
 
-        async function getAuth0Token() {
-            log('🎫 Getting Auth0 ID token...');
-            try {
-                const response = await fetch('/api/auth/paragon-token');
-                const data = await response.json();
-                
-                if (data.success) {
-                    userToken = data.userToken;
-                    currentUser = data.user;
-                    document.getElementById('tokenResult').innerHTML = `
-                        <div class="success">
-                            <p>✅ Auth0 ID token retrieved!</p>
-                            <p><strong>User:</strong> ${data.user.name || data.user.email}</p>
-                            <p><strong>Provider:</strong> ${data.metadata.auth_provider}</p>
-                            <p><strong>Token Type:</strong> ${data.metadata.token_type}</p>
-                            <div class="token-display">${userToken.substring(0, 100)}...</div>
-                        </div>
-                    `;
-                    log('✅ Auth0 ID token retrieved successfully');
-                } else {
-                    throw new Error(data.error || 'Failed to get token');
-                }
-            } catch (error) {
-                document.getElementById('tokenResult').innerHTML = `
-                    <div class="error">
-                        <p>❌ Failed to get Auth0 ID token</p>
-                        <p>Error: ${error.message}</p>
-                        <p>Please login with Auth0 first</p>
-                    </div>
-                `;
-                log(`❌ Token retrieval failed: ${error.message}`);
-            }
-        }
+        async function generateToken() {
+  log("🎫 Generating signed Paragon JWT token...");
+  try {
+    const response = await fetch("/api/auth/paragon-token");
+    const data = await response.json();
+
+    if (data.token) {
+      userToken = data.token;
+      document.getElementById("tokenResult").innerHTML = `
+        <div class="success">
+          <p>✅ Signed JWT token generated successfully!</p>
+          <div class="token-display">${userToken.substring(0, 100)}...</div>
+        </div>
+      `;
+      log("✅ Paragon JWT token generated successfully");
+    } else {
+      throw new Error(data.error || "No token returned from backend");
+    }
+  } catch (error) {
+    document.getElementById("tokenResult").innerHTML = `
+      <div class="error">
+        <p>❌ Failed to generate Paragon JWT token</p>
+        <p>Error: ${error.message}</p>
+      </div>
+    `;
+    log(`❌ Token generation failed: ${error.message}`);
+  }
+}
 
         async function loadParagonSDK() {
             log('📦 Loading Paragon SDK...');
