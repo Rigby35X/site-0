@@ -100,6 +100,95 @@
 	}
 }
 
+@media only screen and (max-width: 48em) {
+	#hero {
+		padding: clamp(4rem, 15vw, 6rem) 1.5rem;
+
+		.cs-container {
+			align-items: center;
+		}
+
+		.cs-flex-group {
+			align-items: center;
+			text-align: center;
+
+			.cs-text {
+				text-align: center;
+			}
+		}
+
+		.cs-button-solid,
+		.cs-button-transparent {
+			width: 100%;
+			max-width: 320px;
+			margin: 0;
+		}
+
+		.cs-button-transparent {
+			margin-top: 0.75rem;
+		}
+	}
+
+	#sbs,
+	#sbs-r {
+		.cs-container {
+			align-items: stretch;
+		}
+
+		.cs-left {
+			width: 100%;
+			max-width: none;
+			height: auto;
+			display: flex;
+			flex-direction: column;
+			gap: 1.5rem;
+			font-size: 1em;
+		}
+
+		.cs-picture {
+			position: relative;
+			width: 100%;
+			height: auto;
+
+			img {
+				position: relative;
+				height: auto;
+			}
+		}
+
+		.cs-picture1,
+		.cs-picture2 {
+			position: relative;
+			top: auto;
+			right: auto;
+			bottom: auto;
+			left: auto;
+			width: 100%;
+			max-width: none;
+			border: none;
+			box-shadow: none;
+		}
+
+		.cs-right {
+			text-align: center;
+		
+			.cs-topper,
+			.cs-title,
+			.cs-text {
+				text-align: center;
+			}
+		}
+	}
+
+	#faq-1741 {
+		padding: clamp(3rem, 12vw, 4.5rem) 1.5rem;
+
+		.cs-flex-group {
+			grid-template-columns: 1fr;
+		}
+	}
+}
+
 /* Scroll To Top Button */
 #scroll-to-top {
 	position: fixed;
