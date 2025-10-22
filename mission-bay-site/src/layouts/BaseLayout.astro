@@ -6,6 +6,7 @@ import Header from "@components/Header.astro";
 import Footer from "@components/Footer.astro";
 import "@styles/root.less";
 import "@styles/dark.less";
+import "../styles/tailwind.css";
 
 // Define a type for images from the content collection
 type ContentImage = {
@@ -22,16 +23,17 @@ interface Props {
   title: string;
   description: string;
   preloadedImage?: PreloadedImage; // optional - passing a preloadedImage to BaseLayout will 1. preload the image and 2. use the image for og socials tags in the <head>
+  organization?: any; // optional - organization data for dynamic content
 }
 
-const { description, title, preloadedImage } = Astro.props as Props;
+const { description, title, preloadedImage, organization } = Astro.props as Props;
 
 ---
 <!-- A fully fleshed-out <head>, dynamically changing based on client.json and the page front matter -->
 <html lang="en">
         <head>
             <!-- View Transitions support -->
-            <ClientRouter />
+           <!-- <ClientRouter /> -->
 
             <!-- Standard meta tags -->
             <meta charset="UTF-8">
@@ -85,13 +87,16 @@ const { description, title, preloadedImage } = Astro.props as Props;
             }
             </title>
 
+            <!-- Dynamic Organization Branding CSS -->
+            <link rel="stylesheet" href="/api/branding.css?orgId=9" />
+
             <!-- Netlify Identity Widget for CMS Authentication -->
             <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
             <!-- Sitewide Scripts -->
-            <script src="@js/nav.js"></script>
-            <script src="@js/paragon.js"></script>
-            <script src="@js/auth.js"></script>
+            <script src="/src/js/nav.js"></script>
+            <script src="/src/js/paragon.js"></script>
+            <script src="/src/js/auth.js"></script>
         </head>
         <body>
             <!-- Screen reader skip main nav -->

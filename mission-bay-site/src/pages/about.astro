@@ -1,28 +1,72 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
 import CTA from "@components/CTA.astro";
-import Landing from "@components/Landing.astro";
-import FAQ from "@components/FAQ.astro";
+import { fetchAllPageData } from "../utils/content-fetcher.js";
 
 // Optimize our landing image and pass it as props to the BaseLayout (for preloading) and Landing (for rendering)
-import landingImage from "@assets/images/landing.jpg"; // <-- THE PATH TO THE ASSET YOU WANT TO PRELOAD - The asset must live in src
+import landingImage from "@assets/images/about-hero.png"; // <-- THE PATH TO THE ASSET YOU WANT TO PRELOAD - The asset must live in src
 import { getImage } from "astro:assets";
 const optimizedImage = await getImage({src: landingImage, format: 'avif'});
+
+// Fetch dynamic content for about page
+const { content, organization } = await fetchAllPageData('about', '9', Astro.url.origin);
+
+// Use dynamic content with fallbacks
+const heroContent = content.hero || {};
+const missionContent = content.our_story || content.mission || {};
+const whatWeDoContent = content.what_we_do_expanded || content.what_we_do || {};
+const defaultFaqSection = {
+  headline: "Frequently Asked Questions",
+  subheadline: "Common Questions",
+  body_text: "Find answers to the most common questions about our adoption process.",
+  faq_question_1: "How long does the adoption process take?",
+  faq_answer_1: "Our adoption process typically takes 3-7 days from application to bringing your new companion home.",
+  faq_question_2: "What is included in the adoption fee?",
+  faq_answer_2: "All dogs come spayed/neutered, vaccinated, microchipped, and with a health certificate.",
+  faq_question_3: "Can I meet the dog before adopting?",
+  faq_answer_3: "Absolutely! We encourage meet-and-greets to ensure a perfect match for both you and the dog.",
+  faq_question_4: "Do you have a return policy?",
+  faq_answer_4: "Yes, if for any reason the adoption doesn't work out, we welcome the dog back with open arms.",
+  faq_question_5: "What if I have other pets?",
+  faq_answer_5: "We can arrange supervised introductions to ensure all pets get along before finalizing the adoption."
+};
+
+const teamContent = content.team || {};
+const faqSection = { ...defaultFaqSection, ...(content.faq_section || {}) };
+const ctaContent = content.cta || {};
+const footerContent = content.footer || {};
 ---
 
+
+
 <BaseLayout
-  title="About Mission Bay Puppy Rescue"
-  description="Learn about our mission to rescue and rehome puppies in the San Diego area."
+  title={organization?.org ? `About ${organization.org}` : "About Mission Bay Puppy Rescue"}
+  description={heroContent.body_text || "Learn about our mission to rescue and rehome puppies in the San Diego area."}
   preloadedImage = {optimizedImage}
+  organization = {organization}
 >
   <!-- ============================================ -->
   <!--                    LANDING                   -->
   <!-- ============================================ -->
+  <!--                 HERO                         -->
+  <!-- ============================================ -->
 
-  <Landing
-    title="About Mission Bay Puppy Rescue"
-    image={optimizedImage}
-  />
+  <section id="hero-1060">
+    <div class="cs-container">
+      <div class="cs-content">
+        <h1 class="cs-title">{heroContent.headline || "About Mission Bay Puppy Rescue"}</h1>
+        <p class="cs-text">
+          {heroContent.body_text || "Learn about our mission to rescue and rehome puppies in the San Diego area."}
+        </p>
+      </div>
+    </div>
+    <!--Background Image-->
+    <picture class="cs-background">
+      <source media="(max-width: 600px)" srcset={heroContent.background_image_url || "/assets/images/about-hero-m.jpg"}>
+      <source media="(min-width: 601px)" srcset={heroContent.background_image_url || "/assets/images/about-hero.jpg"}>
+      <img loading="lazy" decoding="async" src={heroContent.background_image_url || "/assets/images/about-hero.jpg"} alt="about hero" width="2250" height="1500" aria-hidden="true">
+    </picture>
+  </section>
 
   <!-- ============================================ -->
   <!--                 Side By Side                 -->
@@ -33,18 +77,12 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'});
       <!-- Left Image Section -->
       <div class="cs-left">
         <picture class="cs-picture cs-picture1">
-          <source
-            media="(max-width: 600px)"
-            srcset="/assets/images/MBPR-White.png"
-          />
-          <source
-            media="(min-width: 601px)"
-            srcset="/assets/images/cabinets2.jpg"
-          />
+          <source media="(max-width: 600px)" srcset="/assets/images/about1.jpg" />
+          <source media="(min-width: 601px)" srcset="/assets/images/about1.jpg" />
           <img
             aria-hidden="true"
             decoding="async"
-            src="/assets/images/cabinets2.jpg"
+            src="/assets/images/about1.jpg"
             alt="cabinets"
             loading="lazy"
             width="400"
@@ -52,18 +90,12 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'});
           />
         </picture>
         <picture class="cs-picture cs-picture2">
-          <source
-            media="(max-width: 600px)"
-            srcset="/assets/images/construction-m.jpg"
-          />
-          <source
-            media="(min-width: 601px)"
-            srcset="/assets/images/construction.jpg"
-          />
+          <source media="(max-width: 600px)" srcset="/assets/images/about2.jpg" />
+          <source media="(min-width: 601px)" srcset="/assets/images/about2.jpg" />
           <img
             aria-hidden="true"
             decoding="async"
-            src="/assets/images/construction.jpg"
+            src="/assets/images/about2.jpg"
             alt="house"
             loading="lazy"
             width="400"
@@ -73,16 +105,16 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'});
       </div>
       <!-- Right Content Section-->
       <div class="cs-right">
-        <span class="cs-topper">Our Story</span>
-        <h2 class="cs-title">Our Story of Saving Lives</h2>
-        <p class="cs-text">
-          Mission Bay Puppy Rescue was founded in 2018 by a group of passionate dog lovers who saw the overwhelming need for dog rescue in our community. What started as a small group of volunteers has grown into a comprehensive rescue organization that has saved over 800 puppies. We work with local shelters, take in owner surrenders, and rescue puppies from difficult situations, providing them with medical care, training, and love until they find their perfect forever homes.
-        </p>
-        <p class="cs-text">
-          To rescue, rehabilitate, and rehome puppies in need while educating our community about responsible pet ownership, the importance of spay/neuter programs, and the incredible bond between humans and dogs. We believe every puppy deserves a second chance and a loving home.
-        </p>
+        <span class="cs-topper">{missionContent.subheadline || "Our Story"}</span>
+        <h2 class="cs-title">{missionContent.headline || "Our Story of Saving Lives"}</h2>
+        <div class="cs-text" set:html={missionContent.body_text?.replace(/\n/g, '<br>') || "Mission Bay Puppy Rescue was founded in 2018 by a group of passionate dog lovers who saw the overwhelming need for dog rescue in our community. What started as a small group of volunteers has grown into a comprehensive rescue organization that has saved over 800 puppies. We work with local shelters, take in owner surrenders, and rescue puppies from difficult situations, providing them with medical care, training, and love until they find their perfect forever homes."}>
+        </div>
+        {missionContent.secondary_text && (
+          <div class="cs-text" set:html={missionContent.secondary_text.replace(/\n/g, '<br>')}>
+          </div>
+        )}
         <div class="cs-flex-group">
-          <p class="cs-flex-p">
+         <!--   <p class="cs-flex-p">
             In consequat tincidunt turpis sit amet imperdiet. Praesent Classei
             consequat tincidunt turpis sit amet imperdiet for mind.
           </p>
@@ -96,18 +128,221 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'});
             alt="gavel"
             width="136"
             height="77"
-          />
+          /> -->
         </div>
         <a href="/projects" class="cs-button-solid">Our Projects</a>
       </div>
     </div>
   </section>
-  <FAQ />
-  <CTA />
+
+  <!-- What We Do Section -->
+  {whatWeDoContent.headline && (
+    <section id="what-we-do" class="cs-section">
+      <div class="cs-container">
+        <div class="cs-content">
+          <span class="cs-topper">{whatWeDoContent.subheadline || "What We Do"}</span>
+          <h2 class="cs-title">{whatWeDoContent.headline}</h2>
+          <div class="cs-text" set:html={whatWeDoContent.body_text?.replace(/\n/g, '<br>')}>
+          </div>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section id="faq-1741">
+    <div class="cs-container">
+      <div class="cs-content">
+        <span class="cs-topper">{faqSection.subheadline}</span>
+        <h2 class="cs-title">{faqSection.headline}</h2>
+        <p class="cs-text">{faqSection.body_text}</p>
+      </div>
+      <div class="cs-flex-group">
+        <ul class="cs-faq-group">
+          {faqSection.faq_question_1 && (
+            <li class="cs-faq-item active">
+              <button class="cs-button">
+                <span class="cs-button-text">{faqSection.faq_question_1}</span>
+              </button>
+              <p class="cs-item-text">{faqSection.faq_answer_1}</p>
+            </li>
+          )}
+          {faqSection.faq_question_2 && (
+            <li class="cs-faq-item">
+              <button class="cs-button">
+                <span class="cs-button-text">{faqSection.faq_question_2}</span>
+              </button>
+              <p class="cs-item-text">{faqSection.faq_answer_2}</p>
+            </li>
+          )}
+          {faqSection.faq_question_3 && (
+            <li class="cs-faq-item">
+              <button class="cs-button">
+                <span class="cs-button-text">{faqSection.faq_question_3}</span>
+              </button>
+              <p class="cs-item-text">{faqSection.faq_answer_3}</p>
+            </li>
+          )}
+          {faqSection.faq_question_4 && (
+            <li class="cs-faq-item">
+              <button class="cs-button">
+                <span class="cs-button-text">{faqSection.faq_question_4}</span>
+              </button>
+              <p class="cs-item-text">{faqSection.faq_answer_4}</p>
+            </li>
+          )}
+          {faqSection.faq_question_5 && (
+            <li class="cs-faq-item">
+              <button class="cs-button">
+                <span class="cs-button-text">{faqSection.faq_question_5}</span>
+              </button>
+              <p class="cs-item-text">{faqSection.faq_answer_5}</p>
+            </li>
+          )}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Dynamic CTA Section -->
+  {ctaContent.headline ? (
+    <section id="cta" class="cs-cta">
+      <div class="container">
+        <h2 class="title">{ctaContent.headline}</h2>
+        <div class="cs-text" set:html={ctaContent.body_text?.replace(/\n/g, '<br>')}>
+        </div>
+        {ctaContent.button_text && ctaContent.button_link && (
+          <a href={ctaContent.button_link} class="cs-button-solid">{ctaContent.button_text}</a>
+        )}
+      </div>
+    </section>
+  ) : (
+    <CTA />
+  )}
 </BaseLayout>
 
 <style lang="less">
   /* PAGE-SPECIFIC STYLES FOR THE ABOUT PAGE */
+
+  /*-- --------------------------
+    Hero Section
+  -------------------------- --*/
+
+  /* Mobile - 360px */
+  @media only screen and (min-width: 0em) {
+    #hero-1060 {
+      /* 200px - 300px - leaving extra space for the navigation */
+      padding: clamp(12.5rem, 25.95vw, 18.75em) (16/16rem);
+      /* prevents the topper line from causing an overflow */
+      overflow: hidden;
+      position: relative;
+      z-index: 1;
+
+      .cs-container {
+        width: 100%;
+        max-width: (1280/16rem);
+        margin: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        /* 48px - 64px */
+        gap: clamp(3rem, 6vw, 4rem);
+      }
+
+      .cs-content {
+        /* set text align to left if content needs to be left aligned */
+        text-align: center;
+        width: 100%;
+        max-width: (630/16rem);
+        display: flex;
+        flex-direction: column;
+        /* centers content horizontally, set to flex-start to left align */
+        align-items: center;
+      }
+
+      .cs-title {
+        /* 39px - 61px */
+        font-size: clamp(2.4375rem, 6.4vw, 3.8125rem);
+        font-weight: 900;
+        line-height: 1.2em;
+        text-align: inherit;
+        max-width: (700/16rem);
+        color: var(--bodyTextColorWhite);
+        margin: 0 0 (16/16rem) 0;
+      }
+
+      .cs-text {
+        /* 16px - 20px */
+        font-size: clamp(1rem, 1.95vw, 1.25rem);
+        line-height: 1.5em;
+        text-align: inherit;
+        width: 100%;
+        max-width: (630/16rem);
+        color: var(--bodyTextColorWhite);
+        margin: 0;
+      }
+
+      .cs-background {
+        width: 100%;
+        height: 100%;
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -2;
+
+        &:before {
+          /* Overlay */
+          content: '';
+          width: 100%;
+          height: 100%;
+          background: #000;
+          opacity: .48;
+          position: absolute;
+          display: block;
+          top: 0;
+          left: 0;
+          z-index: 1;
+          /* prevents the cursor from interacting with it */
+          pointer-events: none;
+        }
+
+        img {
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          width: 100%;
+          /* Makes img tag act as a background image */
+          object-fit: cover;
+        }
+      }
+    }
+  }
+
+  /*-- --------------------------
+    What We Do Section
+  -------------------------- --*/
+
+  #what-we-do {
+    padding: var(--sectionPadding);
+    background-color: #f7f7f7;
+
+    .cs-container {
+      width: 100%;
+      max-width: (1280/16rem);
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cs-content {
+      text-align: center;
+      width: 100%;
+      max-width: (630/16rem);
+    }
+  }
 
   /*-- --------------------------
     Side By Side
@@ -268,6 +503,106 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'});
     }
   }
 
+  /* FAQ Section */
+  @media only screen and (min-width: 0em) {
+    #faq-1741 {
+      padding: var(--sectionPadding);
+
+      .cs-container {
+        width: 100%;
+        max-width: (1280/16rem);
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        gap: clamp(2rem, 6vw, 3rem);
+      }
+
+      .cs-content {
+        text-align: center;
+        max-width: (674/16rem);
+        margin: 0 auto;
+
+        .cs-text {
+          margin-bottom: 0;
+        }
+      }
+
+      .cs-flex-group {
+        display: flex;
+        flex-direction: column;
+        gap: clamp(1.5rem, 4vw, 2rem);
+      }
+
+      .cs-faq-group {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 1rem;
+      }
+
+      .cs-faq-item {
+        border-radius: (16/16rem);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        background: #fff;
+        transition: border 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        cursor: pointer;
+
+        &.active {
+          border-color: var(--primary);
+          box-shadow: 0 20px 45px rgba(16, 24, 40, 0.12);
+
+          .cs-item-text {
+            max-height: 500px;
+            padding-bottom: 1rem;
+            opacity: 1;
+          }
+        }
+
+        .cs-button {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+          padding: clamp(1rem, 3vw, 1.25rem);
+          font-size: clamp(1rem, 2.5vw, 1.1rem);
+          font-weight: 600;
+          background: transparent;
+          border: none;
+          text-align: left;
+          color: var(--headerColor);
+          cursor: pointer;
+        }
+
+        .cs-item-text {
+          max-height: 0;
+          overflow: hidden;
+          padding: 0 clamp(1rem, 3vw, 1.25rem);
+          font-size: 0.95rem;
+          color: var(--bodyTextColor);
+          line-height: 1.6;
+          transition: max-height 0.3s ease, opacity 0.3s ease, padding-bottom 0.3s ease;
+          opacity: 0;
+        }
+      }
+    }
+  }
+
+  @media only screen and (min-width: 48em) {
+    #faq-1741 {
+      .cs-flex-group {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+
+      .cs-faq-group {
+        width: 100%;
+      }
+    }
+  }
+
   /* Dark Mode */
   @media only screen and (min-width: 0em) {
     body.dark-mode {
@@ -310,6 +645,41 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'});
           opacity: 0.2;
         }
       }
+
+      #faq-1741 {
+        .cs-faq-item {
+          border-color: rgba(255, 255, 255, 0.24);
+          background: rgba(255, 255, 255, 0.05);
+
+          &.active {
+            border-color: var(--primary);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+          }
+
+          .cs-button,
+          .cs-item-text {
+            color: var(--bodyTextColorWhite);
+          }
+        }
+      }
     }
   }
 </style>
+
+<script>
+const initFaq = () => {
+  const faqItems = Array.from(document.querySelectorAll('#faq-1741 .cs-faq-item'));
+  if (!faqItems.length) return;
+
+  for (const item of faqItems) {
+    if (item.dataset.bound === 'true') continue;
+    item.dataset.bound = 'true';
+    item.addEventListener('click', () => {
+      item.classList.toggle('active');
+    });
+  }
+};
+
+document.addEventListener('DOMContentLoaded', initFaq);
+document.addEventListener('astro:page-load', initFaq);
+</script>

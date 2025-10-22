@@ -1,11 +1,20 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
 import CTA from "@components/CTA.astro";
+import { fetchAllPageData } from "../utils/content-fetcher.js";
+
+// Fetch dynamic content for donate page
+const { content, organization } = await fetchAllPageData('donate', '9', Astro.url.origin);
+
+// Use dynamic content with fallbacks
+const heroContent = content.hero || {};
+const impactContent = content.impact || {};
 ---
 
 <BaseLayout
-  title="Mission Bay Puppy Rescue - Donate"
-  description="Support Mission Bay Puppy Rescue with a donation. Your contribution directly helps animals in need get medical care, food, shelter, and love."
+  title={heroContent.headline ? `${heroContent.headline} - ${organization?.org || 'Mission Bay Puppy Rescue'}` : "Mission Bay Puppy Rescue - Donate"}
+  description={heroContent.body_text || "Support Mission Bay Puppy Rescue with a donation. Your contribution directly helps animals in need get medical care, food, shelter, and love."}
+  organization = {organization}
 >
   <!-- ============================================ -->
   <!--                 Page Header                  -->
@@ -13,10 +22,9 @@ import CTA from "@components/CTA.astro";
   
   <section id="page-header">
     <div class="cs-container">
-      <h1 class="cs-title">Support Our Mission</h1>
+      <h1 class="cs-title">{heroContent.headline || "Support Our Mission"}</h1>
       <p class="cs-text">
-        Your donation directly impacts the lives of animals in need. Every dollar helps us provide 
-        medical care, food, shelter, and love to animals waiting for their forever homes.
+        {heroContent.body_text || "Your donation directly impacts the lives of animals in need. Every dollar helps us provide medical care, food, shelter, and love to animals waiting for their forever homes."}
       </p>
     </div>
   </section>
@@ -29,10 +37,9 @@ import CTA from "@components/CTA.astro";
     <div class="cs-container">
       <div class="cs-content">
         <div class="cs-text-content">
-          <h2>Your Impact</h2>
+          <h2>{impactContent.headline || "Your Impact"}</h2>
           <p>
-            Every donation, no matter the size, makes a real difference in the lives of animals. 
-            Here's how your generosity helps us continue our life-saving work:
+            {impactContent.body_text || "Every donation, no matter the size, makes a real difference in the lives of animals. Here's how your generosity helps us continue our life-saving work:"}
           </p>
           
           <div class="cs-impact-stats">

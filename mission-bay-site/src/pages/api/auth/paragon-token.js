@@ -2,44 +2,29 @@ import jwt from "jsonwebtoken";
 import fs from "fs";
 import path from "path";
 
+
+dotenv.config();
+
 const PARAGON_PROJECT_ID =
   process.env.PARAGON_PROJECT_ID || "4c35906a-b8f0-4fbf-9b85-733a876cd9a5";
 
 function resolveSigningKey() {
+  // 1️⃣ Prefer explicit file path
+if (process.env.PARAGON_SIGNING_KEY_PATH) {
+  const pemPath = path.resolve(process.env.PARAGON_SIGNING_KEY_PATH);
+  console.log("🔑 Loading Paragon key from file:", pemPath);
+  return fs.readFileSync(pemPath, "utf8");
+}
+
+  // 2️⃣ Inline key in .env
   if (process.env.PARAGON_SIGNING_KEY) {
     let key = process.env.PARAGON_SIGNING_KEY;
     key = key.replace(/\\n/g, "\n");
-    if (!key.includes("BEGIN")) {
-      key = `-----BEGIN PRIVATE KEY-----\n${key}\n-----END PRIVATE KEY-----\n`;
-    }
-    if (!key.endsWith("\n")) {
-      key += "\n";
-    }
+    console.log("✅ Inline key preview (first 80 chars):", key.slice(0, 80), "...");
     return key;
   }
 
-  const candidates = [
-    path.join(process.cwd(), "mission-bay-site", "paragon-signing-key.pem"),
-    path.join(process.cwd(), "paragon-signing-key.pem"),
-  ];
-
-  for (const candidate of candidates) {
-    try {
-      if (fs.existsSync(candidate)) {
-        let pem = fs.readFileSync(candidate, "utf8");
-        if (!pem.endsWith("\n")) {
-          pem += "\n";
-        }
-        return pem;
-      }
-    } catch (error) {
-      console.error(`Unable to read signing key at ${candidate}:`, error);
-    }
-  }
-
-  throw new Error(
-    "Paragon signing key not configured. Set PARAGON_SIGNING_KEY or include paragon-signing-key.pem."
-  );
+  throw new Error("❌ No signing key configured.");
 }
 
 export async function GET() {
@@ -56,13 +41,16 @@ export async function GET() {
       exp: now + 3600,
     };
 
+    // 🔍 Log for debugging
+    console.log("🧩 privateKey starts with:", privateKey.split("\n")[0]);
+    console.log("🧩 privateKey ends with:", privateKey.split("\n").slice(-2).join("\n"));
+    console.log("🧩 privateKey preview:", privateKey.substring(0, 100));
+console.log("🧩 begins with:", privateKey.startsWith("-----BEGIN RSA PRIVATE KEY-----"));
+console.log("🧩 ends with:", privateKey.trim().endsWith("-----END RSA PRIVATE KEY-----"));
+
     const token = jwt.sign(payload, privateKey, {
       algorithm: "RS256",
       audience: `useparagon.com/${PARAGON_PROJECT_ID}`,
-      header: {
-        typ: "JWT",
-        alg: "RS256",
-      },
     });
 
     return new Response(JSON.stringify({ token, projectId: PARAGON_PROJECT_ID }), {

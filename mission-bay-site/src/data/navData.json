@@ -6,22 +6,27 @@
   },
   {
     "key": "About",
-    "url": "/about/",
+    "url": "/about",
     "children": []
   },
   {
     "key": "Our Puppies",
-    "url": "/our-animals/",
+    "url": "/our-animals",
     "children": []
   },
   {
     "key": "Applications",
-    "url": "/applications/",
+    "url": "/applications",
+    "children": []
+  },
+  {
+    "key": "Events",
+    "url": "/events",
     "children": []
   },
   {
     "key": "Donate",
-    "url": "/donate/",
+    "url": "/donate",
     "children": []
   }
 ]

@@ -6,6 +6,8 @@
 import clientData from '@data/client.json';
 
 // Xano Configuration
+const CACHE_CONTROL_HEADER = 'public, s-maxage=300, stale-while-revalidate=600';
+
 const XANO_CONFIG = {
     organizationsUrl: import.meta.env.VITE_XANO_ORGANIZATIONS_URL || 'https://xz6u-fpaz-praf.n7e.xano.io/api:siXQEdjz',
     token: import.meta.env.VITE_XANO_ORGANIZATIONS_TOKEN || '165XkoniNXylFdNKgO_aCvmAIcQ'
@@ -89,7 +91,8 @@ export async function GET({ request }) {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'GET, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type'
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Cache-Control': CACHE_CONTROL_HEADER
             }
         });
     } catch (error) {
@@ -108,7 +111,10 @@ export async function GET({ request }) {
         
         return new Response(JSON.stringify(fallbackData), {
             status: 200,
-            headers: { 'Content-Type': 'application/json' }
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': CACHE_CONTROL_HEADER
+            }
         });
     }
 }

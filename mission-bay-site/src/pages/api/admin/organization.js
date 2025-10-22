@@ -4,6 +4,8 @@
  */
 
 // Xano Configuration
+const CACHE_CONTROL_HEADER = 'public, s-maxage=300, stale-while-revalidate=600';
+
 const XANO_CONFIG = {
     organizationsUrl: import.meta.env.VITE_XANO_ORGANIZATIONS_URL || 'https://xz6u-fpaz-praf.n7e.xano.io/api:siXQEdjz',
     token: import.meta.env.VITE_XANO_ORGANIZATIONS_TOKEN || '165XkoniNXylFdNKgO_aCvmAIcQ'
@@ -43,8 +45,26 @@ export async function GET({ request }) {
         
         let organization;
         try {
-            organization = await makeXanoRequest(`/organizations/${orgId}`);
-            console.log('✅ Organization fetched from Xano:', organization);
+            const xanoOrg = await makeXanoRequest(`/organizations/${orgId}`);
+            console.log('✅ Organization fetched from Xano:', xanoOrg);
+
+            // Transform Xano data to match form expectations
+            organization = {
+                id: xanoOrg.id,
+                name: xanoOrg.org,
+                email: xanoOrg.email,
+                phone: xanoOrg.phone,
+                address: xanoOrg.address,
+                city: xanoOrg.city || '',
+                state: xanoOrg.state || '',
+                zip: xanoOrg.zip_code || '',
+                ein: xanoOrg.ein,
+                tax_id: xanoOrg.ein,
+                website: xanoOrg.website,
+                facebook: xanoOrg.facebook_url,
+                instagram: xanoOrg.instagram_url,
+                contact_email: xanoOrg.contact_email
+            };
         } catch (xanoError) {
             console.warn('⚠️ Xano fetch failed, using shared storage:', xanoError.message);
             organization = sharedStorage.organizations.get(orgId) || {
@@ -63,7 +83,8 @@ export async function GET({ request }) {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                'Cache-Control': CACHE_CONTROL_HEADER
             }
         });
     } catch (error) {
@@ -83,7 +104,10 @@ export async function GET({ request }) {
         
         return new Response(JSON.stringify(fallbackOrg), {
             status: 200,
-            headers: { 'Content-Type': 'application/json' }
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': CACHE_CONTROL_HEADER
+            }
         });
     }
 }
@@ -93,16 +117,34 @@ export async function PUT({ request }) {
     try {
         const body = await request.json();
         console.log('📝 Organization update request body:', body);
-        
+
         // Extract orgId from body or URL params
         const url = new URL(request.url);
         const orgId = body.orgId || url.searchParams.get('orgId') || '9';
-        
+
+        // Transform form data to match Xano schema
+        const xanoData = {
+            org: body.name || body.org,
+            email: body.email,
+            phone: body.phone,
+            address: body.address,
+            city: body.city,
+            state: body.state,
+            zip_code: body.zip,
+            ein: body.ein || body.tax_id,
+            website: body.website,
+            facebook_url: body.facebook,
+            instagram_url: body.instagram,
+            contact_email: body.contact_email || body.email
+        };
+
+        console.log('📝 Transformed data for Xano:', xanoData);
+
         let updatedOrganization;
         try {
             updatedOrganization = await makeXanoRequest(`/organizations/${orgId}`, {
                 method: 'PUT',
-                body: JSON.stringify(body)
+                body: JSON.stringify(xanoData)
             });
             console.log('✅ Organization updated in Xano:', updatedOrganization);
         } catch (xanoError) {

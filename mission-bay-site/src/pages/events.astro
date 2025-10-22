@@ -1,6 +1,14 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
 import CTA from "@components/CTA.astro";
+import { fetchAllPageData } from "../utils/content-fetcher.js";
+
+// Fetch dynamic content for events page
+const { content, organization } = await fetchAllPageData('events', '9', Astro.url.origin);
+
+// Use dynamic content with fallbacks
+const heroContent = content.hero || {};
+const upcomingContent = content.upcoming || {};
 
 // Sample events data - in a real implementation, this would come from a CMS or database
 const upcomingEvents = [
@@ -75,8 +83,9 @@ const pastEvents = [
 ---
 
 <BaseLayout
-  title="Mission Bay Puppy Rescue - Events"
-  description="Join Mission Bay Puppy Rescue for upcoming adoption events, fundraisers, and volunteer opportunities. Help us save more animal lives."
+  title={heroContent.headline ? `${heroContent.headline} - ${organization?.org || 'Mission Bay Puppy Rescue'}` : "Mission Bay Puppy Rescue - Events"}
+  description={heroContent.body_text || "Join Mission Bay Puppy Rescue for upcoming adoption events, fundraisers, and volunteer opportunities. Help us save more animal lives."}
+  organization = {organization}
 >
   <!-- ============================================ -->
   <!--                 Page Header                  -->
@@ -84,10 +93,9 @@ const pastEvents = [
   
   <section id="page-header">
     <div class="cs-container">
-      <h1 class="cs-title">Upcoming Events</h1>
+      <h1 class="cs-title">{heroContent.headline || "Upcoming Events"}</h1>
       <p class="cs-text">
-        Join us for adoption events, fundraisers, and volunteer opportunities. 
-        Every event helps us save more animal lives and build our community of animal lovers.
+        {heroContent.body_text || "Join us for adoption events, fundraisers, and volunteer opportunities. Every event helps us save more animal lives and build our community of animal lovers."}
       </p>
     </div>
   </section>

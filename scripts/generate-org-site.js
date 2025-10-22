@@ -117,7 +117,7 @@ PUBLIC_XANO_BASE_URL=https://your-workspace-id.us-east-1.xano.io/api:version
 PUBLIC_ORG_ID=${orgId}
 
 # Optional: API Key if your endpoints require authentication
-# XANO_API_KEY=your-api-key-if-needed
+# XANO_API_KEY=eyJhbGciOiJBMjU2S1ciLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwiemlwIjoiREVGIn0.fe0dF32JhQP3JtvhR9-0bEKK1qTVPxQXfcbvrDUKLq68CrVwrSfaILXl151Mi2vO7Ys2X5h8-EQDXE0MioBuYi5kBWxa0xSf.369K2Frf1xgKnm1aVQH5mg.1g6hAlBjN5DSabtzYFBB-H5yo4mdnImvm3LOVIRJeutLapHtUcRQHwXGXnKNMSFyVxxowRk7g-8n7yrA78lxKvBtciUwpxkiOH6wI7a4EkepbGRaBPWFU2oyhIVqYQ0lgwlTLU1gTOwaoOHHUZsOj7ff2pvHBrbZRo-j3mAaVZU.VmkH_L1dY6B5UqcMQLLHjjK7A4l6ozLwq82PAFL7OWg
 
 # Environment
 NODE_ENV=development

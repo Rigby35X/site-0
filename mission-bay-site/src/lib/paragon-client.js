@@ -1,15 +1,18 @@
 // Paragon SDK Client for Barkhaus Multi-Tenant Setup
 import Paragon from "@useparagon/connect";
+paragon.configureGlobal({
+  host: "useparagon.com",
+});
 
 // Paragon configuration
 const PARAGON_CONFIG = {
-  apiKey: import.meta.env.PUBLIC_PARAGON_API_KEY || import.meta.env.VITE_PARAGON_API_KEY,
+  apiKey: import.meta.env.PUBLIC_PARAGON_API_KEY || import.meta.env.PARAGON_API_KEY,
   environment: import.meta.env.PUBLIC_PARAGON_ENVIRONMENT || "production", // or "sandbox"
 };
 
 // Create Paragon client instance with user token (Auth0 or admin session)
 export function createParagonClient(userToken) {
-  const apiKey = import.meta.env.PUBLIC_PARAGON_API_KEY || import.meta.env.VITE_PARAGON_API_KEY;
+  const apiKey = import.meta.env.PUBLIC_PARAGON_API_KEY || import.meta.env.PARAGON_API_KEY;
 
   if (!apiKey) {
     throw new Error('Paragon API key not configured');

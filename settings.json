@@ -1,0 +1,10 @@
+"files.watcherExclude": {
+  "**/node_modules/**": true,
+  "**/.git/**": true,
+  "**/dist/**": true,
+  "**/.next/**": true
+},
+"files.exclude": {
+  "**/.DS_Store": true,
+  "**/Thumbs.db": true
+}

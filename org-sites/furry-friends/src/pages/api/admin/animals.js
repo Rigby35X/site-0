@@ -4,6 +4,8 @@
  */
 
 // Xano Configuration
+const CACHE_CONTROL_HEADER = 'public, s-maxage=300, stale-while-revalidate=600';
+
 const XANO_CONFIG = {
     animalsUrl: import.meta.env.VITE_XANO_ANIMALS_URL || 'https://xz6u-fpaz-praf.n7e.xano.io/api:Od874PbA',
     token: import.meta.env.VITE_XANO_ANIMALS_TOKEN || '165XkoniNXylFdNKgO_aCvmAIcQ'
@@ -44,7 +46,8 @@ export async function GET({ request }) {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-                'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                'Cache-Control': CACHE_CONTROL_HEADER
             }
         });
     } catch (error) {

@@ -7,6 +7,8 @@
 export const prerender = false;
 
 // Xano Configuration
+const CACHE_CONTROL_HEADER = 'public, s-maxage=300, stale-while-revalidate=600';
+
 const XANO_CONFIG = {
     contentUrl: import.meta.env.VITE_XANO_CONTENT_URL || 'https://xz6u-fpaz-praf.n7e.xano.io/api:MU8UozDK',
     token: import.meta.env.VITE_XANO_CONTENT_TOKEN || '165XkoniNXylFdNKgO_aCvmAIcQ'
@@ -31,6 +33,269 @@ async function makeXanoRequest(endpoint, options = {}) {
     }
 
     return await response.json();
+}
+
+// Helper function to safely parse JSON content from Xano
+function parseSectionContent(rawContent) {
+    if (!rawContent) return {};
+
+    if (typeof rawContent === 'object') {
+        return rawContent;
+    }
+
+    if (typeof rawContent === 'string') {
+        try {
+            return JSON.parse(rawContent);
+        } catch (error) {
+            console.warn('⚠️ Failed to parse section content JSON:', error.message);
+            return {};
+        }
+    }
+
+    return {};
+}
+
+// Helper function to get fallback content for different pages
+function getFallbackContentForPage(pageSlug) {
+    const commonFooter = {
+        content: {
+            footer_organization_name: "Mission Bay Puppy Rescue",
+            footer_address_line_one: "123 Main Street",
+            footer_address_line_two: "Suite 200",
+            footer_address_city: "San Diego",
+            footer_address_state: "CA",
+            footer_address_zip: "92109",
+            footer_phone: "555-555-5555",
+            footer_email: "info@mbpr.org",
+            footer_ein: "87-2984609",
+            footer_copyright: `© ${new Date().getFullYear()} Mission Bay Puppy Rescue. All rights reserved.`
+        }
+    };
+
+    const fallbackByPage = {
+        homepage: {
+            hero: {
+                headline: "Every Dog Deserves a Loving Home",
+                subheadline: "Rescue • Love • Adopt",
+                body_text: "At Mission Bay Puppy Rescue, we're dedicated to finding loving homes for dogs in need.",
+                button_text: "Meet Our Dogs",
+                button_link: "/our-animals/",
+                background_image_url: "/assets/images/hero.jpg"
+            },
+            services_header: {
+                headline: "Our Services",
+                subheadline: "What We Do",
+                body_text: "We provide comprehensive rescue services for dogs in need."
+            },
+            about_us: {
+                headline: "About Mission Bay Puppy Rescue",
+                subheadline: "About Us",
+                body_text: "Founded in 2020, Mission Bay Puppy Rescue has been dedicated to saving and rehoming dogs throughout San Diego.",
+                button_text: "More About Us",
+                button_link: "/about"
+            },
+            what_we_do: {
+                headline: "What We Do",
+                subheadline: "Our Mission",
+                body_text: "We rescue, rehabilitate, and rehome dogs in need throughout the San Diego area."
+            },
+            success_stories: {
+                headline: "Success Stories",
+                subheadline: "Happy Endings",
+                body_text: "See the amazing transformations and happy endings we've helped create."
+            },
+            reviews_header: {
+                headline: "What People Say",
+                subheadline: "Reviews",
+                body_text: "Hear from families who have adopted through our rescue."
+            },
+            cta: {
+                headline: "Ready to Find Your New Best Friend?",
+                body_text: "Browse our available dogs, submit an application, or learn how you can help support our mission.",
+                button_text: "Start Your Adoption Journey",
+                button_link: "/our-animals"
+            },
+            faq_section: {
+                headline: "Frequently Asked Questions",
+                subheadline: "FAQ",
+                body_text: "Get answers to common questions about our adoption process."
+            },
+            footer: commonFooter
+        },
+        about: {
+            hero: {
+                headline: "About Mission Bay Puppy Rescue",
+                subheadline: "Our Story",
+                body_text: "Learn about our mission, values, and the dedicated team working to save dogs in need.",
+                background_image_url: "/assets/images/about-hero.jpg"
+            },
+            mission: {
+                headline: "Our Mission",
+                subheadline: "Why We Exist",
+                body_text: "Every dog deserves a loving home. We rescue, rehabilitate, and rehome dogs in need throughout the San Diego area."
+            },
+            team: {
+                headline: "Meet Our Team",
+                subheadline: "The People Behind the Mission",
+                body_text: "Our dedicated volunteers and staff work tirelessly to give every dog a second chance."
+            },
+            footer: commonFooter
+        },
+        contact: {
+            hero: {
+                headline: "Get in Touch",
+                subheadline: "Contact Us",
+                body_text: "Have questions about adoption, volunteering, or how you can help? We'd love to hear from you.",
+                background_image_url: "/assets/images/contact-hero.jpg"
+            },
+            contact_info: {
+                headline: "Contact Information",
+                subheadline: "Reach Out",
+                body_text: "Get in touch with us through any of the following methods."
+            },
+            footer: commonFooter
+        },
+        animals: {
+            hero: {
+                headline: "Meet Our Available Dogs",
+                subheadline: "Find Your New Best Friend",
+                body_text: "Browse our current dogs available for adoption and find your perfect match.",
+                background_image_url: "/assets/images/animals-hero.jpg"
+            },
+            adoption_process: {
+                headline: "Adoption Process",
+                subheadline: "How It Works",
+                body_text: "Learn about our simple adoption process and how to welcome a new family member."
+            },
+            footer: commonFooter
+        },
+        donate: {
+            hero: {
+                headline: "Support Our Mission",
+                subheadline: "Make a Difference",
+                body_text: "Your donation helps us rescue, care for, and rehome dogs in need.",
+                background_image_url: "/assets/images/donate-hero.jpg"
+            },
+            impact: {
+                headline: "Your Impact",
+                subheadline: "How Your Donation Helps",
+                body_text: "See how your contribution directly supports our rescue efforts."
+            },
+            footer: commonFooter
+        },
+        events: {
+            hero: {
+                headline: "Upcoming Events",
+                subheadline: "Join Us",
+                body_text: "Attend our adoption events, fundraisers, and community gatherings.",
+                background_image_url: "/assets/images/events-hero.jpg"
+            },
+            upcoming: {
+                headline: "Upcoming Events",
+                subheadline: "Mark Your Calendar",
+                body_text: "Don't miss our upcoming adoption events and fundraisers."
+            },
+            footer: commonFooter
+        },
+        contact: {
+            hero: {
+                headline: "Get in Touch",
+                subheadline: "Contact Us",
+                body_text: "We'd love to hear from you! Whether you have questions about adoption, want to volunteer, or need support, we're here to help."
+            },
+            contact_info: {
+                address: "456 Mission Bay Drive\nSuite 200\nSan Diego, CA 92109",
+                phone: "(619) 555-PUPS",
+                email: "info@missionbaypuppyrescue.org",
+                hours: "Monday - Friday: 9:00 AM - 6:00 PM\nSaturday: 10:00 AM - 4:00 PM\nSunday: 12:00 PM - 4:00 PM\nClosed on major holidays"
+            },
+            emergency_contact: {
+                headline: "Emergency Contact",
+                body_text: "For after-hours emergencies involving animals in our care, please contact our emergency hotline.",
+                emergency_phone: "(619) 555-HELP"
+            },
+            footer: commonFooter
+        },
+        animals: {
+            hero: {
+                headline: "Meet Our Animals",
+                subheadline: "Available for Adoption",
+                body_text: "Browse our wonderful animals looking for their forever homes. Each one has a unique personality and story."
+            },
+            adoption_process: {
+                headline: "Adoption Process",
+                body_text: "Our adoption process is designed to ensure the best match between you and your new companion. Here's how it works:",
+                step_1_title: "Submit Application",
+                step_1_description: "Complete our adoption application with information about your lifestyle and preferences.",
+                step_2_title: "Meet & Greet",
+                step_2_description: "Schedule a meet and greet with your potential new companion.",
+                step_3_title: "Home Visit",
+                step_3_description: "Our team will conduct a brief home visit to ensure a safe environment."
+            },
+            more_info: {
+                headline: "Need More Information?",
+                body_text: "Have questions about our animals or the adoption process? We're here to help! Contact us for more information about any of our available pets.",
+                button_text: "Contact Us",
+                button_link: "/contact"
+            },
+            footer: commonFooter
+        },
+        donate: {
+            hero: {
+                headline: "Support Our Mission",
+                subheadline: "Make a Difference",
+                body_text: "Your donation helps us provide medical care, food, shelter, and love to animals in need. Every contribution makes a difference."
+            },
+            impact: {
+                headline: "Your Impact",
+                body_text: "See how your donations directly impact the lives of animals in our care.",
+                impact_25: "Provides food for one animal for a week",
+                impact_50: "Covers basic medical checkup and vaccinations",
+                impact_100: "Funds emergency medical treatment"
+            },
+            footer: commonFooter
+        },
+        events: {
+            hero: {
+                headline: "Upcoming Events",
+                subheadline: "Join Us",
+                body_text: "Join us for adoption events, fundraisers, and community activities. Meet our animals and learn how you can help."
+            },
+            upcoming: {
+                headline: "What's Coming Up",
+                body_text: "Check out our upcoming adoption events, fundraisers, and volunteer opportunities."
+            },
+            footer: commonFooter
+        },
+        applications: {
+            hero: {
+                headline: "Get Involved",
+                subheadline: "Applications",
+                body_text: "There are many ways to help animals in need. Whether you're ready to adopt, want to foster, or volunteer your time, we have opportunities for everyone."
+            },
+            adoption_application: {
+                headline: "Adoption Application",
+                body_text: "Ready to welcome a new family member? Our adoption process ensures the perfect match between you and your future pet.",
+                requirements: "Requirements:\n• Must be 21 years or older\n• Valid government-issued ID\n• Proof of residence\n• Landlord approval (if renting)\n• Veterinary references (if you've had pets)",
+                button_text: "Start Adoption Application"
+            },
+            foster_application: {
+                headline: "Foster Application",
+                body_text: "Foster families provide temporary homes for animals while they await adoption. It's a rewarding way to help save lives.",
+                requirements: "Requirements:\n• Must be 18 years or older\n• Stable housing situation\n• Time and commitment to care for foster animal\n• Ability to transport to vet appointments\n• Previous pet experience preferred",
+                button_text: "Start Foster Application"
+            },
+            volunteer_application: {
+                headline: "Volunteer Application",
+                body_text: "Volunteers are the heart of our organization. Whether you have an hour a week or several hours a day, there are meaningful ways to contribute.",
+                requirements: "Requirements:\n• Must be 16 years or older (some positions 18+)\n• Reliable and committed\n• Comfortable around animals\n• Able to follow safety protocols\n• Background check required for some positions",
+                button_text: "Start Volunteer Application"
+            },
+            footer: commonFooter
+        }
+    };
+
+    return fallbackByPage[pageSlug] || fallbackByPage.homepage;
 }
 
 // GET - Fetch website content for organization
@@ -70,7 +335,36 @@ export async function GET({ request }) {
                             }
                         };
                     } else {
-                        organizedContent[section.section_key] = section;
+                        const parsedContent = parseSectionContent(section.content);
+
+                        // Merge parsed content back into section data for easier consumption
+                        const combinedSection = {
+                            ...section,
+                            ...parsedContent,
+                            id: section.id,
+                            section_key: section.section_key,
+                            page_slug: section.page_slug,
+                            is_visible: section.is_visible,
+                            headline: section.headline || parsedContent.headline || section.title,
+                            subheadline: section.subheadline || parsedContent.subheadline || section.subtitle,
+                            body_text: section.body_text || parsedContent.body_text || parsedContent.description || section.description,
+                            button_text: section.button_text || parsedContent.button_text || parsedContent.cta_text,
+                            button_link: section.button_link || parsedContent.button_link || parsedContent.cta_link,
+                            background_image_url: section.background_image_url || parsedContent.background_image_url || parsedContent.hero_image_url,
+                            featured_image_url: section.featured_image_url || parsedContent.featured_image_url || parsedContent.image_url,
+                            secondary_image_url: section.secondary_image_url || parsedContent.secondary_image_url || null,
+                            content: parsedContent
+                        };
+
+                        // Ensure FAQ question/answer pairs remain available at the top level
+                        Object.keys(parsedContent)
+                            .filter(key => key.startsWith('faq_question_') || key.startsWith('faq_answer_'))
+                            .forEach(key => {
+                                combinedSection[key] = parsedContent[key];
+                            });
+
+                        // Include all section properties for flexible content structure
+                        organizedContent[section.section_key] = combinedSection;
                     }
                 }
             });
@@ -83,54 +377,23 @@ export async function GET({ request }) {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-                    'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+                    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+                    'Cache-Control': CACHE_CONTROL_HEADER
                 }
             });
             
         } catch (xanoError) {
             console.warn('⚠️ Xano fetch failed:', xanoError.message);
             
-            // Return fallback content
-            const fallbackContent = {
-                hero: {
-                    headline: "Every Dog Deserves a Loving Home",
-                    subheadline: "Rescue • Love • Adopt",
-                    body_text: "At Mission Bay Puppy Rescue, we're dedicated to finding loving homes for dogs in need.",
-                    button_text: "Meet Our Dogs",
-                    button_link: "/our-animals/",
-                    background_image_url: "/assets/images/hero.jpg"
-                },
-                about_us: {
-                    headline: "About Mission Bay Puppy Rescue",
-                    subheadline: "About Us",
-                    body_text: "Founded in 2020, Mission Bay Puppy Rescue has been dedicated to saving and rehoming dogs throughout San Diego.",
-                    button_text: "More About Us",
-                    button_link: "/about"
-                },
-                cta: {
-                    headline: "Ready to Find Your New Best Friend?",
-                    body_text: "Browse our available dogs, submit an application, or learn how you can help support our mission.",
-                    button_text: "Start Your Adoption Journey",
-                    button_link: "/our-animals"
-                },
-                footer: {
-                    organization_name: "Mission Bay Puppy Rescue",
-                    address_line_one: "123 Main Street",
-                    address_line_two: "Suite 200",
-                    address_city: "San Diego",
-                    address_state: "CA",
-                    address_zip: "92109",
-                    phone: "555-555-5555",
-                    email: "info@mbpr.org",
-                    ein: "87-2984609"
-                }
-            };
+            // Return fallback content based on page
+            const fallbackContent = getFallbackContentForPage(pageSlug);
             
             return new Response(JSON.stringify(fallbackContent), {
                 status: 200,
                 headers: {
                     'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*'
+                    'Access-Control-Allow-Origin': '*',
+                    'Cache-Control': CACHE_CONTROL_HEADER
                 }
             });
         }
@@ -155,8 +418,8 @@ export async function PUT({ request }) {
             throw new Error('Request body is empty');
         }
 
-        const { orgId, sectionKey, content } = JSON.parse(requestBody);
-        console.log(`🎨 Updating website content for org ${orgId}, section ${sectionKey}`, content);
+        const { orgId, sectionKey, content, pageSlug } = JSON.parse(requestBody);
+        console.log(`🎨 Updating website content for org ${orgId}, section ${sectionKey}, page ${pageSlug}`, content);
 
         try {
             // First, get all content to find the record ID for this section
@@ -164,10 +427,11 @@ export async function PUT({ request }) {
             const allContent = await makeXanoRequest(`/website_content/${orgId}?id=1`);
 
             // For global content (footer), look for global page_slug; for other sections, look for specific page
+            const targetPageSlug = sectionKey === 'footer' ? 'global' : (pageSlug || 'homepage');
             const recordToUpdate = allContent.find(record =>
                 record.section_key === sectionKey &&
                 record.org_id == orgId &&
-                (record.page_slug === 'global' || record.page_slug === 'homepage')
+                record.page_slug === targetPageSlug
             );
 
             if (!recordToUpdate) {
@@ -177,7 +441,7 @@ export async function PUT({ request }) {
                 const newRecord = {
                     org_id: parseInt(orgId),
                     section_key: sectionKey,
-                    page_slug: sectionKey === 'footer' ? 'global' : 'homepage',
+                    page_slug: sectionKey === 'footer' ? 'global' : (pageSlug || 'homepage'),
                     is_visible: true,
                     content: content
                 };
@@ -205,8 +469,9 @@ export async function PUT({ request }) {
 
             // Prepare update data with only the fields that were provided
             const updateData = {
+                content,
                 ...content,
-                updated_at: Date.now()
+                updated_at: new Date().toISOString()
             };
 
             console.log('🚀 Updating record with data:', updateData);
@@ -221,6 +486,7 @@ export async function PUT({ request }) {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${XANO_CONFIG.token}`
                 },
                 body: JSON.stringify(updateData)
             });

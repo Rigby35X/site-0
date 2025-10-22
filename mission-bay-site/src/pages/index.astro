@@ -5,22 +5,14 @@ import CTA from "@components/CTA.astro";
 // Optimize our landing image and pass it as props to the BaseLayout (for preloading) and Landing (for rendering)
 import landingImage from "@assets/images/landing.jpg" // <-- THE PATH TO THE ASSET YOU WANT TO PRELOAD - The asset must live in src
 import { getImage } from "astro:assets";
-import type Footer from "@components/Footer.astro";
 const optimizedImage = await getImage({src: landingImage, format: 'avif'})
 
-// Fetch dynamic website content from Xano
-let websiteContent: any = {};
-try {
-  const response = await fetch(`${Astro.url.origin}/api/website-content?orgId=9`);
-  if (response.ok) {
-    websiteContent = await response.json();
-    console.log('✅ Fetched website content for homepage:', Object.keys(websiteContent));
-  } else {
-    console.error('❌ Failed to fetch website content:', response.status);
-  }
-} catch (error) {
-  console.error('❌ Error fetching website content:', error);
-}
+// Fetch dynamic content for homepage
+import { fetchAllPageData } from "../utils/content-fetcher.js";
+
+const origin = Astro.url?.origin ?? import.meta.env.PUBLIC_SITE_URL ?? '';
+const { content: fetchedContent, organization } = await fetchAllPageData('homepage', '9', origin);
+const websiteContent = fetchedContent || {};
 
 // Fallback content if API fails
 const defaultContent = {
@@ -31,6 +23,22 @@ const defaultContent = {
     button_text: "Meet Our Dogs",
     button_link: "/our-animals/"
   }
+};
+
+const defaultFaqSection = {
+  headline: "Frequently Asked Questions",
+  subheadline: "Common Questions",
+  body_text: "Find answers to the most common questions about our adoption process.",
+  faq_question_1: "How long does the adoption process take?",
+  faq_answer_1: "Our adoption process typically takes 3-7 days from application to bringing your new companion home.",
+  faq_question_2: "What is included in the adoption fee?",
+  faq_answer_2: "All dogs come spayed/neutered, vaccinated, microchipped, and with a health certificate.",
+  faq_question_3: "Can I meet the dog before adopting?",
+  faq_answer_3: "Absolutely! We encourage meet-and-greets to ensure a perfect match for both you and the dog.",
+  faq_question_4: "Do you have a return policy?",
+  faq_answer_4: "Yes, if for any reason the adoption doesn't work out, we welcome the dog back with open arms.",
+  faq_question_5: "What if I have other pets?",
+  faq_answer_5: "We can arrange supervised introductions to ensure all pets get along before finalizing the adoption."
 };
 
 // Use dynamic content with fallbacks
@@ -88,20 +96,9 @@ const content = {
     button_text: "View All Success Stories",
     button_link: "/success-stories"
   },
-  faq_section: websiteContent.faq_section || {
-    headline: "Frequently Asked Questions",
-    subheadline: "Common Questions",
-    body_text: "Find answers to the most common questions about our adoption process.",
-    faq_question_1: "How long does the adoption process take?",
-    faq_answer_1: "Our adoption process typically takes 3-7 days from application to bringing your new companion home.",
-    faq_question_2: "What is included in the adoption fee?",
-    faq_answer_2: "All dogs come spayed/neutered, vaccinated, microchipped, and with a health certificate.",
-    faq_question_3: "Can I meet the dog before adopting?",
-    faq_answer_3: "Absolutely! We encourage meet-and-greets to ensure a perfect match for both you and the dog.",
-    faq_question_4: "Do you have a return policy?",
-    faq_answer_4: "Yes, if for any reason the adoption doesn't work out, we welcome the dog back with open arms.",
-    faq_question_5: "What if I have other pets?",
-    faq_answer_5: "We can arrange supervised introductions to ensure all pets get along before finalizing the adoption."
+  faq_section: {
+    ...defaultFaqSection,
+    ...(websiteContent.faq_section || {})
   },
   reviews_header: websiteContent.reviews_header || {
     headline: "Words From Our Customers",
@@ -132,9 +129,10 @@ const showSuccessStories = false;
 ---
 
 <BaseLayout
-  title="Mission Bay Puppy Rescue - Every Dog Deserves a Loving Home"
-  description="Mission Bay Pupp Rescue is dedicated to finding loving homes for dogs in need. Browse our available animals and learn how you can help make a difference."
+  title={organization?.org ? `${organization.org} - Every Dog Deserves a Loving Home` : "Mission Bay Puppy Rescue - Every Dog Deserves a Loving Home"}
+  description="Mission Bay Puppy Rescue is dedicated to finding loving homes for dogs in need. Browse our available animals and learn how you can help make a difference."
   preloadedImage = {optimizedImage}
+  organization = {organization}
 >
   <!-- ============================================ -->
   <!--                    Hero                      -->
@@ -316,15 +314,7 @@ const showSuccessStories = false;
         </p>
         <div class="cs-flex-group">
           
-          <img
-            class="cs-quote-icon"
-            loading="lazy"
-            decoding="async"
-            src="https://csimg.nyc3.digitaloceanspaces.com/SideBySide/quote-white.svg"
-            alt="gavel"
-            width="136"
-            height="77"
-          />
+          
         </div>
         <a href={content.about_us.button_link} class="cs-button-solid">{content.about_us.button_text}</a>
       </div>
@@ -385,7 +375,13 @@ const showSuccessStories = false;
         <p class="cs-text">
           {content.what_we_do.body_text}
         </p>
-      </div>
+         <div class="cs-button-wrapper">
+  <a href="/donate" class="cs-button-solid">How You Can Help</a>
+
+</div>
+        </div>
+       
+
     </div>
   </section>
 
@@ -606,65 +602,41 @@ const showSuccessStories = false;
           {content.faq_section.faq_question_1 && (
             <li class="cs-faq-item active">
               <button class="cs-button">
-                <span class="cs-button-text">
-                  {content.faq_section.faq_question_1}
-                </span>
+                <span class="cs-button-text">{content.faq_section.faq_question_1}</span>
               </button>
-              <p class="cs-item-text">
-                {content.faq_section.faq_answer_1}
-              </p>
+              <p class="cs-item-text">{content.faq_section.faq_answer_1}</p>
             </li>
           )}
-
           {content.faq_section.faq_question_2 && (
             <li class="cs-faq-item">
               <button class="cs-button">
-                <span class="cs-button-text">
-                  {content.faq_section.faq_question_2}
-                </span>
+                <span class="cs-button-text">{content.faq_section.faq_question_2}</span>
               </button>
-              <p class="cs-item-text">
-                {content.faq_section.faq_answer_2}
-              </p>
+              <p class="cs-item-text">{content.faq_section.faq_answer_2}</p>
             </li>
           )}
-
           {content.faq_section.faq_question_3 && (
             <li class="cs-faq-item">
               <button class="cs-button">
-                <span class="cs-button-text">
-                  {content.faq_section.faq_question_3}
-                </span>
+                <span class="cs-button-text">{content.faq_section.faq_question_3}</span>
               </button>
-              <p class="cs-item-text">
-                {content.faq_section.faq_answer_3}
-              </p>
+              <p class="cs-item-text">{content.faq_section.faq_answer_3}</p>
             </li>
           )}
-
           {content.faq_section.faq_question_4 && (
             <li class="cs-faq-item">
               <button class="cs-button">
-                <span class="cs-button-text">
-                  {content.faq_section.faq_question_4}
-                </span>
+                <span class="cs-button-text">{content.faq_section.faq_question_4}</span>
               </button>
-              <p class="cs-item-text">
-                {content.faq_section.faq_answer_4}
-              </p>
+              <p class="cs-item-text">{content.faq_section.faq_answer_4}</p>
             </li>
           )}
-
           {content.faq_section.faq_question_5 && (
             <li class="cs-faq-item">
               <button class="cs-button">
-                <span class="cs-button-text">
-                  {content.faq_section.faq_question_5}
-                </span>
+                <span class="cs-button-text">{content.faq_section.faq_question_5}</span>
               </button>
-              <p class="cs-item-text">
-                {content.faq_section.faq_answer_5}
-              </p>
+              <p class="cs-item-text">{content.faq_section.faq_answer_5}</p>
             </li>
           )}
         </ul>
@@ -1832,208 +1804,120 @@ const showSuccessStories = false;
   <---           FAQ              -->
   <--- -------------------------- -*/
 
-  /* Mobile - 360px */
-  @media only screen and (min-width: 0rem) {
+  @media only screen and (min-width: 0em) {
     #faq-1741 {
       padding: var(--sectionPadding);
-      background-color: #f7f7f7;
 
       .cs-container {
         width: 100%;
-        /* changes to 1280px at desktop */
-        max-width: (550/16rem);
+        max-width: (1280/16rem);
         margin: auto;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        /* 48px - 64px */
-        gap: clamp(3rem, 6vw, 4rem);
+        gap: clamp(2rem, 6vw, 3rem);
       }
 
       .cs-content {
-        /* set text align to left if content needs to be left aligned */
         text-align: center;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        /* centers content horizontally, set to flex-start to left align */
-        align-items: center;
+        max-width: (674/16rem);
+        margin: 0 auto;
+
+        .cs-text {
+          margin-bottom: 0;
+        }
       }
 
       .cs-flex-group {
-        width: 100%;
-        margin: 0;
-        padding: 0;
         display: flex;
-        justify-content: center;
-        align-items: center;
         flex-direction: column;
+        gap: clamp(1.5rem, 4vw, 2rem);
       }
 
       .cs-faq-group {
-        width: 100%;
+        list-style: none;
         margin: 0;
         padding: 0;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: (12/16rem);
+        display: grid;
+        gap: 1rem;
       }
 
       .cs-faq-item {
-        list-style: none;
-        width: 100%;
-        /* clips all corners of the button that overlap the rounded border */
+        border-radius: (16/16rem);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        background: #fff;
+        transition: border 0.3s ease, box-shadow 0.3s ease;
         overflow: hidden;
-        transition: border-bottom 0.3s;
+        cursor: pointer;
 
         &.active {
-          .cs-button {
-            background-color: var(--primary);
-            color: var(--bodyTextColorWhite);
-
-            &:before {
-              background-color: var(--bodyTextColorWhite);
-              transform: rotate(315deg);
-            }
-
-            &:after {
-              background-color: var(--bodyTextColorWhite);
-              transform: rotate(-315deg);
-            }
-          }
+          border-color: var(--primary);
+          box-shadow: 0 20px 45px rgba(16, 24, 40, 0.12);
 
           .cs-item-text {
-            height: auto;
-            /* 16px - 24px */
-            padding: (16/16rem) clamp(1rem, 2vw, 1.5rem);
+            max-height: 500px;
+            padding-bottom: 1rem;
             opacity: 1;
-            border: 1px solid #e8e8e8;
           }
         }
-      }
 
-      .cs-button {
-        /* 16px - 20px */
-        font-size: clamp(1rem, 2.5vw, 1.25rem);
-        line-height: 1.2em;
-        text-align: left;
-        font-weight: bold;
-        /* 16px - 20px */
-        padding: clamp(1rem, 2vw, 1.25rem);
-        background-color: #f7f7f7;
-        border: none;
-        color: var(--headerColor);
-        display: block;
-        width: 100%;
-        position: relative;
-        transition:
-          background-color 0.3s,
-          color 0.3s;
-
-        &:hover {
+        .cs-button {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+          padding: clamp(1rem, 3vw, 1.25rem);
+          font-size: clamp(1rem, 2.5vw, 1.1rem);
+          font-weight: 600;
+          background: transparent;
+          border: none;
+          text-align: left;
+          color: var(--headerColor);
           cursor: pointer;
         }
 
-        &:before {
-          /* left line */
-          content: "";
-          width: (8/16rem);
-          height: (2/16rem);
-          background-color: var(--headerColor);
-          opacity: 1;
-          border-radius: 50px;
-          position: absolute;
-          display: block;
-          top: 50%;
-          right: (24/16rem);
-          transform: rotate(45deg);
-          /* animate the transform from the left side of the x axis, and the center of the y */
-          transform-origin: left center;
-          transition: transform 0.5s;
+        .cs-item-text {
+          max-height: 0;
+          overflow: hidden;
+          padding: 0 clamp(1rem, 3vw, 1.25rem);
+          font-size: 0.95rem;
+          color: var(--bodyTextColor);
+          line-height: 1.6;
+          transition: max-height 0.3s ease, opacity 0.3s ease, padding-bottom 0.3s ease;
+          opacity: 0;
         }
-
-        &:after {
-          /* right line */
-          content: "";
-          width: (8/16rem);
-          height: (2/16rem);
-          background-color: var(--headerColor);
-          opacity: 1;
-          border-radius: 50px;
-          position: absolute;
-          display: block;
-          top: 50%;
-          right: (21/16rem);
-          transform: rotate(-45deg);
-          /* animate the transform from the right side of the x axis, and the center of the y */
-          transform-origin: right center;
-          transition: transform 0.5s;
-        }
-      }
-
-      .cs-button-text {
-        width: 80%;
-        display: block;
-      }
-
-      .cs-item-text {
-        /* 14px - 16px */
-        font-size: clamp(0.875rem, 1.5vw, 1rem);
-        line-height: 1.5em;
-        width: 100%;
-        height: 0;
-        margin: 0;
-        /* 16px - 24px */
-        padding: 0 clamp(1rem, 2vw, 1.5rem);
-        opacity: 0;
-        color: var(--bodyTextColor);
-        /* clips the text so it doesn't show up */
-        overflow: hidden;
-        transition:
-          opacity 0.3s,
-          padding-bottom 0.3s;
       }
     }
   }
 
-  /* Desktop - 1024px */
-  @media only screen and (min-width: 64rem) {
+  @media only screen and (min-width: 48em) {
     #faq-1741 {
-      .cs-container {
-        max-width: (1280/16rem);
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: flex-start;
-        /* 60px - 108px */
-        gap: clamp(3.75rem, 10.5vw, 6.75rem);
-      }
-
-      .cs-content {
-        text-align: left;
-        width: 40%;
-        flex: none;
-        /* prevents flexbox from squishing it */
-        align-items: flex-start;
-      }
-
       .cs-flex-group {
-        width: 60%;
+        flex-direction: row;
+        align-items: flex-start;
+      }
+
+      .cs-faq-group {
+        width: 100%;
       }
     }
   }
 </style>
 
 <script>
-// Astro:page-load wrapper for View Transitions purposes
-document.addEventListener('astro:page-load', () => { // Makes the script available after navigating to a new page.
-    const faqItems = Array.from(document.querySelectorAll(".cs-faq-item"));
-    for (const item of faqItems) {
-      const onClick = () => {
-        item.classList.toggle("active");
-      };
-      item.addEventListener("click", onClick);
-    }
+const initFaq = () => {
+  const faqItems = Array.from(document.querySelectorAll<HTMLElement>('#faq-1741 .cs-faq-item'));
+  if (!faqItems.length) return;
+
+  faqItems.forEach((item) => {
+    if (item.dataset.bound === 'true') return;
+    item.dataset.bound = 'true';
+    item.addEventListener('click', () => {
+      item.classList.toggle('active');
+    });
   });
+};
+
+document.addEventListener('DOMContentLoaded', initFaq);
+document.addEventListener('astro:page-load', initFaq);
 </script>

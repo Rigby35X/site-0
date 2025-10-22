@@ -1,20 +1,26 @@
-  // Astro:page-load wrapper for View Transitions purposes
-  document.addEventListener('astro:page-load', () => { // Make the script controlling the <Hamburger /> mobile menu component available after navigating to a new page.
-
+function initNavigation() {
     const CSbody = document.querySelector('body');
     const CSnavbarMenu = document.getElementById('cs-navigation');
     const CSUlWrapper = document.getElementById('cs-ul-wrapper');
     const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-    
+
+    if (!CSbody || !CSnavbarMenu || !CSUlWrapper || !mobileMenuToggle) {
+        return;
+    }
+
+    if (mobileMenuToggle.dataset.bound === 'true') {
+        return;
+    }
+    mobileMenuToggle.dataset.bound = 'true';
+
     function toggleMenu() {
         mobileMenuToggle.classList.toggle('cs-active');
         CSnavbarMenu.classList.toggle('cs-active');
         CSbody.classList.toggle('cs-open');
     }
-    
-    // Toggles the hamburger mobile menu
+
     mobileMenuToggle.addEventListener('click', function () {
-        toggleMenu()
+        toggleMenu();
         ariaExpanded(mobileMenuToggle);
     });
     
@@ -105,5 +111,8 @@
                 window.location.href = this.href;
             } 
         });
-    });   
     });
+}
+
+document.addEventListener('DOMContentLoaded', initNavigation);
+document.addEventListener('astro:page-load', initNavigation);

@@ -1,110 +1,119 @@
 // Admin API endpoint to get organization-specific token for Mailchimp integration
-// Uses admin session (orgId + accessCode) instead of Auth0
+// ✅ Uses orgId + accessCode authentication and the same Paragon private key system as paragon-token.js
 
-import jwt from 'jsonwebtoken';
-import fs from 'fs';
-import path from 'path';
+import jwt from "jsonwebtoken";
+import fs from "fs";
+import path from "path";
+
+const PARAGON_PROJECT_ID =
+  process.env.PARAGON_PROJECT_ID || "f8dcc8f0-7214-4bd6-8e84-99a82f7f6e6b";
+
+// Reuse same signing key resolver logic as paragon-token.js
+function resolveSigningKey() {
+  // Prefer file path from .env
+  if (process.env.PARAGON_SIGNING_KEY_PATH) {
+    const pemPath = path.resolve(process.env.PARAGON_SIGNING_KEY_PATH);
+    console.log("🔑 Loading signing key from:", pemPath);
+    if (!fs.existsSync(pemPath)) throw new Error("Signing key file not found");
+    return fs.readFileSync(pemPath, "utf8");
+  }
+
+  // Fallback inline key (not ideal but works)
+  if (process.env.PARAGON_SIGNING_KEY) {
+    let key = process.env.PARAGON_SIGNING_KEY.replace(/\\n/g, "\n");
+    return key;
+  }
+
+  throw new Error("❌ No signing key configured.");
+}
 
 export async function POST({ request }) {
   try {
     const body = await request.json();
     const { orgId, accessCode } = body;
-    
+
     if (!orgId || !accessCode) {
-      return new Response(JSON.stringify({ 
-        error: 'Missing parameters',
-        message: 'Organization ID and access code are required'
-      }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Missing parameters",
+          message: "Organization ID and access code are required",
+        }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
     }
 
-    // Validate admin session
+    // Basic access code validation
     const validCodes = {
-      '3': 'shelter123',
-      '4': 'happy456', 
-      '5': 'paws789',
-      '6': 'second123',
-      '7': 'loving456',
-      '8': 'barkhaus789',
-      '9': 'rangers789'
+      "3": "shelter123",
+      "4": "happy456",
+      "5": "paws789",
+      "6": "second123",
+      "7": "loving456",
+      "8": "barkhaus789",
+      "9": "rangers789",
     };
 
     const expectedCode = validCodes[orgId];
     if (!expectedCode || accessCode !== expectedCode) {
-      return new Response(JSON.stringify({ 
-        error: 'Authentication failed',
-        message: 'Invalid organization ID or access code'
-      }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' }
-      });
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Authentication failed",
+          message: "Invalid organization ID or access code",
+        }),
+        { status: 401, headers: { "Content-Type": "application/json" } }
+      );
     }
 
-    // Generate properly signed JWT token for Paragon
-    const projectId = 'f8dcc8f0-7214-4bd6-8e84-99a82f7f6e6b';
-    const currentTime = Math.floor(Date.now() / 1000);
+    // Get key from .env or file
+    const signingKey = resolveSigningKey();
+    console.log("🧩 begins with:", signingKey.startsWith("-----BEGIN"));
+    console.log("🧩 ends with:", signingKey.trim().endsWith("END RSA PRIVATE KEY-----"));
 
-    // Get the Paragon signing key from file
-    const keyPath = path.join(process.cwd(), 'paragon-signing-key.pem');
-    console.log('Reading signing key from:', keyPath);
-
-    let signingKey;
-    try {
-      signingKey = fs.readFileSync(keyPath, 'utf8');
-      console.log('Signing key loaded successfully, length:', signingKey.length);
-    } catch (error) {
-      console.error('Failed to read signing key file:', error.message);
-      throw new Error('Paragon signing key file not found');
-    }
-
-    // Create JWT payload according to Paragon requirements
+    // Build JWT payload
+    const now = Math.floor(Date.now() / 1000);
     const payload = {
-      sub: `org-${orgId}`, // Subject (user identifier)
-      aud: `useparagon.com/${projectId}`, // Audience (useparagon.com/{project-id})
-      iat: currentTime, // Issued at
-      exp: currentTime + (60 * 60), // Expires in 1 hour
-      // Additional claims for organization context
+      sub: `org-${orgId}`,
+      aud: `useparagon.com/${PARAGON_PROJECT_ID}`,
+      iat: now,
+      exp: now + 3600,
       org_id: orgId,
-      type: 'admin_session'
+      type: "admin_session",
     };
 
-    // Sign the JWT token with the Paragon private key using static import
+    // Sign JWT with RS256 private key
     const jwtToken = jwt.sign(payload, signingKey, {
-      algorithm: 'RS256',
-      header: {
-        typ: 'JWT',
-        alg: 'RS256'
-      }
+      algorithm: "RS256",
+      header: { typ: "JWT", alg: "RS256" },
     });
 
-    return new Response(JSON.stringify({
-      success: true,
-      userToken: jwtToken,
-      orgId: orgId,
-      message: 'Signed JWT token generated successfully',
-      metadata: {
-        organization_id: orgId,
-        type: 'admin_session',
-        scope: 'mailchimp_integration',
-        token_type: 'jwt_signed',
-        algorithm: 'RS256',
-        expires_in: 3600
-      }
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
-
+    return new Response(
+      JSON.stringify({
+        success: true,
+        userToken: jwtToken,
+        orgId,
+        message: "Signed JWT token generated successfully",
+        metadata: {
+          organization_id: orgId,
+          type: "admin_session",
+          scope: "mailchimp_integration",
+          token_type: "jwt_signed",
+          algorithm: "RS256",
+          expires_in: 3600,
+        },
+      }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
   } catch (error) {
-    console.error('Admin Mailchimp token API error:', error);
-    return new Response(JSON.stringify({ 
-      error: 'Internal server error',
-      details: error.message 
-    }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    console.error("Admin Mailchimp token API error:", error);
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: "Internal server error",
+        details: error.message,
+      }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
 }

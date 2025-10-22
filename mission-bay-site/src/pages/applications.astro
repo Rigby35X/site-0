@@ -1,6 +1,17 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
 import CTA from "@components/CTA.astro";
+import { fetchAllPageData } from "../utils/content-fetcher.js";
+
+// Fetch dynamic content for applications page
+const { content, organization } = await fetchAllPageData('applications', '9', Astro.url.origin);
+
+// Use dynamic content with fallbacks
+const heroContent = content.hero || {};
+const adoptionContent = content.adoption_application || {};
+const fosterContent = content.foster_application || {};
+const volunteerContent = content.volunteer_application || {};
+const ctaContent = content.cta || {};
 ---
 
 <BaseLayout
@@ -13,10 +24,9 @@ import CTA from "@components/CTA.astro";
   
   <section id="page-header">
     <div class="cs-container">
-      <h1 class="cs-title">Get Involved</h1>
+      <h1 class="cs-title">{heroContent.headline || "Get Involved"}</h1>
       <p class="cs-text">
-        There are many ways to help animals in need. Whether you're ready to adopt, 
-        want to foster, or volunteer your time, we have opportunities for everyone.
+        {heroContent.body_text || "There are many ways to help animals in need. Whether you're ready to adopt, want to foster, or volunteer your time, we have opportunities for everyone."}
       </p>
     </div>
   </section>
@@ -34,22 +44,23 @@ import CTA from "@components/CTA.astro";
           <div class="cs-icon">
             <img src="/assets/svgs/adoption.svg" alt="Adoption icon" width="60" height="60" />
           </div>
-          <h2>Adoption Application</h2>
+          <h2>{adoptionContent.headline || "Adoption Application"}</h2>
           <p class="cs-description">
-            Ready to welcome a new family member? Our adoption process ensures the perfect match 
-            between you and your future pet. We'll guide you through every step to make sure 
-            both you and your new companion are set up for success.
+            {adoptionContent.body_text || "Ready to welcome a new family member? Our adoption process ensures the perfect match between you and your future pet. We'll guide you through every step to make sure both you and your new companion are set up for success."}
           </p>
-          
+
           <div class="cs-requirements">
             <h3>Requirements:</h3>
-            <ul>
-              <li>Must be 21 years or older</li>
-              <li>Valid government-issued ID</li>
-              <li>Proof of residence</li>
-              <li>Landlord approval (if renting)</li>
-              <li>Veterinary references (if you've had pets)</li>
-            </ul>
+            <div class="cs-requirements-text" set:html={adoptionContent.requirements?.replace(/\n/g, '<br>') || `
+              <ul>
+                <li>Must be 21 years or older</li>
+                <li>Valid government-issued ID</li>
+                <li>Proof of residence</li>
+                <li>Landlord approval (if renting)</li>
+                <li>Veterinary references (if you've had pets)</li>
+              </ul>
+            `}>
+            </div>
           </div>
           
           <div class="cs-process">
@@ -84,7 +95,7 @@ import CTA from "@components/CTA.astro";
             </p>
           </div>
           
-          <a href="/forms/adoption-application" class="cs-button-solid">Start Adoption Application</a>
+          <a href="/forms/adoption-application" class="cs-button-solid">{adoptionContent.button_text || "Start Adoption Application"}</a>
         </div>
 
         <!-- Foster Application -->
@@ -92,22 +103,23 @@ import CTA from "@components/CTA.astro";
           <div class="cs-icon">
             <img src="/assets/svgs/foster.svg" alt="Foster icon" width="60" height="60" />
           </div>
-          <h2>Foster Application</h2>
+          <h2>{fosterContent.headline || "Foster Application"}</h2>
           <p class="cs-description">
-            Foster families provide temporary care for animals who need extra time before adoption. 
-            This might include young animals, those recovering from medical procedures, or pets 
-            who need behavioral support. We provide all supplies and medical care.
+            {fosterContent.body_text || "Foster families provide temporary care for animals who need extra time before adoption. This might include young animals, those recovering from medical procedures, or pets who need behavioral support. We provide all supplies and medical care."}
           </p>
-          
+
           <div class="cs-requirements">
             <h3>Requirements:</h3>
-            <ul>
-              <li>Must be 18 years or older</li>
-              <li>Stable living situation</li>
-              <li>Time to dedicate to foster care</li>
-              <li>Transportation to vet appointments</li>
-              <li>Current pets must be up-to-date on vaccinations</li>
-            </ul>
+            <div class="cs-requirements-text" set:html={fosterContent.requirements?.replace(/\n/g, '<br>') || `
+              <ul>
+                <li>Must be 18 years or older</li>
+                <li>Stable living situation</li>
+                <li>Time to dedicate to foster care</li>
+                <li>Transportation to vet appointments</li>
+                <li>Current pets must be up-to-date on vaccinations</li>
+              </ul>
+            `}>
+            </div>
           </div>
           
           <div class="cs-foster-types">
@@ -132,7 +144,7 @@ import CTA from "@components/CTA.astro";
             </ul>
           </div>
           
-          <a href="/forms/foster-application" class="cs-button-solid">Start Foster Application</a>
+          <a href="/forms/foster-application" class="cs-button-solid">{fosterContent.button_text || "Start Foster Application"}</a>
         </div>
 
         <!-- Volunteer Application -->
@@ -140,22 +152,23 @@ import CTA from "@components/CTA.astro";
           <div class="cs-icon">
             <img src="/assets/svgs/volunteer.svg" alt="Volunteer icon" width="60" height="60" />
           </div>
-          <h2>Volunteer Application</h2>
+          <h2>{volunteerContent.headline || "Volunteer Application"}</h2>
           <p class="cs-description">
-            Volunteers are the heart of our organization. Whether you have an hour a week or 
-            several hours a day, there are meaningful ways to contribute to animal welfare 
-            and make a direct impact on the lives of animals in need.
+            {volunteerContent.body_text || "Volunteers are the heart of our organization. Whether you have an hour a week or several hours a day, there are meaningful ways to contribute to animal welfare and make a direct impact on the lives of animals in need."}
           </p>
-          
+
           <div class="cs-requirements">
             <h3>Requirements:</h3>
-            <ul>
-              <li>Must be 16 years or older (some positions 18+)</li>
-              <li>Reliable and committed</li>
-              <li>Comfortable around animals</li>
-              <li>Able to follow safety protocols</li>
-              <li>Background check required for some positions</li>
-            </ul>
+            <div class="cs-requirements-text" set:html={volunteerContent.requirements?.replace(/\n/g, '<br>') || `
+              <ul>
+                <li>Must be 16 years or older (some positions 18+)</li>
+                <li>Reliable and committed</li>
+                <li>Comfortable around animals</li>
+                <li>Able to follow safety protocols</li>
+                <li>Background check required for some positions</li>
+              </ul>
+            `}>
+            </div>
           </div>
           
           <div class="cs-volunteer-opportunities">
@@ -204,7 +217,7 @@ import CTA from "@components/CTA.astro";
             </p>
           </div>
           
-          <a href="/forms/volunteer-application" class="cs-button-solid">Start Volunteer Application</a>
+          <a href="/forms/volunteer-application" class="cs-button-solid">{volunteerContent.button_text || "Start Volunteer Application"}</a>
         </div>
       </div>
     </div>

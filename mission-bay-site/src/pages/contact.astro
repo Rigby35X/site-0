@@ -2,24 +2,34 @@
 import BaseLayout from "@layouts/BaseLayout.astro";
 import client from "@data/client.json";
 import Landing from "@components/Landing.astro";
+import { fetchAllPageData } from "../utils/content-fetcher.js";
 
 // Optimize our landing image and pass it as props to the BaseLayout (for preloading) and Landing (for rendering)
 import landingImage from "@assets/images/landing.jpg" // <-- THE PATH TO THE ASSET YOU WANT TO PRELOAD - The asset must live in src
 import { getImage } from "astro:assets";
 const optimizedImage = await getImage({src: landingImage, format: 'avif'})
+
+// Fetch dynamic content for contact page
+const { content, organization } = await fetchAllPageData('contact', '9', Astro.url.origin);
+
+// Use dynamic content with fallbacks
+const heroContent = content.hero || {};
+const contactInfoContent = content.contact_info || {};
 ---
 
 <BaseLayout
-  title="{{pages.contact.hero.title}}"
-  description="{{pages.contact.hero.description}}"
+  title={heroContent.headline || "Get in Touch"}
+  description={heroContent.body_text || "Have questions about adoption, volunteering, or how you can help? We'd love to hear from you."}
   preloadedImage = {optimizedImage}
+  organization = {organization}
 >
   <!-- ============================================ -->
   <!--                    LANDING                   -->
   <!-- ============================================ -->
 
   <Landing
-    title="{{pages.contact.hero.title}}"
+    title={heroContent.headline || "Get in Touch"}
+    description={heroContent.body_text || "Have questions about adoption, volunteering, or how you can help? We'd love to hear from you."}
     image={optimizedImage}
   />
 
@@ -31,12 +41,10 @@ const optimizedImage = await getImage({src: landingImage, format: 'avif'})
     <div class="cs-container">
       <form id="cs-form" name="Contact Form" method="post">
         <div class="cs-content">
-          <span class="cs-topper">Contact</span>
-          <h2 class="cs-title">Get in Touch</h2>
+          <span class="cs-topper">{contactInfoContent.subheadline || "Contact"}</span>
+          <h2 class="cs-title">{contactInfoContent.headline || "Get in Touch"}</h2>
           <p class="cs-text">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ridiculus
-            elementum ullamcorper ipsum porttitor aliquam. Id magna urna
-            ultrices odio pulvinar. Sed ut.
+            {contactInfoContent.body_text || "Have questions about adoption, volunteering, or how you can help? We'd love to hear from you. Fill out the form below and we'll get back to you as soon as possible."}
           </p>
         </div>
         <label>

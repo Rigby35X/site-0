@@ -15,7 +15,8 @@
       "@data/*": ["src/data/*"],
       "@styles/*": ["src/styles/*"],
       "@components/*": ["src/components/*"],
-      "@js/*": ["src/js/*"]
+      "@js/*": ["src/js/*"],
+      "@/*": ["src/*", "mission-bay-site/src/*"]
     },
     "incremental": true,
 		"skipLibCheck": true

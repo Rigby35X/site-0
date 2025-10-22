@@ -1,5 +1,8 @@
 // Paragon SDK Integration
 import { paragon } from '@useparagon/connect';
+paragon.configureGlobal({
+  host: "useparagon.com",
+});
 
 // Initialize Paragon when the page loads
 document.addEventListener('astro:page-load', () => {

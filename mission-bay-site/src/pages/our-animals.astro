@@ -1,6 +1,16 @@
 ---
 import BaseLayout from "@layouts/BaseLayout.astro";
 import CTA from "@components/CTA.astro";
+import { fetchAllPageData } from "../utils/content-fetcher.js";
+
+// Fetch dynamic content for animals page
+const { content, organization } = await fetchAllPageData('animals', '9', Astro.url.origin);
+
+// Use dynamic content with fallbacks
+const heroContent = content.hero || {};
+const adoptionProcessContent = content.adoption_process || {};
+const moreInfoContent = content.more_info || {};
+const adoptedGalleryContent = content.adopted_gallery || {};
 
 // Fetch animals server-side
 let animals = [];
@@ -25,8 +35,9 @@ const availableAnimals = animals.filter((animal) => (animal.status || '').toLowe
 ---
 
 <BaseLayout
-  title="Mission Bay Puppy Rescue - Our Animals Available for Adoption"
-  description="Meet our wonderful animals looking for their forever homes. Browse available dogs, cats, and other pets ready for adoption."
+  title={heroContent.headline ? `${heroContent.headline} - ${organization?.org || 'Mission Bay Puppy Rescue'}` : "Mission Bay Puppy Rescue - Our Animals Available for Adoption"}
+  description={heroContent.body_text || "Meet our wonderful animals looking for their forever homes. Browse available dogs, cats, and other pets ready for adoption."}
+  organization = {organization}
 >
   <!-- ============================================ -->
   <!--                 Page Header                  -->
@@ -34,10 +45,9 @@ const availableAnimals = animals.filter((animal) => (animal.status || '').toLowe
   
   <section id="page-header">
     <div class="cs-container">
-      <h1 class="cs-title">Our Animals</h1>
+      <h1 class="cs-title">{heroContent.headline || "Our Animals"}</h1>
       <p class="cs-text">
-        Meet our wonderful animals who are looking for their forever homes. Each pet has been health-checked, 
-        vaccinated, and is ready to become a beloved family member.
+        {heroContent.body_text || "Meet our wonderful animals who are looking for their forever homes. Each pet has been health-checked, vaccinated, and is ready to become a beloved family member."}
       </p>
     </div>
   </section>
@@ -133,8 +143,8 @@ const availableAnimals = animals.filter((animal) => (animal.status || '').toLowe
       {adoptedAnimals.length > 0 && (
         <section id="adopted-gallery">
           <div class="cs-gallery-header">
-            <h2>Recently Adopted</h2>
-            <p>Celebrating the pets who have found their forever families.</p>
+            <h2>{adoptedGalleryContent.headline || "Recently Adopted"}</h2>
+            <p>{adoptedGalleryContent.body_text || "Celebrating the pets who have found their forever families."}</p>
           </div>
           <div class="cs-gallery-scroll">
             {adoptedAnimals.map((animal) => {
@@ -161,13 +171,13 @@ const availableAnimals = animals.filter((animal) => (animal.status || '').toLowe
       )}
 
       <div class="cs-more-info">
-        <h2>Don't See Your Perfect Match?</h2>
+        <h2>{moreInfoContent.headline || "Don't See Your Perfect Match?"}</h2>
         <p>
-          We have more animals in foster care and new arrivals coming in regularly. 
-          Contact us to learn about animals that may not be listed yet or to get on our waiting list 
-          for specific types of pets.
+          {moreInfoContent.body_text || "We have more animals in foster care and new arrivals coming in regularly. Contact us to learn about animals that may not be listed yet or to get on our waiting list for specific types of pets."}
         </p>
-        <a href="/contact" class="cs-button-solid">Contact Us</a>
+        <a href={moreInfoContent.button_link || "/contact"} class="cs-button-solid">
+          {moreInfoContent.button_text || "Contact Us"}
+        </a>
       </div>
     </div>
   </section>
