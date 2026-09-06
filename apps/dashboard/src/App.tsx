@@ -11,7 +11,9 @@ import {
 import { ORGANIZATIONS, getOrganization, type OrgConfig } from './lib/api';
 import Layout from './components/Layout';
 import Onboarding from './components/Onboarding';
+import OnboardingWizard from './components/OnboardingWizard';
 import { isOnboardingComplete, resetOnboarding } from './lib/onboarding';
+import { isWizardComplete, markWizardComplete } from './lib/onboardingWizard';
 import type { TabKey } from './components/Sidebar';
 
 // Lazy-loaded tabs
@@ -199,7 +201,20 @@ function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showWizard, setShowWizard] = useState(false);
   const [animalsSearch, setAnimalsSearch] = useState({ query: '', nonce: 0 });
+
+  // Shows the 5-step setup wizard on first login; falls back to the guided tour
+  // once the wizard is already complete for this org.
+  const maybeStartOnboarding = (orgId: number) => {
+    isWizardComplete(orgId).then((wizardDone) => {
+      if (!wizardDone) {
+        setShowWizard(true);
+      } else if (!isOnboardingComplete()) {
+        setShowOnboarding(true);
+      }
+    });
+  };
 
   // Merge live Supabase organizations row over the static ORGANIZATIONS defaults —
   // covers login, session restore, and org switch, since all of them change orgId.
@@ -260,7 +275,7 @@ function App() {
         const orgId = jwtSession.orgId ?? 8;
         const orgConfig = ORGANIZATIONS[orgId] ?? ORGANIZATIONS[8] ?? Object.values(ORGANIZATIONS)[0];
         setSession({ orgId, orgConfig });
-        if (!isOnboardingComplete()) setShowOnboarding(true);
+        maybeStartOnboarding(orgId);
         return;
       }
 
@@ -268,23 +283,27 @@ function App() {
       const restored = restoreSession();
       if (restored) {
         setSession({ orgId: restored.session.orgId, orgConfig: restored.org });
-        if (!isOnboardingComplete()) setShowOnboarding(true);
+        maybeStartOnboarding(restored.session.orgId);
       }
     }).catch(() => {
       // If initSession throws, fall back to legacy
       const restored = restoreSession();
       if (restored) {
         setSession({ orgId: restored.session.orgId, orgConfig: restored.org });
-        if (!isOnboardingComplete()) setShowOnboarding(true);
+        maybeStartOnboarding(restored.session.orgId);
       }
     });
   }, []);
 
   const handleLogin = (s: Session) => {
     setSession(s);
-    if (!isOnboardingComplete()) {
-      setShowOnboarding(true);
-    }
+    maybeStartOnboarding(s.orgId);
+  };
+
+  const handleWizardComplete = async () => {
+    if (session) await markWizardComplete(session.orgId);
+    setShowWizard(false);
+    if (!isOnboardingComplete()) setShowOnboarding(true);
   };
 
   const handleLogout = () => {
@@ -368,7 +387,16 @@ function App() {
         </Suspense>
       </Layout>
 
-      {showOnboarding && (
+      {showWizard && (
+        <OnboardingWizard
+          orgId={session.orgId}
+          orgConfig={session.orgConfig}
+          onComplete={() => void handleWizardComplete()}
+          onNavigateTab={setActiveTab}
+        />
+      )}
+
+      {showOnboarding && !showWizard && (
         <Onboarding
           onComplete={() => setShowOnboarding(false)}
           onNavigateTab={setActiveTab}
