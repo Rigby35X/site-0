@@ -68,18 +68,26 @@ const availableAnimals = animals.filter((animal) => (animal.status || '').toLowe
   <!-- ============================================ -->
   <!--                Animal Filters               -->
   <!-- ============================================ -->
-  
-  <!-- <section id="animal-filters">
+
+  <section id="animal-filters">
     <div class="cs-container">
       <div class="cs-filter-group">
-        <button class="cs-filter-button active" data-filter="all">All Animals</button>
-        <button class="cs-filter-button" data-filter="dogs">Dogs</button>
-        <button class="cs-filter-button" data-filter="cats">Cats</button>
-        <button class="cs-filter-button" data-filter="available">Available</button>
-        <button class="cs-filter-button" data-filter="special-needs">Special Needs</button>
+        <button class="cs-filter-button active" data-filter="all">All</button>
+        <button class="cs-filter-button" data-filter="dog">Dogs</button>
+        <button class="cs-filter-button" data-filter="cat">Cats</button>
+        <button class="cs-filter-button" data-filter="other">Other</button>
+      </div>
+      <div class="cs-search-group">
+        <input
+          type="text"
+          id="animal-search"
+          class="cs-search-input"
+          placeholder="Search by name or breed…"
+          aria-label="Search animals by name or breed"
+        />
       </div>
     </div>
-  </section> -->
+  </section>
 
   <!-- ============================================ -->
   <!--                Animal Grid                   -->
@@ -97,24 +105,32 @@ const availableAnimals = animals.filter((animal) => (animal.status || '').toLowe
         </div>
       ) : availableAnimals.length === 0 ? (
         <div class="cs-loading">
-          <p>No animals are currently available for adoption. Please check back soon!</p>
+          <p>No animals available right now — check back soon!</p>
         </div>
       ) : (
         <div class="cs-card-group">
           {availableAnimals.map((animal) => {
-            const imageUrl = animal.image_url || animal.main_image?.url || '/assets/images/animals/placeholder.jpg';
+            const imageUrl = animal.image_url || animal.main_image?.url || '/assets/images/placeholder-dog.svg';
             const status = animal.status || 'Available';
             const description = animal.description || animal.My_Story || '';
             const shortDescription = description.length > 150 ? description.substring(0, 150) + '...' : description;
+            const rawSpecies = (animal.species || 'dog').toLowerCase();
+            const speciesBucket = rawSpecies.includes('dog') ? 'dog' : rawSpecies.includes('cat') ? 'cat' : 'other';
+            const name = animal.name || animal.Dog_Name || 'This pet';
 
             return (
-              <div class="cs-item" data-category={`${animal.species || 'dog'} ${status.toLowerCase()} ${animal.special_needs ? 'special-needs' : ''}`}>
+              <div
+                class="cs-item"
+                data-species={speciesBucket}
+                data-name={name.toLowerCase()}
+                data-breed={(animal.breed || animal.Breed || '').toLowerCase()}
+              >
                 <picture class="cs-picture">
                   <img
                     loading="lazy"
                     decoding="async"
                     src={imageUrl}
-                    alt={animal.name || animal.Dog_Name}
+                    alt={name}
                   />
                   <div class={`cs-status-badge cs-status-${status.toLowerCase()}`}>
                     {status}
@@ -122,13 +138,17 @@ const availableAnimals = animals.filter((animal) => (animal.status || '').toLowe
                 </picture>
 
                 <div class="cs-item-content">
-                  <h3 class="cs-item-title">{animal.name || animal.Dog_Name}</h3>
+                  <h3 class="cs-item-title">{name}</h3>
                   <div class="cs-item-details">
                     <span class="cs-detail">{animal.breed || animal.Breed || 'Mixed'}</span>
                     <span class="cs-detail">{animal.age || 'Unknown age'}</span>
                     <span class="cs-detail">{animal.gender || animal.Gender || 'Unknown'}</span>
                     <span class="cs-detail">{animal.size || animal.Estimated_Size_When_Grown || 'Unknown size'}</span>
                   </div>
+
+                  {animal.adoption_fee ? (
+                    <p class="cs-adoption-fee">Adoption fee: ${animal.adoption_fee}</p>
+                  ) : null}
 
                   <p class="cs-item-text">{shortDescription}</p>
 
@@ -143,8 +163,8 @@ const availableAnimals = animals.filter((animal) => (animal.status || '').toLowe
                   </div>
 
                   <div class="cs-button-group">
-                    <a href={`/animal-details/${animal.id}`} class="cs-button-solid">Learn More</a>
-                    <a href="/applications" class="cs-button-transparent">Apply to Adopt</a>
+                    <a href={`/animal-details/${animal.id}`} class="cs-button-solid">Meet {name}</a>
+                    <a href="/forms/adoption-application" class="cs-button-transparent">Apply to Adopt</a>
                   </div>
                 </div>
               </div>
@@ -152,6 +172,10 @@ const availableAnimals = animals.filter((animal) => (animal.status || '').toLowe
           })}
         </div>
       )}
+
+      <p id="no-results-message" class="cs-loading" style="display:none;">
+        No animals available right now — check back soon!
+      </p>
 
       {adoptedAnimals.length > 0 && (
         <section id="adopted-gallery">
@@ -228,14 +252,21 @@ const availableAnimals = animals.filter((animal) => (animal.status || '').toLowe
   #animal-filters {
     padding: 2rem 0;
     background: #f8f9fa;
-    
+
+    .cs-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
     .cs-filter-group {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
       gap: 1rem;
     }
-    
+
     .cs-filter-button {
       padding: 0.75rem 1.5rem;
       border: 2px solid var(--primary);
@@ -245,11 +276,29 @@ const availableAnimals = animals.filter((animal) => (animal.status || '').toLowe
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
-      
+
       &:hover,
       &.active {
         background: var(--primary);
         color: white;
+      }
+    }
+
+    .cs-search-group {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .cs-search-input {
+      width: 100%;
+      padding: 0.75rem 1.25rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 25px;
+      font-size: 1rem;
+
+      &:focus {
+        outline: none;
+        border-color: var(--primary);
       }
     }
   }
@@ -340,9 +389,15 @@ const availableAnimals = animals.filter((animal) => (animal.status || '').toLowe
 
     .cs-card-group {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 2rem;
       margin-bottom: 4rem;
+    }
+
+    @media only screen and (max-width: 1024px) {
+      .cs-card-group {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
     .cs-item {
@@ -428,6 +483,12 @@ const availableAnimals = animals.filter((animal) => (animal.status || '').toLowe
     .cs-item-text {
       margin-bottom: 1rem;
       line-height: 1.6;
+    }
+
+    .cs-adoption-fee {
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.75rem;
     }
     
     .cs-compatibility {
@@ -536,3 +597,45 @@ const availableAnimals = animals.filter((animal) => (animal.status || '').toLowe
     color: var(--errorColor, #dc2626);
   }
 </style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const filterButtons = document.querySelectorAll<HTMLButtonElement>('.cs-filter-button');
+    const searchInput = document.querySelector<HTMLInputElement>('#animal-search');
+    const items = document.querySelectorAll<HTMLElement>('.cs-item');
+    const noResultsMessage = document.querySelector<HTMLElement>('#no-results-message');
+
+    let activeFilter = 'all';
+
+    function applyFilters() {
+      const term = (searchInput?.value ?? '').trim().toLowerCase();
+      let visibleCount = 0;
+
+      items.forEach((item) => {
+        const matchesFilter = activeFilter === 'all' || item.dataset.species === activeFilter;
+        const matchesSearch =
+          !term ||
+          (item.dataset.name ?? '').includes(term) ||
+          (item.dataset.breed ?? '').includes(term);
+        const visible = matchesFilter && matchesSearch;
+        item.style.display = visible ? '' : 'none';
+        if (visible) visibleCount++;
+      });
+
+      if (noResultsMessage) {
+        noResultsMessage.style.display = visibleCount === 0 ? '' : 'none';
+      }
+    }
+
+    filterButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        filterButtons.forEach((b) => b.classList.remove('active'));
+        button.classList.add('active');
+        activeFilter = button.dataset.filter ?? 'all';
+        applyFilters();
+      });
+    });
+
+    searchInput?.addEventListener('input', applyFilters);
+  });
+</script>

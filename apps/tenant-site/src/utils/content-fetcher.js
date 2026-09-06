@@ -384,6 +384,36 @@ export async function fetchOrganizationData(orgId = '9', origin = '') {
 }
 
 /**
+ * Fetch available animals for the public "our animals" listing.
+ */
+export async function fetchAnimals(orgId = '9') {
+  try {
+    const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+    const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+    const columns = [
+      'id', 'name', 'breed', 'age', 'gender', 'size', 'status', 'image_url',
+      'description', 'good_with_kids', 'good_with_dogs', 'good_with_cats',
+      'spayed_neutered', 'vaccinated', 'adoption_fee', 'species',
+    ].join(',');
+
+    const res = await fetch(
+      `${supabaseUrl}/rest/v1/animals?select=${columns}&org_id=eq.${orgId}&status=eq.Available&order=created_at.desc`,
+      {
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+        },
+      }
+    );
+    if (!res.ok) throw new Error(`Supabase HTTP ${res.status}`);
+    return await res.json();
+  } catch (error) {
+    console.error(`❌ Error fetching animals for org ${orgId}:`, error);
+    return [];
+  }
+}
+
+/**
  * Fetch both page content and organization data in parallel.
  */
 export async function fetchAllPageData(pageSlug = 'homepage', orgId = '9', origin = '') {

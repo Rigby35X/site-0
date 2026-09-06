@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <rect width="400" height="300" fill="#e9e8e6"/>
+  <g fill="#bfae9b">
+    <circle cx="200" cy="150" r="55"/>
+    <ellipse cx="160" cy="105" rx="22" ry="34" transform="rotate(-25 160 105)"/>
+    <ellipse cx="240" cy="105" rx="22" ry="34" transform="rotate(25 240 105)"/>
+    <circle cx="182" cy="140" r="6" fill="#4d4c4c"/>
+    <circle cx="218" cy="140" r="6" fill="#4d4c4c"/>
+    <ellipse cx="200" cy="165" rx="10" ry="7" fill="#4d4c4c"/>
+  </g>
+  <text x="200" y="250" font-size="20" text-anchor="middle" fill="#8a7a6a" font-family="sans-serif">No Photo Available</text>
+</svg>
