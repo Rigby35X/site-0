@@ -1,0 +1,93 @@
+/* Barkhaus Platform design system — self-hosted fonts + color schemes.
+   Source: barkhaus-platform-design/DESIGN.md, react/globals.css. */
+
+@font-face {
+  font-family: 'Noto Serif';
+  src: url('/fonts/noto-serif-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Noto Serif';
+  src: url('/fonts/noto-serif-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Noto Serif';
+  src: url('/fonts/noto-serif-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Noto Serif';
+  src: url('/fonts/noto-serif-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins-300.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins-500.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/*
+  Color schemes — each scheme sets --scheme-bg/--scheme-text/--scheme-accent/--scheme-border
+  and applies them as the section's background/text color. Matches DESIGN.md's scheme table.
+*/
+.scheme-1, .scheme-2, .scheme-3, .scheme-4, .scheme-5, .scheme-6, .scheme-7, .scheme-8 {
+  background-color: var(--scheme-bg);
+  color: var(--scheme-text);
+}
+
+.scheme-1 { --scheme-bg: #EFEEED; --scheme-text: #060403; --scheme-accent: #5F5754; --scheme-border: rgba(6,4,3,0.15); }
+.scheme-2 { --scheme-bg: #D9D9D9; --scheme-text: #060403; --scheme-accent: #5F5754; --scheme-border: rgba(6,4,3,0.15); }
+.scheme-3 { --scheme-bg: #CFB5A3; --scheme-text: #060403; --scheme-accent: #060403; --scheme-border: rgba(6,4,3,0.15); }
+.scheme-4 { --scheme-bg: #BDB8AE; --scheme-text: #060403; --scheme-accent: #060403; --scheme-border: rgba(6,4,3,0.15); }
+.scheme-5 { --scheme-bg: #A68378; --scheme-text: #ffffff; --scheme-accent: #ffffff; --scheme-border: rgba(255,255,255,0.2); }
+.scheme-6 { --scheme-bg: #FAF7F5; --scheme-text: #060403; --scheme-accent: #5F5754; --scheme-border: rgba(6,4,3,0.15); }
+.scheme-7 { --scheme-bg: #FFFFFF; --scheme-text: #060403; --scheme-accent: #5F5754; --scheme-border: rgba(6,4,3,0.15); }
+.scheme-8 { --scheme-bg: #060403; --scheme-text: #ffffff; --scheme-accent: #ffffff; --scheme-border: rgba(255,255,255,0.2); }
+
+.scheme-border { border-color: var(--scheme-border); }
+.scheme-accent { color: var(--scheme-accent); }
+
+/* Every heading in this codebase already carries the `font-serif` utility class,
+   and <body> carries `font-sans` (see BaseLayout.astro) — both map to the
+   self-hosted families above via tailwind.config.mjs, so no extra base rule
+   is needed here (and @layer base needs a @tailwind base directive we don't
+   control the location of in this file). */

@@ -1,0 +1,51 @@
+---
+export interface Props {
+  scheme?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+  heading?: string;
+  subtext?: string;
+}
+
+const {
+  scheme = 8,
+  heading = 'Stay in the loop',
+  subtext = 'Product updates, rescue tech tips, and stories from the field — no spam, unsubscribe any time.',
+} = Astro.props;
+---
+
+<section class={`scheme-${scheme} py-16`}>
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 text-center">
+    <h2 class="font-serif text-2xl sm:text-3xl font-medium mb-3">{heading}</h2>
+    <p class="opacity-80 mb-8">{subtext}</p>
+    <form id="newsletter-form" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+      <input
+        type="email"
+        name="email"
+        required
+        placeholder="you@rescue.org"
+        class="flex-1 border border-white/20 bg-white/5 rounded-input px-4 py-3 text-sm placeholder:opacity-50 focus:outline-none focus:ring-2 focus:ring-warm-brown"
+      />
+      <button
+        type="submit"
+        class="px-6 py-3 bg-warm-brown text-white rounded-button text-sm font-semibold hover:opacity-90 transition whitespace-nowrap"
+      >
+        Subscribe
+      </button>
+    </form>
+    <p id="newsletter-success" class="hidden mt-4 text-sm text-white/80">Thanks for subscribing! Watch your inbox.</p>
+  </div>
+</section>
+
+<script>
+  const form = document.getElementById('newsletter-form') as HTMLFormElement | null;
+  const success = document.getElementById('newsletter-success');
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    try {
+      form.classList.add('hidden');
+      success?.classList.remove('hidden');
+    } catch (err) {
+      console.error('Newsletter signup failed:', err);
+    }
+  });
+</script>

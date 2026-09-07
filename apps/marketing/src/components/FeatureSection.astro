@@ -1,0 +1,45 @@
+---
+export interface Props {
+  scheme?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+  eyebrow?: string;
+  heading: string;
+  body: string;
+  imageSrc: string;
+  imageAlt?: string;
+  reverse?: boolean;
+  ctaLabel?: string;
+  ctaHref?: string;
+}
+
+const {
+  scheme = 1,
+  eyebrow,
+  heading,
+  body,
+  imageSrc,
+  imageAlt = '',
+  reverse = false,
+  ctaLabel,
+  ctaHref = '/features',
+} = Astro.props;
+---
+
+<section class={`scheme-${scheme} py-20`}>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-12 items-center">
+      <div class={reverse ? 'lg:order-2' : ''}>
+        {eyebrow && <p class="text-xs font-semibold uppercase tracking-wider scheme-accent mb-3">{eyebrow}</p>}
+        <h2 class="font-serif text-3xl font-medium mb-4">{heading}</h2>
+        <p class="opacity-80 leading-relaxed mb-6">{body}</p>
+        {ctaLabel && (
+          <a href={ctaHref} class="inline-block px-6 py-3 bg-warm-brown text-white rounded-button text-sm font-semibold hover:opacity-90 transition">
+            {ctaLabel}
+          </a>
+        )}
+      </div>
+      <div class={reverse ? 'lg:order-1' : ''}>
+        <img src={imageSrc} alt={imageAlt} class="rounded-card shadow-xl w-full object-cover" loading="lazy" />
+      </div>
+    </div>
+  </div>
+</section>

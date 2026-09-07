@@ -1,4 +1,6 @@
 ---
+import '../styles/theme.css';
+
 export interface Props {
   title: string;
   description?: string;
@@ -12,9 +14,6 @@ const { title, description = 'Streamline your shelter\'s operations, boost marke
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title} | Barkhaus</title>
     <meta name="description" content={description} />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="icon" type="image/png" href="/images/logos/1.png" />
   </head>
   <body class="font-sans text-deep-taupe bg-white antialiased">

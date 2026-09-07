@@ -4,48 +4,120 @@ export interface Props {
 }
 const { currentPage = '' } = Astro.props;
 
-const links = [
-  { href: '/features', label: 'Features' },
-  { href: '/pricing',  label: 'Pricing' },
-  { href: '/about',    label: 'About' },
-  { href: '/contact',  label: 'Contact' },
-  { href: '/blog',     label: 'Blog' },
+const productLinks = [
+  { href: '/features', label: 'All Features' },
+  { href: '/pricing', label: 'Pricing' },
 ];
+
+const featureLinks = [
+  { href: '/features/animals', label: 'Animal Management' },
+  { href: '/features/applications', label: 'Applications' },
+  { href: '/features/public-website', label: 'Website Builder' },
+  { href: '/features/social-media', label: 'Social Media AI' },
+  { href: '/features/inbox', label: 'Unified Inbox' },
+  { href: '/features/branding', label: 'Branding' },
+  { href: '/features/analytics', label: 'Analytics' },
+  { href: '/features/events', label: 'Events' },
+  { href: '/features/donations', label: 'Donations' },
+  { href: '/features/csv-import', label: 'CSV Import' },
+  { href: '/features/security', label: 'Security' },
+  { href: '/features/integrations', label: 'Integrations' },
+];
+
+const companyLinks = [
+  { href: '/about', label: 'About' },
+  { href: '/my-dog-cinco', label: 'My Dog Cinco' },
+  { href: '/partners', label: 'Partners' },
+  { href: '/careers', label: 'Careers' },
+  { href: '/waitlist', label: 'Join Waitlist' },
+];
+
+const flatLinks = [
+  { href: '/blog', label: 'Blog' },
+  { href: '/contact', label: 'Contact' },
+];
+
+const isActive = (href: string) => currentPage === href || currentPage.startsWith(href + '/');
 ---
 
-<nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white/90 backdrop-blur border-b border-transparent" data-navbar>
-  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+<nav id="navbar" class="scheme-8 fixed top-0 left-0 right-0 z-50 border-b border-white/10 transition-shadow duration-300" data-navbar>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center h-16">
 
       <!-- Logo -->
-      <a href="/" class="flex items-center">
-        <img src="/images/logos/6.png" alt="Barkhaus" class="h-12 w-auto" />
+      <a href="/" class="flex items-center shrink-0">
+        <img src="/logo-dark.png" alt="Barkhaus" class="h-9 w-auto" />
       </a>
 
       <!-- Desktop nav -->
-      <div class="hidden md:flex items-center gap-6">
-        {links.map(({ href, label }) => (
-          <a
-            href={href}
-            class={`text-sm font-medium transition-colors hover:text-warm-brown ${
-              currentPage === href ? 'text-warm-brown' : 'text-deep-taupe'
-            }`}
-          >
+      <div class="hidden lg:flex items-center gap-1">
+
+        <!-- Product megamenu -->
+        <div class="relative group">
+          <button class={`px-3 py-2 text-sm font-medium rounded-button transition-colors flex items-center gap-1 ${isActive('/features') ? 'text-white' : 'text-white/80 hover:text-white'}`}>
+            Product
+            <svg class="w-3.5 h-3.5 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+          </button>
+          <div class="invisible opacity-0 translate-y-2 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-150 absolute left-1/2 -translate-x-1/2 top-full pt-3 w-[640px]">
+            <div class="scheme-7 rounded-card border scheme-border shadow-2xl p-6 grid grid-cols-3 gap-6">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wider text-warm-brown mb-3">Explore</p>
+                <ul class="space-y-1">
+                  {productLinks.map(({ href, label }) => (
+                    <li><a href={href} class="block px-2 py-1.5 rounded-button text-sm font-semibold hover:bg-cararra-3 transition-colors">{label}</a></li>
+                  ))}
+                </ul>
+              </div>
+              <div class="col-span-2">
+                <p class="text-xs font-semibold uppercase tracking-wider text-warm-brown mb-3">Features</p>
+                <ul class="grid grid-cols-2 gap-x-4 gap-y-1">
+                  {featureLinks.map(({ href, label }) => (
+                    <li><a href={href} class="block px-2 py-1.5 rounded-button text-sm hover:bg-cararra-3 transition-colors">{label}</a></li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Company megamenu -->
+        <div class="relative group">
+          <button class={`px-3 py-2 text-sm font-medium rounded-button transition-colors flex items-center gap-1 ${companyLinks.some(l => isActive(l.href)) ? 'text-white' : 'text-white/80 hover:text-white'}`}>
+            Company
+            <svg class="w-3.5 h-3.5 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+          </button>
+          <div class="invisible opacity-0 translate-y-2 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-150 absolute left-1/2 -translate-x-1/2 top-full pt-3 w-56">
+            <div class="scheme-7 rounded-card border scheme-border shadow-2xl p-3">
+              <ul class="space-y-1">
+                {companyLinks.map(({ href, label }) => (
+                  <li><a href={href} class="block px-3 py-2 rounded-button text-sm font-medium hover:bg-cararra-3 transition-colors">{label}</a></li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {flatLinks.map(({ href, label }) => (
+          <a href={href} class={`px-3 py-2 text-sm font-medium rounded-button transition-colors ${isActive(href) ? 'text-white' : 'text-white/80 hover:text-white'}`}>
             {label}
           </a>
         ))}
-        <a href="/login" class="px-4 py-2 text-sm font-medium text-deep-taupe hover:text-warm-brown transition">
-          Log in
+      </div>
+
+      <!-- Right actions -->
+      <div class="hidden lg:flex items-center gap-3">
+        <a href="/login" class="px-4 py-2 text-sm font-semibold text-white border border-white/30 rounded-button hover:border-white hover:bg-white/5 transition">
+          Log In
         </a>
-        <a href="/signup" class="ml-1 px-5 py-2 text-sm font-semibold bg-warm-brown text-white rounded-xl hover:opacity-90 transition">
-          Get started
+        <a href="/signup" class="px-4 py-2 text-sm font-semibold bg-warm-brown text-white rounded-button hover:opacity-90 transition">
+          Get Started
         </a>
       </div>
 
       <!-- Mobile hamburger -->
       <button
         id="mobile-menu-btn"
-        class="md:hidden p-2 rounded-lg text-deep-taupe hover:bg-cloud transition"
+        class="lg:hidden p-2 rounded-button text-white hover:bg-white/10 transition"
         aria-label="Open menu"
         aria-expanded="false"
       >
@@ -59,45 +131,40 @@ const links = [
     </div>
   </div>
 
-  <!-- Mobile menu -->
-  <div id="mobile-menu" class="hidden md:hidden border-t border-cloud bg-white">
+  <!-- Mobile slide-in drawer -->
+  <div id="mobile-menu" class="hidden lg:hidden scheme-8 border-t border-white/10 max-h-[calc(100vh-4rem)] overflow-y-auto">
     <div class="px-4 py-4 space-y-1">
-      {links.map(({ href, label }) => (
-        <a
-          href={href}
-          class={`block px-3 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-cloud hover:text-warm-brown ${
-            currentPage === href ? 'text-warm-brown bg-dove' : 'text-deep-taupe'
-          }`}
-        >
-          {label}
-        </a>
+      <p class="px-3 pt-2 pb-1 text-xs font-semibold uppercase tracking-wider text-white/50">Product</p>
+      {productLinks.concat(featureLinks).map(({ href, label }) => (
+        <a href={href} class="block px-3 py-2 rounded-button text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">{label}</a>
       ))}
-      <a href="/login" class="block px-3 py-2 rounded-lg text-sm font-medium text-deep-taupe hover:bg-cloud hover:text-warm-brown transition">
-        Log in
-      </a>
-      <a href="/signup" class="block mt-1 px-3 py-2 text-sm font-semibold bg-warm-brown text-white rounded-xl text-center">
-        Get started
-      </a>
+      <p class="px-3 pt-3 pb-1 text-xs font-semibold uppercase tracking-wider text-white/50">Company</p>
+      {companyLinks.map(({ href, label }) => (
+        <a href={href} class="block px-3 py-2 rounded-button text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">{label}</a>
+      ))}
+      <div class="pt-2 border-t border-white/10 mt-2">
+        {flatLinks.map(({ href, label }) => (
+          <a href={href} class="block px-3 py-2 rounded-button text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white">{label}</a>
+        ))}
+      </div>
+      <a href="/login" class="block mt-2 px-3 py-2 rounded-button text-sm font-semibold text-white border border-white/30 text-center">Log In</a>
+      <a href="/signup" class="block mt-2 px-3 py-2 rounded-button text-sm font-semibold bg-warm-brown text-white text-center">Get Started</a>
     </div>
   </div>
 </nav>
 
 <script>
-  // Transparent → solid scroll effect
   const navbar = document.querySelector('[data-navbar]') as HTMLElement;
   const updateNavbar = () => {
     if (window.scrollY > 40) {
-      navbar.classList.add('shadow-sm', 'border-cloud');
-      navbar.classList.remove('border-transparent');
+      navbar.classList.add('shadow-lg');
     } else {
-      navbar.classList.remove('shadow-sm', 'border-cloud');
-      navbar.classList.add('border-transparent');
+      navbar.classList.remove('shadow-lg');
     }
   };
   window.addEventListener('scroll', updateNavbar, { passive: true });
   updateNavbar();
 
-  // Mobile toggle
   const btn = document.getElementById('mobile-menu-btn')!;
   const menu = document.getElementById('mobile-menu')!;
   const iconOpen = document.getElementById('icon-open')!;
