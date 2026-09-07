@@ -13,6 +13,10 @@ const { content, organization } = await fetchAllPageData('donate', orgId, Astro.
 // Use dynamic content with fallbacks
 const heroContent = content.hero || {};
 const impactContent = content.impact || {};
+
+// Stripe is not connected until an org sets a publishable key in Settings → Payments.
+const stripePublishableKey = organization?.stripe_publishable_key || null;
+const donationAmounts = organization?.donation_amounts?.length ? organization.donation_amounts : [25, 50, 100, 250];
 ---
 
 <BaseLayout
@@ -88,75 +92,47 @@ const impactContent = content.impact || {};
   <!-- ============================================ -->
   <!--              Donation Levels                 -->
   <!-- ============================================ -->
-  
-  <section id="donation-levels">
-    <div class="cs-container">
-      <h2 class="cs-section-title">Choose Your Impact Level</h2>
-      
-      <div class="cs-donation-grid">
-        <div class="cs-donation-card">
-          <div class="cs-amount">$25</div>
-          <h3>Food & Comfort</h3>
-          <p>Provides food for one animal for a week</p>
-          <ul class="cs-includes">
-            <li>Nutritious meals</li>
-            <li>Treats and enrichment</li>
-            <li>Comfort items</li>
-          </ul>
-          <button class="cs-donate-button" data-amount="25">Donate $25</button>
+
+  {stripePublishableKey ? (
+    <section id="donation-levels">
+      <div class="cs-container">
+        <h2 class="cs-section-title">{organization?.donation_headline || "Choose Your Impact Level"}</h2>
+        {organization?.donation_description && (
+          <p class="cs-donation-description">{organization.donation_description}</p>
+        )}
+
+        <div class="cs-amount-grid">
+          {donationAmounts.map((amount) => (
+            <button class="cs-amount-button" data-amount={amount}>${amount}</button>
+          ))}
         </div>
-        
-        <div class="cs-donation-card cs-featured">
-          <div class="cs-popular-badge">Most Popular</div>
-          <div class="cs-amount">$50</div>
-          <h3>Basic Medical Care</h3>
-          <p>Covers basic medical care and vaccinations</p>
-          <ul class="cs-includes">
-            <li>Health examination</li>
-            <li>Vaccinations</li>
-            <li>Deworming treatment</li>
-            <li>Basic medications</li>
-          </ul>
-          <button class="cs-donate-button" data-amount="50">Donate $50</button>
+
+        <div class="cs-custom-donation">
+          <h3>Custom Amount</h3>
+          <p>Choose your own donation amount to support our mission</p>
+          <div class="cs-custom-form">
+            <input type="number" id="custom-amount" placeholder="Enter amount" min="1" />
+          </div>
         </div>
-        
-        <div class="cs-donation-card">
-          <div class="cs-amount">$100</div>
-          <h3>Spay/Neuter Surgery</h3>
-          <p>Sponsors spay/neuter surgery for one animal</p>
-          <ul class="cs-includes">
-            <li>Pre-surgical exam</li>
-            <li>Surgery procedure</li>
-            <li>Post-op care</li>
-            <li>Pain medication</li>
-          </ul>
-          <button class="cs-donate-button" data-amount="100">Donate $100</button>
-        </div>
-        
-        <div class="cs-donation-card">
-          <div class="cs-amount">$250</div>
-          <h3>Emergency Treatment</h3>
-          <p>Covers emergency medical treatment</p>
-          <ul class="cs-includes">
-            <li>Emergency surgery</li>
-            <li>Diagnostic tests</li>
-            <li>Specialized treatment</li>
-            <li>Extended recovery care</li>
-          </ul>
-          <button class="cs-donate-button" data-amount="250">Donate $250</button>
+
+        <div class="cs-donor-form">
+          <h3>Your Information</h3>
+          <div class="cs-donor-fields">
+            <input type="text" id="donor-name" placeholder="Your Name" />
+            <input type="email" id="donor-email" placeholder="Your Email" />
+          </div>
+          <button class="cs-donate-button" id="donate-now-button">Donate Now</button>
+          <p id="payment-status-message" class="cs-payment-status" style="display:none;"></p>
         </div>
       </div>
-      
-      <div class="cs-custom-donation">
-        <h3>Custom Amount</h3>
-        <p>Choose your own donation amount to support our mission</p>
-        <div class="cs-custom-form">
-          <input type="number" id="custom-amount" placeholder="Enter amount" min="1" />
-          <button class="cs-donate-button" id="custom-donate">Donate</button>
-        </div>
+    </section>
+  ) : (
+    <section id="donation-coming-soon">
+      <div class="cs-container">
+        <p>Donations coming soon — we're setting up secure payment processing. Check back shortly!</p>
       </div>
-    </div>
-  </section>
+    </section>
+  )}
 
   <!-- ============================================ -->
   <!--              Monthly Giving                  -->
@@ -393,16 +369,47 @@ const impactContent = content.impact || {};
   #donation-levels {
     padding: var(--sectionPadding);
     background: #f8f9fa;
+    text-align: center;
 
-    /* Donation grid spacing override */
-    .cs-donation-grid {
-      margin-bottom: 4rem;
+    .cs-donation-description {
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      color: var(--bodyTextColor);
+      font-size: 1.125rem;
+      line-height: 1.6;
     }
 
-    .cs-custom-donation {
+    .cs-amount-grid {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .cs-amount-button {
+      padding: 1rem 2rem;
+      border: 2px solid var(--primary);
+      background: white;
+      color: var(--primary);
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1.125rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover,
+      &.active {
+        background: var(--primary);
+        color: white;
+      }
+    }
+
+    .cs-custom-donation,
+    .cs-donor-form {
       text-align: center;
       max-width: 500px;
-      margin: 0 auto;
+      margin: 0 auto 1.5rem;
       padding: 2rem;
       background: white;
       border-radius: 12px;
@@ -419,9 +426,11 @@ const impactContent = content.impact || {};
         color: var(--bodyTextColor);
       }
 
-      .cs-custom-form {
+      .cs-custom-form,
+      .cs-donor-fields {
         display: flex;
         gap: 1rem;
+        margin-bottom: 1.5rem;
 
         input {
           flex: 1;
@@ -435,22 +444,44 @@ const impactContent = content.impact || {};
             border-color: var(--primary);
           }
         }
+      }
 
-        button {
-          padding: 1rem 2rem;
-          background: var(--primary);
-          color: white;
-          border: none;
-          border-radius: 8px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: background 0.3s ease;
+      button {
+        width: 100%;
+        padding: 1rem 2rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s ease;
 
-          &:hover {
-            background: var(--primaryDark);
-          }
+        &:hover {
+          background: var(--primaryDark);
         }
       }
+
+      .cs-payment-status {
+        margin: 1rem 0 0;
+        padding: 0.75rem;
+        background: #e3f2fd;
+        border-radius: 8px;
+        color: #1565c0;
+        font-weight: 600;
+      }
+    }
+  }
+
+  /* Donations coming soon */
+  #donation-coming-soon {
+    padding: var(--sectionPadding);
+    background: #f8f9fa;
+    text-align: center;
+
+    p {
+      font-size: 1.25rem;
+      color: var(--bodyTextColor);
     }
   }
 
@@ -626,7 +657,8 @@ const impactContent = content.impact || {};
       gap: 2rem;
     }
 
-    .cs-custom-form {
+    .cs-custom-form,
+    .cs-donor-fields {
       flex-direction: column;
     }
 
@@ -641,34 +673,64 @@ const impactContent = content.impact || {};
   }
 </style>
 
-<script>
-  // Donation button functionality
+<script define:vars={{ stripePublishableKey }}>
+  // Load Stripe.js when a publishable key is configured. Actual Checkout Session
+  // creation requires a server-side function using the secret key — not built yet,
+  // so the Donate Now click below is stubbed with a console.log + status message.
+  let stripeInstance = null;
+  if (stripePublishableKey) {
+    const stripeScript = document.createElement('script');
+    stripeScript.src = 'https://js.stripe.com/v3/';
+    stripeScript.onload = () => {
+      stripeInstance = window.Stripe(stripePublishableKey);
+      console.log('Stripe.js initialized with publishable key');
+    };
+    document.head.appendChild(stripeScript);
+  }
+
   document.addEventListener('DOMContentLoaded', function() {
-    const donateButtons = document.querySelectorAll('.cs-donate-button[data-amount]');
-    const customDonateButton = document.getElementById('custom-donate');
-    const customAmountInput = document.getElementById('custom-amount') as HTMLInputElement;
+    const amountButtons = document.querySelectorAll('.cs-amount-button[data-amount]');
+    const customAmountInput = document.getElementById('custom-amount') as HTMLInputElement | null;
+    const donateNowButton = document.getElementById('donate-now-button');
+    const donorNameInput = document.getElementById('donor-name') as HTMLInputElement | null;
+    const donorEmailInput = document.getElementById('donor-email') as HTMLInputElement | null;
+    const statusMessage = document.getElementById('payment-status-message');
     const monthlyButtons = document.querySelectorAll('.cs-monthly-button[data-monthly]');
 
-    // Handle preset donation amounts
-    donateButtons.forEach(button => {
-      button.addEventListener('click', function() {
-        const amount = this.getAttribute('data-amount');
-        // In a real implementation, this would redirect to a payment processor
-        alert(`Redirecting to donation page for $${amount}`);
+    let selectedAmount: number | null = null;
+
+    amountButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        amountButtons.forEach((b) => b.classList.remove('active'));
+        button.classList.add('active');
+        selectedAmount = parseFloat(button.getAttribute('data-amount') || '0');
+        if (customAmountInput) customAmountInput.value = '';
       });
     });
 
-    // Handle custom donation amount
-    if (customDonateButton && customAmountInput) {
-      customDonateButton.addEventListener('click', function() {
-        const amount = customAmountInput.value;
-        if (amount && parseFloat(amount) > 0) {
-          alert(`Redirecting to donation page for $${amount}`);
-        } else {
-          alert('Please enter a valid donation amount');
-        }
-      });
-    }
+    customAmountInput?.addEventListener('input', () => {
+      amountButtons.forEach((b) => b.classList.remove('active'));
+      selectedAmount = parseFloat(customAmountInput.value) || null;
+    });
+
+    donateNowButton?.addEventListener('click', () => {
+      const amount = selectedAmount || parseFloat(customAmountInput?.value || '0');
+      if (!amount || amount <= 0) {
+        alert('Please select or enter a donation amount.');
+        return;
+      }
+
+      const donorName = donorNameInput?.value || '';
+      const donorEmail = donorEmailInput?.value || '';
+
+      // Stub: real Stripe Checkout Session creation requires a server function.
+      console.log('Stripe checkout stub:', { amount, donorName, donorEmail });
+
+      if (statusMessage) {
+        statusMessage.textContent = 'Payment processing coming soon — thank you for your patience!';
+        statusMessage.style.display = 'block';
+      }
+    });
 
     // Handle monthly donations
     monthlyButtons.forEach(button => {

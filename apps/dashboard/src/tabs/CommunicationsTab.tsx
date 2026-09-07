@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useToast } from '../components/Toast';
+import { draftReply } from '../lib/ai';
+import { ORGANIZATIONS } from '../lib/api';
 
 interface CommunicationsTabProps {
   orgId?: number;
@@ -74,6 +76,17 @@ function StatusBadge({ status }: { status: string }) {
 
 const STATUSES = ['new', 'under_review', 'approved', 'denied', 'completed'];
 
+const REPLY_TEMPLATES: Record<string, (name: string) => string> = {
+  'Thank you': (name) =>
+    `Hi ${name},\n\nThank you so much for reaching out — we really appreciate it! We'll review your message and follow up soon.\n\nWarmly,`,
+  'Need more info': (name) =>
+    `Hi ${name},\n\nThanks for getting in touch! Could you share a bit more detail so we can help? Just reply here whenever you get a chance.\n\nLooking forward to hearing from you,`,
+  'Approved': (name) =>
+    `Hi ${name},\n\nGreat news — we're happy to move forward! We'll follow up shortly with next steps.\n\nWith gratitude,`,
+  'Not a fit': (name) =>
+    `Hi ${name},\n\nThank you so much for reaching out and for your interest. After careful review, we don't think this is quite the right fit at this time — but we truly appreciate your support of our mission.\n\nWarmly,`,
+};
+
 export default function CommunicationsTab({ orgId = 9 }: CommunicationsTabProps) {
   const { showToast } = useToast();
   const [submissions, setSubmissions] = useState<Submission[]>([]);
@@ -82,6 +95,7 @@ export default function CommunicationsTab({ orgId = 9 }: CommunicationsTabProps)
   const [selected, setSelected] = useState<Submission | null>(null);
   const [newStatus, setNewStatus] = useState('');
   const [reply, setReply] = useState('');
+  const [drafting, setDrafting] = useState(false);
   const [saving, setSaving] = useState(false);
   const [typeFilter, setTypeFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -160,6 +174,33 @@ export default function CommunicationsTab({ orgId = 9 }: CommunicationsTabProps)
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleDraftReply = async () => {
+    if (!selected) return;
+    setDrafting(true);
+    try {
+      const applicantName = `${selected.first_name ?? ''} ${selected.last_name ?? ''}`.trim() || 'the sender';
+      const content = await draftReply(orgId, {
+        applicantName,
+        formType: selected.form_type ?? 'contact',
+        formData: selected.form_data ?? {},
+        orgName: ORGANIZATIONS[orgId]?.name ?? 'our rescue',
+        status: newStatus || selected.status || 'new',
+      });
+      setReply(content);
+    } catch (err) {
+      console.error('[CommunicationsTab] Draft reply error:', err);
+      showToast('Could not generate reply — please write manually', 'info');
+    } finally {
+      setDrafting(false);
+    }
+  };
+
+  const applyTemplate = (label: string) => {
+    if (!selected) return;
+    const name = selected.first_name || 'there';
+    setReply(REPLY_TEMPLATES[label](name));
   };
 
   return (
@@ -362,9 +403,37 @@ export default function CommunicationsTab({ orgId = 9 }: CommunicationsTabProps)
 
               {/* Reply */}
               <div>
-                <label className="block text-xs font-semibold text-stone uppercase tracking-wider mb-1">
-                  Reply
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-semibold text-stone uppercase tracking-wider">
+                    Reply
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => void handleDraftReply()}
+                    disabled={drafting}
+                    className="flex items-center gap-1.5 text-xs font-semibold text-warm-brown hover:opacity-80 transition disabled:opacity-50"
+                  >
+                    {drafting && (
+                      <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
+                    )}
+                    {drafting ? 'Generating…' : 'Draft Reply with AI ✨'}
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-1.5 mb-2">
+                  {Object.keys(REPLY_TEMPLATES).map((label) => (
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={() => applyTemplate(label)}
+                      className="px-2.5 py-1 text-xs border border-silver-gray rounded-full text-deep-taupe hover:bg-cloud transition"
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
                 <textarea
                   value={reply}
                   onChange={(e) => setReply(e.target.value)}

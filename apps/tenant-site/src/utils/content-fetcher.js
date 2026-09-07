@@ -370,6 +370,14 @@ export async function fetchOrganizationData(orgId = '9', origin = '') {
       body_font: data.body_font,
       font_scale: data.font_scale,
       link_color: data.link_color,
+      // Publishable key is safe to ship to the browser by design — Stripe's secret key
+      // must never be included here, even though the underlying table is readable via
+      // the public REST API (RLS is disabled — see CLAUDE.md). Keeping it out of every
+      // response this app builds is a real, if partial, mitigation.
+      stripe_publishable_key: data.stripe_publishable_key || null,
+      donation_headline: data.donation_headline || null,
+      donation_description: data.donation_description || null,
+      donation_amounts: Array.isArray(data.donation_amounts) ? data.donation_amounts : null,
       socialMedia: {
         facebook: data.facebook_url || '',
         instagram: data.instagram_url || '',

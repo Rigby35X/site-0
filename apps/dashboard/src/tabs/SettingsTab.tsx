@@ -8,6 +8,7 @@ import { uploadImage } from '../lib/upload';
 interface SettingsTabProps {
   orgId: number;
   orgConfig: OrgConfig;
+  initialSection?: string;
 }
 
 const HEADING_FONT_OPTIONS = ['Noto Serif Display', 'Playfair Display', 'Lora', 'Merriweather', 'Georgia'];
@@ -20,9 +21,9 @@ const SECURITY_OPTIONS = ['TLS', 'SSL', 'None'];
 
 interface CsvRow { [key: string]: string }
 
-export default function SettingsTab({ orgId, orgConfig }: SettingsTabProps) {
+export default function SettingsTab({ orgId, orgConfig, initialSection }: SettingsTabProps) {
   const { showToast } = useToast();
-  const [activeSection, setActiveSection] = useState('organization');
+  const [activeSection, setActiveSection] = useState(initialSection || 'organization');
 
   // ── Organization ──
   const [org, setOrg] = useState({
@@ -60,6 +61,20 @@ export default function SettingsTab({ orgId, orgConfig }: SettingsTabProps) {
     logo_dark_url: orgConfig.logo,
     logo_light_url: '',
     favicon_url: '',
+  });
+
+  // ── Payments ──
+  // NOTE: stripe_secret_key should NEVER be exposed client-side in production.
+  // RLS is currently disabled on the organizations table (see CLAUDE.md), which means
+  // this column is readable via Supabase's public REST API by anyone with the anon key
+  // — the same as every other column on this table. Do not enter a real/live secret key
+  // here until RLS policies are added or secrets are moved server-side (e.g. Vercel env vars).
+  const [payments, setPayments] = useState({
+    stripe_publishable_key: '',
+    stripe_secret_key: '',
+    donation_headline: '',
+    donation_description: '',
+    donation_amounts: [25, 50, 100, 250] as number[],
   });
 
   // ── Email ──
@@ -125,6 +140,11 @@ export default function SettingsTab({ orgId, orgConfig }: SettingsTabProps) {
   // ALTER TABLE organizations ADD COLUMN IF NOT EXISTS smtp_server text;
   // ALTER TABLE organizations ADD COLUMN IF NOT EXISTS smtp_port text;
   // ALTER TABLE organizations ADD COLUMN IF NOT EXISTS smtp_security text;
+  // ALTER TABLE organizations ADD COLUMN IF NOT EXISTS stripe_publishable_key text;
+  // ALTER TABLE organizations ADD COLUMN IF NOT EXISTS stripe_secret_key text;
+  // ALTER TABLE organizations ADD COLUMN IF NOT EXISTS donation_headline text;
+  // ALTER TABLE organizations ADD COLUMN IF NOT EXISTS donation_description text;
+  // ALTER TABLE organizations ADD COLUMN IF NOT EXISTS donation_amounts jsonb;
 
   // Load live org data on mount — use ?? (not ||) so empty-string saves are respected
   useEffect(() => {
@@ -175,6 +195,14 @@ export default function SettingsTab({ orgId, orgConfig }: SettingsTabProps) {
           logo_dark_url: (data.logo_dark_url as string) ?? prev.logo_dark_url,
           logo_light_url: (data.logo_light_url as string) ?? prev.logo_light_url,
           favicon_url: (data.favicon_url as string) ?? prev.favicon_url,
+        }));
+        setPayments((prev) => ({
+          ...prev,
+          stripe_publishable_key: (data.stripe_publishable_key as string) ?? prev.stripe_publishable_key,
+          stripe_secret_key: (data.stripe_secret_key as string) ?? prev.stripe_secret_key,
+          donation_headline: (data.donation_headline as string) ?? prev.donation_headline,
+          donation_description: (data.donation_description as string) ?? prev.donation_description,
+          donation_amounts: Array.isArray(data.donation_amounts) ? (data.donation_amounts as number[]) : prev.donation_amounts,
         }));
         setEmailCfg((prev) => ({
           ...prev,
@@ -272,6 +300,14 @@ export default function SettingsTab({ orgId, orgConfig }: SettingsTabProps) {
           youtube_url: org.youtube,
           linkedin_url: org.linkedin,
         };
+      } else if (activeSection === 'payments') {
+        updates = {
+          stripe_publishable_key: payments.stripe_publishable_key,
+          stripe_secret_key: payments.stripe_secret_key,
+          donation_headline: payments.donation_headline,
+          donation_description: payments.donation_description,
+          donation_amounts: payments.donation_amounts,
+        };
       } else if (activeSection === 'email') {
         updates = {
           email_provider: emailCfg.provider,
@@ -292,6 +328,8 @@ export default function SettingsTab({ orgId, orgConfig }: SettingsTabProps) {
         showToast('Branding saved \u2713', 'success');
       } else if (activeSection === 'social') {
         showToast('Social media saved \u2713', 'success');
+      } else if (activeSection === 'payments') {
+        showToast('Payment settings saved \u2713', 'success');
       } else {
         showToast('Saved \u2713', 'success');
       }
@@ -360,6 +398,7 @@ export default function SettingsTab({ orgId, orgConfig }: SettingsTabProps) {
     { key: 'organization', label: 'Organization' },
     { key: 'branding', label: 'Branding' },
     { key: 'social', label: 'Social Media' },
+    { key: 'payments', label: 'Payments' },
     { key: 'email', label: 'Email' },
     { key: 'domain', label: 'Domain' },
     { key: 'csv-import', label: 'Animal Import' },
@@ -581,6 +620,82 @@ export default function SettingsTab({ orgId, orgConfig }: SettingsTabProps) {
                 <SField label="LinkedIn URL">
                   <input type="url" className={inp} value={org.linkedin} onChange={(e) => setOrg((p) => ({ ...p, linkedin: e.target.value }))} placeholder="https://linkedin.com/…" />
                 </SField>
+              </div>
+            )}
+
+            {/* ── Payments ── */}
+            {activeSection === 'payments' && (
+              <div className="space-y-5">
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800">
+                  No Stripe account connected yet. Enter your keys below once you have a Stripe account —
+                  animals will show &quot;Donations coming soon&quot; on your public site until a publishable key is set.
+                </div>
+
+                <SField label="Stripe Publishable Key">
+                  <input
+                    type="text"
+                    className={inp}
+                    value={payments.stripe_publishable_key}
+                    onChange={(e) => setPayments((p) => ({ ...p, stripe_publishable_key: e.target.value }))}
+                    placeholder="pk_live_…"
+                  />
+                </SField>
+
+                <div>
+                  <SField label="Stripe Secret Key">
+                    <input
+                      type="password"
+                      className={inp}
+                      value={payments.stripe_secret_key}
+                      onChange={(e) => setPayments((p) => ({ ...p, stripe_secret_key: e.target.value }))}
+                      placeholder="sk_live_…"
+                    />
+                  </SField>
+                  <p className="text-xs text-red-600 bg-red-50 rounded-lg px-3 py-2 mt-1.5">
+                    ⚠️ Not secure yet — Row Level Security is currently disabled on this database, so this key
+                    is technically readable via Supabase&apos;s public API by anyone with the site&apos;s anon key.
+                    Do not enter a real/live secret key until this is locked down server-side.
+                  </p>
+                </div>
+
+                <SField label="Donation Page Headline">
+                  <input
+                    className={inp}
+                    value={payments.donation_headline}
+                    onChange={(e) => setPayments((p) => ({ ...p, donation_headline: e.target.value }))}
+                    placeholder="Support Our Mission"
+                  />
+                </SField>
+
+                <SField label="Donation Page Description">
+                  <textarea
+                    className={`${inp} min-h-[80px] resize-y`}
+                    value={payments.donation_description}
+                    onChange={(e) => setPayments((p) => ({ ...p, donation_description: e.target.value }))}
+                  />
+                </SField>
+
+                <div>
+                  <p className="text-xs font-semibold text-stone uppercase tracking-wider mb-3">Suggested Amounts</p>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {payments.donation_amounts.map((amount, i) => (
+                      <div key={i} className="space-y-1">
+                        <label className="block text-xs text-stone">Option {i + 1}</label>
+                        <input
+                          type="number"
+                          min={1}
+                          className={inp}
+                          value={amount}
+                          onChange={(e) => {
+                            const next = [...payments.donation_amounts];
+                            next[i] = parseFloat(e.target.value) || 0;
+                            setPayments((p) => ({ ...p, donation_amounts: next }));
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
 

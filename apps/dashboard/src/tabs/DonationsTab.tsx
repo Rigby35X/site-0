@@ -1,10 +1,24 @@
 interface DonationsTabProps {
   orgId: number;
+  onNavigateToSettings?: () => void;
 }
 
-export default function DonationsTab({ orgId: _orgId }: DonationsTabProps) {
+export default function DonationsTab({ orgId: _orgId, onNavigateToSettings }: DonationsTabProps) {
   return (
-    <div className="flex justify-center">
+    <div className="flex flex-col items-center gap-4">
+      <div className="w-full max-w-[480px] bg-white border border-warm-brown/30 rounded-2xl shadow-sm p-5 flex items-center justify-between gap-4">
+        <div>
+          <p className="font-semibold text-deep-taupe text-sm">Connect Stripe to start accepting donations</p>
+          <p className="text-xs text-gray-500 mt-0.5">Set up your publishable key in Settings → Payments.</p>
+        </div>
+        <button
+          onClick={onNavigateToSettings}
+          className="flex-shrink-0 px-4 py-2 text-sm font-semibold bg-warm-brown text-white rounded-xl hover:opacity-90 transition"
+        >
+          Go to Settings
+        </button>
+      </div>
+
       <div className="w-full max-w-[480px] bg-cloud rounded-2xl border border-silver-gray shadow-sm">
         <div className="flex flex-col items-center justify-center py-16 text-center px-8">
           <div className="text-6xl mb-6">💝</div>

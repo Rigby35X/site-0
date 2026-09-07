@@ -203,6 +203,12 @@ function App() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
   const [animalsSearch, setAnimalsSearch] = useState({ query: '', nonce: 0 });
+  const [settingsInitialSection, setSettingsInitialSection] = useState('');
+
+  const handleNavigateToPayments = () => {
+    setSettingsInitialSection('payments');
+    setActiveTab('settings');
+  };
 
   // Shows the 5-step setup wizard on first login; falls back to the guided tour
   // once the wizard is already complete for this org.
@@ -352,7 +358,7 @@ function App() {
       case 'website-content':
         return <WebsiteContentTab orgId={session.orgId} />;
       case 'settings':
-        return <SettingsTab orgId={session.orgId} orgConfig={session.orgConfig} />;
+        return <SettingsTab orgId={session.orgId} orgConfig={session.orgConfig} initialSection={settingsInitialSection} />;
       case 'communications':
         return <CommunicationsTab orgId={session.orgId} />;
       case 'policies':
@@ -362,7 +368,7 @@ function App() {
       case 'events':
         return <EventsTab orgId={session.orgId} />;
       case 'donations':
-        return <DonationsTab orgId={session.orgId} />;
+        return <DonationsTab orgId={session.orgId} onNavigateToSettings={handleNavigateToPayments} />;
       case 'integrations':
         return <IntegrationsTab orgId={session.orgId} />;
       default:
