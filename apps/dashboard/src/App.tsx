@@ -13,7 +13,7 @@ import Layout from './components/Layout';
 import Onboarding from './components/Onboarding';
 import OnboardingWizard from './components/OnboardingWizard';
 import { isOnboardingComplete, resetOnboarding } from './lib/onboarding';
-import { isWizardComplete, markWizardComplete } from './lib/onboardingWizard';
+import { isWizardComplete, markWizardComplete, resetWizard } from './lib/onboardingWizard';
 import type { TabKey } from './components/Sidebar';
 
 // Lazy-loaded tabs
@@ -213,13 +213,11 @@ function App() {
   // Shows the 5-step setup wizard on first login; falls back to the guided tour
   // once the wizard is already complete for this org.
   const maybeStartOnboarding = (orgId: number) => {
-    isWizardComplete(orgId).then((wizardDone) => {
-      if (!wizardDone) {
-        setShowWizard(true);
-      } else if (!isOnboardingComplete()) {
-        setShowOnboarding(true);
-      }
-    });
+    if (!isWizardComplete(orgId)) {
+      setShowWizard(true);
+    } else if (!isOnboardingComplete()) {
+      setShowOnboarding(true);
+    }
   };
 
   // Merge live Supabase organizations row over the static ORGANIZATIONS defaults —
@@ -306,8 +304,8 @@ function App() {
     maybeStartOnboarding(s.orgId);
   };
 
-  const handleWizardComplete = async () => {
-    if (session) await markWizardComplete(session.orgId);
+  const handleWizardComplete = () => {
+    if (session) markWizardComplete(session.orgId);
     setShowWizard(false);
     if (!isOnboardingComplete()) setShowOnboarding(true);
   };
@@ -322,6 +320,14 @@ function App() {
     resetOnboarding();
     setActiveTab('overview');
     setShowOnboarding(true);
+  };
+
+  const handleRestartWizard = () => {
+    if (!session) return;
+    resetWizard(session.orgId);
+    setActiveTab('overview');
+    setShowOnboarding(false);
+    setShowWizard(true);
   };
 
   const handleSearch = (query: string) => {
@@ -386,6 +392,7 @@ function App() {
         onLogout={handleLogout}
         onOrgSwitch={session.orgConfig.isAdmin ? handleOrgSwitch : undefined}
         onRestartTour={handleRestartTour}
+        onRestartWizard={handleRestartWizard}
         onSearch={handleSearch}
       >
         <Suspense fallback={<TabSpinner />}>
@@ -397,7 +404,7 @@ function App() {
         <OnboardingWizard
           orgId={session.orgId}
           orgConfig={session.orgConfig}
-          onComplete={() => void handleWizardComplete()}
+          onComplete={handleWizardComplete}
           onNavigateTab={setActiveTab}
         />
       )}

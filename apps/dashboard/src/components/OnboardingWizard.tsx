@@ -14,7 +14,7 @@ interface OnboardingWizardProps {
 const HEADING_FONT_OPTIONS = ['Noto Serif Display', 'Playfair Display', 'Lora', 'Merriweather'];
 const BODY_FONT_OPTIONS = ['Poppins', 'DM Sans', 'Inter', 'Source Sans 3'];
 const SPECIES_OPTIONS = ['Dog', 'Cat', 'Rabbit', 'Bird', 'Other'];
-const STATUS_OPTIONS = ['Available', 'Pending', 'Adopted'];
+const STATUS_OPTIONS = ['Available', 'Pending'];
 
 const TOTAL_STEPS = 5;
 
@@ -50,6 +50,7 @@ export default function OnboardingWizard({ orgId, orgConfig, onComplete, onNavig
     name: orgConfig.name ?? '',
     phone: orgConfig.contact?.phone ?? '',
     email: orgConfig.contact?.email ?? '',
+    contact_email: orgConfig.contact?.email ?? '',
     address: orgConfig.contact?.address ?? '',
     city: '',
     state: '',
@@ -79,7 +80,6 @@ export default function OnboardingWizard({ orgId, orgConfig, onComplete, onNavig
     image_url: '',
   });
   const [animalUploading, setAnimalUploading] = useState(false);
-  const [animalAdded, setAnimalAdded] = useState(false);
 
   const goTo = (n: number) => {
     setError('');
@@ -122,6 +122,7 @@ export default function OnboardingWizard({ orgId, orgConfig, onComplete, onNavig
         org: orgInfo.name,
         phone: orgInfo.phone,
         email: orgInfo.email,
+        contact_email: orgInfo.contact_email,
         address: orgInfo.address,
         city: orgInfo.city,
         state: orgInfo.state,
@@ -165,7 +166,6 @@ export default function OnboardingWizard({ orgId, orgConfig, onComplete, onNavig
     setError('');
     try {
       await createAnimal({ ...animal, org_id: orgId });
-      setAnimalAdded(true);
       goTo(5);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to add animal.');
@@ -208,14 +208,14 @@ export default function OnboardingWizard({ orgId, orgConfig, onComplete, onNavig
             <div className="text-center py-8">
               <h2 className="text-3xl font-serif font-bold text-deep-taupe mb-4">Welcome to Barkhaus! 🐾</h2>
               <p className="text-stone max-w-md mx-auto mb-8">
-                Let us help you get set up in 5 minutes. We will walk you through adding your organization
-                details, branding, and your first animals.
+                Let us help you get set up in about 5 minutes. We will walk you through your organization
+                details, branding, and adding your first animal.
               </p>
               <button
                 onClick={() => goTo(2)}
                 className="px-8 py-3 font-semibold bg-warm-brown text-white rounded-xl hover:opacity-90 transition"
               >
-                Get Started
+                Get Started →
               </button>
             </div>
           )}
@@ -233,6 +233,9 @@ export default function OnboardingWizard({ orgId, orgConfig, onComplete, onNavig
                 </Field>
                 <Field label="Email">
                   <input type="email" className={inputCls} value={orgInfo.email} onChange={(e) => setOrgInfo((p) => ({ ...p, email: e.target.value }))} />
+                </Field>
+                <Field label="Contact Email">
+                  <input type="email" className={inputCls} value={orgInfo.contact_email} onChange={(e) => setOrgInfo((p) => ({ ...p, contact_email: e.target.value }))} />
                 </Field>
                 <Field label="Website">
                   <input type="url" className={inputCls} value={orgInfo.website} onChange={(e) => setOrgInfo((p) => ({ ...p, website: e.target.value }))} placeholder="https://…" />
@@ -340,9 +343,9 @@ export default function OnboardingWizard({ orgId, orgConfig, onComplete, onNavig
                 </Field>
                 <Field label="Gender">
                   <select className={inputCls} value={animal.gender} onChange={(e) => setAnimal((p) => ({ ...p, gender: e.target.value }))}>
-                    <option value="">Unknown</option>
                     <option>Male</option>
                     <option>Female</option>
+                    <option value="">Unknown</option>
                   </select>
                 </Field>
                 <Field label="Status">
@@ -379,8 +382,7 @@ export default function OnboardingWizard({ orgId, orgConfig, onComplete, onNavig
             <div className="text-center py-4">
               <h2 className="text-3xl font-serif font-bold text-deep-taupe mb-3">You are all set! 🎉</h2>
               <p className="text-stone max-w-md mx-auto mb-6">
-                {orgInfo.name || 'Your organization'} is ready to go — we saved your organization info,
-                branding{animalAdded ? ', and added your first animal' : ''}.
+                Your rescue is ready to go. Here is what you can do next:
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8 text-left">
                 <a
@@ -396,14 +398,14 @@ export default function OnboardingWizard({ orgId, orgConfig, onComplete, onNavig
                   onClick={() => { onNavigateTab('animals'); onComplete(); }}
                   className="border border-silver-gray rounded-xl p-4 hover:bg-cloud transition text-left"
                 >
-                  <p className="font-semibold text-deep-taupe text-sm">Add More Animals →</p>
+                  <p className="font-semibold text-deep-taupe text-sm">Add More Animals</p>
                   <p className="text-xs text-stone mt-1">Grow your adoptable list.</p>
                 </button>
                 <button
                   onClick={() => { onNavigateTab('website-content'); onComplete(); }}
                   className="border border-silver-gray rounded-xl p-4 hover:bg-cloud transition text-left"
                 >
-                  <p className="font-semibold text-deep-taupe text-sm">Edit Website Content →</p>
+                  <p className="font-semibold text-deep-taupe text-sm">Edit Your Website</p>
                   <p className="text-xs text-stone mt-1">Customize your public pages.</p>
                 </button>
               </div>
@@ -442,7 +444,7 @@ export default function OnboardingWizard({ orgId, orgConfig, onComplete, onNavig
                   disabled={saving}
                   className="px-4 py-2 text-sm text-stone hover:text-deep-taupe transition"
                 >
-                  Skip
+                  I will do this later
                 </button>
               )}
               <button

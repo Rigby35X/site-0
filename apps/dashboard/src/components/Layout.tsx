@@ -14,6 +14,7 @@ interface LayoutProps {
   onLogout?: () => void;
   onOrgSwitch?: (orgId: number) => void;
   onRestartTour?: () => void;
+  onRestartWizard?: () => void;
   onSearch?: (query: string) => void;
 }
 
@@ -26,6 +27,7 @@ export default function Layout({
   onLogout,
   onOrgSwitch,
   onRestartTour,
+  onRestartWizard,
   onSearch,
 }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -82,6 +84,7 @@ export default function Layout({
             onClose={() => setSidebarOpen(false)}
             onOrgSwitch={onOrgSwitch}
             onRestartTour={onRestartTour}
+            onRestartWizard={onRestartWizard}
             onLogout={handleLogout}
           />
         )}
