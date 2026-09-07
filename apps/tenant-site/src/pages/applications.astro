@@ -15,6 +15,7 @@ const heroContent = content.hero || {};
 const adoptionContent = content.adoption_application || {};
 const fosterContent = content.foster_application || {};
 const volunteerContent = content.volunteer_application || {};
+const relinquishmentContent = content.relinquishment || {};
 const ctaContent = content.cta || {};
 ---
 
@@ -84,7 +85,7 @@ const ctaContent = content.cta || {};
           <p class="cs-fee-note">Adoption fees include spay/neuter, vaccinations, microchip, and health check.</p>
         </div>
 
-        <a href="/forms/adoption-application" class="cs-button-solid">
+        <a href={adoptionContent.button_link || "/forms/adoption-application"} class="cs-button-solid">
           {adoptionContent.button_text || "Start Adoption Application"}
         </a>
       </div>
@@ -131,7 +132,7 @@ const ctaContent = content.cta || {};
           </ul>
         </div>
 
-        <a href="/forms/foster-application" class="cs-button-solid">
+        <a href={fosterContent.button_link || "/forms/foster-application"} class="cs-button-solid">
           {fosterContent.button_text || "Start Foster Application"}
         </a>
       </div>
@@ -215,10 +216,10 @@ const ctaContent = content.cta || {};
   -->
           <!-- Relinquishment Application -->
       <div class="cs-application-card">
-        
-        <h2>Relinquishment Request</h2>
+
+        <h2>{relinquishmentContent.headline || "Relinquishment Request"}</h2>
         <p class="cs-description">
-          If you need to surrender a pet, we're here to help. Please complete our intake form so we can learn about your pet & find the best placement option.
+          {relinquishmentContent.body_text || "If you need to surrender a pet, we're here to help. Please complete our intake form so we can learn about your pet & find the best placement option."}
         </p>
 
         <ul>
@@ -227,8 +228,8 @@ const ctaContent = content.cta || {};
           <li>We’ll respond within 48 hours</li>
         </ul>
 
-        <a href="/forms/relinquishment-application" class="cs-button-solid">
-          Start Relinquishment Request
+        <a href={relinquishmentContent.button_link || "/forms/relinquishment-application"} class="cs-button-solid">
+          {relinquishmentContent.button_text || "Start Relinquishment Request"}
         </a>
       </div>
 

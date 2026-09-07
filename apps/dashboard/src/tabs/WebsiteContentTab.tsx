@@ -302,6 +302,16 @@ const PAGES: PageDef[] = [
           { key: 'button_link', label: 'Button URL (e.g. /forms/volunteer or https://...)', type: 'text' },
         ],
       },
+      {
+        key: 'relinquishment',
+        label: 'Relinquishment',
+        fields: [
+          { key: 'headline', label: 'Headline' },
+          { key: 'body_text', label: 'Body Text', type: 'textarea' },
+          { key: 'button_text', label: 'Button Text' },
+          { key: 'button_link', label: 'Button URL (e.g. /forms/relinquishment or https://...)', type: 'text' },
+        ],
+      },
     ],
   },
   {
